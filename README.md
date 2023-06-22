@@ -2,16 +2,16 @@ This is a project practice by LTDD2001_Nhom2
 
 ## Let's start
 
-First, that way to clone the project:
+First, the way to clone the project:
 ```bash
 git clone https://github.com/nincode2907/LTDD2001_Nhom2.git
-#with command line
 ```
 
-Two main content
+# Technical
+  Mô tả nghiệp vụ và kỹ thuật
 
-# Presentation
-  Jetpack
+# User manual
+  Hướng dẫn sử dụng app
 
-# Project
-  App Watch Movie
+# Member and work assignment
+  Danh sách nhóm và phân công công việc
