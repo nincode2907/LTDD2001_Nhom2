@@ -45,7 +45,11 @@ import com.example.myapplication.model.NavigationItem
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun BottomBar(mainViewModel: MainViewModel, navController: NavController, bottomBarState: MutableState<Boolean>) {
+fun BottomBar(
+    mainViewModel: MainViewModel,
+    navController: NavController,
+    bottomBarState: MutableState<Boolean>
+) {
     val navStackBackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navStackBackEntry?.destination
     AnimatedVisibility(
@@ -86,14 +90,17 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                 // Show BottomBar
                 bottomBarState.value = true
             }
+
             "Ranking" -> {
                 // Show BottomBar
                 bottomBarState.value = true
             }
+
             "Search" -> {
                 // Show BottomBar
                 bottomBarState.value = true
             }
+
             "Calendar" -> {
                 // Show BottomBar
                 bottomBarState.value = true
@@ -107,35 +114,37 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
         }
 
         Scaffold(
-           bottomBar = {
-               BottomBar(mainViewModel = mainViewModel,
-                   navController = navController,
-                   bottomBarState = bottomBarState
-               )
-           },
-            content = {
-                NavHost(
+            bottomBar = {
+                BottomBar(
+                    mainViewModel = mainViewModel,
                     navController = navController,
-                    startDestination = NavigationItem.Home.route,
-                ) {
-                    composable(NavigationItem.Home.route) {
-                        HomeScreen()
-                    }
-                    composable(NavigationItem.Ranking.route) {
-                        RankingScreen()
-                    }
-                    composable(NavigationItem.Search.route) {
-                        SearchScreen()
-                    }
-                    composable(NavigationItem.ComingSoon.route) {
-                        ComingSoonScreen()
-                    }
+                    bottomBarState = bottomBarState
+                )
+            },
 
-                    composable(NavigationItem.PlayVideo.route){
-                    }
+            ) { paddingValues ->
+            NavHost(
+                modifier = Modifier.padding(paddingValues = paddingValues),
+                navController = navController,
+                startDestination = NavigationItem.Home.route,
+            ) {
+                composable(NavigationItem.Home.route) {
+                    HomeScreen()
+                }
+                composable(NavigationItem.Ranking.route) {
+                    RankingScreen()
+                }
+                composable(NavigationItem.Search.route) {
+                    SearchScreen()
+                }
+                composable(NavigationItem.ComingSoon.route) {
+                    ComingSoonScreen()
+                }
+
+                composable(NavigationItem.PlayVideo.route) {
                 }
             }
-        )
+        }
     }
 
 }
