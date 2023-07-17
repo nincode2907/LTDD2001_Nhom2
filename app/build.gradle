@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-}
+    id("com.google.gms.google-services")}
 
 android {
     namespace 'com.example.moviesapp'
@@ -70,5 +70,13 @@ dependencies {
 
     //material
     implementation("androidx.compose.material:material:1.4.1")
+
+    implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+
+
+
 
 }
