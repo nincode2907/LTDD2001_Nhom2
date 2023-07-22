@@ -1,7 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id("com.google.gms.google-services")}
+    id("com.google.gms.google-services")
+
+
+}
 
 android {
     namespace 'com.example.moviesapp'
@@ -76,7 +79,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
     implementation 'com.google.firebase:firebase-firestore-ktx'
 
+    //serachbar
+    implementation "androidx.compose.material3:material3:1.1.0"
 
-
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
 }

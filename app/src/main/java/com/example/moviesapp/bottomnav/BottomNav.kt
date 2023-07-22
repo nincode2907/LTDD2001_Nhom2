@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomNavigation
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +38,8 @@ import codes.andreirozov.bottombaranimation.ui.theme.BottomBarAnimationTheme
 import com.example.movieapp.screen.homeScreen.HomeScreen
 import com.example.movieapp.screen.rankingScreen.RankingScreen
 import com.example.movieapp.screen.searchScreen.SearchScreen
+import com.example.moviesapp.screen.AnimatedSplashScreen
+import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.myapplication.model.NavigationItem
@@ -86,6 +87,11 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
 
         // Control TopBar and BottomBar
         when (navBackStackEntry?.destination?.route) {
+            "Splash" -> {
+                // Hide BottomBar
+                bottomBarState.value = false
+            }
+
             "Home" -> {
                 // Show BottomBar
                 bottomBarState.value = true
@@ -109,44 +115,57 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
             "PlayVideo" -> {
                 // Hide BottomBar
                 bottomBarState.value = false
-            }
 
+            }
         }
 
-        Scaffold(
-            bottomBar = {
-                BottomBar(
+        NavHost(
+            modifier = Modifier.padding(),
+            navController = navController,
+            startDestination = "Splash",
+        ) {
+            composable(NavigationItem.Home.route) {
+                HomeScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
                     bottomBarState = bottomBarState
                 )
-            },
+            }
+            composable(NavigationItem.Ranking.route) {
+                RankingScreen(
+                    mainViewModel = mainViewModel,
+                    navController = navController,
+                    bottomBarState = bottomBarState
+                )
+            }
+            composable(NavigationItem.Search.route) {
+                SearchScreen(
+                    mainViewModel = mainViewModel,
+                    navController = navController,
+                    bottomBarState = bottomBarState
+                )
+            }
+            composable(NavigationItem.ComingSoon.route) {
+                ComingSoonScreen(
+                    mainViewModel = mainViewModel,
+                    navController = navController,
+                    bottomBarState = bottomBarState
+                )
+            }
 
-            ) { paddingValues ->
-            NavHost(
-                modifier = Modifier.padding(paddingValues = paddingValues),
-                navController = navController,
-                startDestination = NavigationItem.Home.route,
-            ) {
-                composable(NavigationItem.Home.route) {
-                    HomeScreen()
-                }
-                composable(NavigationItem.Ranking.route) {
-                    RankingScreen()
-                }
-                composable(NavigationItem.Search.route) {
-                    SearchScreen()
-                }
-                composable(NavigationItem.ComingSoon.route) {
-                    ComingSoonScreen()
-                }
-
-                composable(NavigationItem.PlayVideo.route) {
-                }
+            composable(NavigationItem.PlayVideo.route) {
+            }
+            composable("CategoryMovies/{nameCate}") { backStackEntry ->
+                CategoryMoviesScreen(
+                    backStackEntry.arguments?.getString("nameCate")!!,
+                    navController = navController
+                )
+            }
+            composable(route = "Splash") {
+                AnimatedSplashScreen(navController = navController)
             }
         }
     }
-
 }
 
 
