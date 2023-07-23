@@ -48,7 +48,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +55,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
@@ -499,3 +503,28 @@ fun PreviewHome() {
         App()
     }
 }
+//@Composable
+//fun HomeScreen(
+//    mainViewModel: MainViewModel,
+//    navController: NavController,
+//    bottomBarState: MutableState<Boolean>
+//) {
+//    Scaffold(
+//        bottomBar = {
+//            BottomBar(
+//                mainViewModel = mainViewModel,
+//                navController = navController,
+//                bottomBarState = bottomBarState
+//            )
+//        },
+//    ) { paddingValues ->
+//
+//        Column(
+//            Modifier
+//                .fillMaxSize()
+//                .padding(paddingValues = paddingValues)
+//                .background(Color.Black)
+//        ) {
+//            Text(text = "HomeScreen", color = Color.White)
+//        }
+//    }
