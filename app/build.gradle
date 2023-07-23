@@ -71,4 +71,9 @@ dependencies {
     //material
     implementation("androidx.compose.material:material:1.4.1")
 
+    //carousel
+    implementation "com.google.accompanist:accompanist-pager:0.20.0"
+    implementation 'androidx.compose.ui:ui-util:1.4.3'
+    implementation ('io.coil-kt:coil-compose:2.2.2')
+
 }

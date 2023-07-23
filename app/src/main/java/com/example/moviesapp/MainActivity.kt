@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import com.example.myapplication.screen.mainScreen.MainScreen
 
@@ -22,5 +23,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
+@Preview(showBackground = true, widthDp = 564, heightDp = 1254)
+@Composable
+fun PreviewMessageCard() {
+    MainScreen()
+}
