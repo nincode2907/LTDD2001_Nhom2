@@ -118,7 +118,6 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
 
             }
         }
-
         NavHost(
             modifier = Modifier.padding(),
             navController = navController,

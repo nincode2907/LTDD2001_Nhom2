@@ -34,56 +34,6 @@ class MainActivity : ComponentActivity() {
             window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
             MainScreen()
 
-
-
-//            AsyncImage(
-//                model = "https://example.com/image.jpg",
-//                contentDescription = "Translated description of what the image contains"
-//            )
-
-//            val db = Firebase.firestore
-//            val movieDocumentId = "7Idb8unSOa5sCUedlBFn"
-//            val movieRef = db.collection("movie").document(movieDocumentId)
-//            movieRef.get()
-//                .addOnSuccessListener { movieDocument ->
-//                    val categoryId = movieDocument.data!!.get("categoryId").toString()
-//
-//                    Log.d("XXX", "data =" + movieDocument.data.toString() + " " + categoryId)
-//                    val categoryRef = db.collection("category").document(categoryId)
-//                    categoryRef.get()
-//                        .addOnSuccessListener { categoryDocument ->
-//                            if (categoryDocument != null && categoryDocument.exists()) {
-//                                Log.d("XXX1", "DocumentSnapshot data: ${categoryDocument.data}")
-//                            } else {
-//                                Log.d("XXX1", "No such document in category table")
-//                            }
-//                        }
-//                        .addOnFailureListener { exception ->
-//                            Log.d("XXX1", "get category failed with ", exception)
-//                        }
-//                }
-//                .addOnFailureListener { exception ->
-//                    Log.d("XXX", "get movie failed with ", exception)
-//                }
-
-//            val db = Firebase.firestore
-//
-//            db.collection("movie")
-//                .get()
-//                .addOnSuccessListener { result ->
-//                    for (movieDocument in result) {
-//                        val categoryId = movieDocument.data!!.get("categoryId").toString()
-//                        val categoryRef = db.collection("category").document(categoryId)
-//                        categoryRef.get()
-//                            .addOnSuccessListener { categoryDocument ->
-//                                Log.d("XXX1", "DocumentSnapshot data: ${categoryDocument.data}")
-//                            }
-//                                Log.d("XXX", "${movieDocument.id} => ${movieDocument.data}" + " " + categoryId)
-//                    }
-//                }
-//                .addOnFailureListener { exception ->
-//                    Log.d("XXX", "Error getting documents: ", exception)
-//                }
         }
     }
 
