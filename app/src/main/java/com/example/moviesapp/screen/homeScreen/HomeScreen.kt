@@ -66,7 +66,6 @@ val images = listOf(
 fun App(
     modifier: Modifier = Modifier
         .fillMaxSize()
-        .background(colorResource(id = R.color.black))
 ) {
     val scrollState = rememberScrollState()
 
@@ -122,9 +121,9 @@ fun App(
 //@Preview(showBackground = true, widthDp = 720, heightDp = 1280)
 //@Preview(showBackground = true, widthDp = 1080, heightDp = 1920)
 //@Preview(showBackground = true, widthDp = 1440, heightDp = 2560)
-//@Preview(showBackground = true, widthDp = 1024, heightDp = 768)
+@Preview(showBackground = true, widthDp = 1024, heightDp = 768)
 //@Preview(showBackground = true, widthDp = 1366, heightDp = 768)
-@Preview(showBackground = true, widthDp = 564, heightDp = 1254)
+//@Preview(showBackground = true, widthDp = 564, heightDp = 1254)
 @Composable
 fun PreviewHome() {
     Surface(

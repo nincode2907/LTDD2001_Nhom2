@@ -33,8 +33,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
-            MainScreen()
+//            MainScreen()
 
+            val db = Firebase.firestore
+
+            db.collection("cities")
+                .get()
+                .addOnSuccessListener { result ->
+                    for (document in result) {
+                        Log.d("XXX", "${document.id} => ${document.data}")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("XXX", "Error getting documents: ", exception)
+                }
         }
     }
 }
