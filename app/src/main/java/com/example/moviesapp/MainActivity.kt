@@ -37,9 +37,6 @@ class MainActivity : ComponentActivity() {
 
         }
     }
-
-
-
 }
 @Preview(showBackground = true, widthDp = 564, heightDp = 1254)
 @Composable
