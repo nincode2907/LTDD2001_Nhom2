@@ -30,7 +30,6 @@ class MovieRepository {
         } catch (exception: Exception) {
             Log.w(ContentValues.TAG, "Error getting documents.", exception)
         }
-
         movies
     }
 

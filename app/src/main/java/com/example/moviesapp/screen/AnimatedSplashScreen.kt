@@ -3,11 +3,9 @@ package com.example.moviesapp.screen
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,14 +15,9 @@ import androidx.navigation.NavHostController
 import com.example.myapplication.model.NavigationItem
 import kotlinx.coroutines.delay
 import com.example.moviesapp.R
-
-import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 
@@ -38,7 +31,6 @@ fun AnimatedSplashScreen(navController: NavHostController) {
             durationMillis = 3000
         )
     )
-
     LaunchedEffect(key1 = true) {
         startAnimation = true
         delay(4000)
@@ -57,7 +49,6 @@ fun Splash(alpha: Float) {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-
         Icon(
             modifier = Modifier
                 .size(120.dp)
@@ -66,7 +57,6 @@ fun Splash(alpha: Float) {
             contentDescription = "Logo Icon",
             tint = Color.White
         )
-
     }
 }
 

@@ -10,6 +10,6 @@ class MainViewModel constructor() : ViewModel() {
     val uiState: StateFlow<MainUiState> get() = _uiState
 
     init {
-        _uiState.value = MainUiState(arrayListOf(NavigationItem.Home,NavigationItem.Search,NavigationItem.ComingSoon,NavigationItem.Ranking))
+        _uiState.value = MainUiState(arrayListOf(NavigationItem.Home,NavigationItem.Search,NavigationItem.ComingSoon,NavigationItem.Ranking,NavigationItem.User))
     }
 }

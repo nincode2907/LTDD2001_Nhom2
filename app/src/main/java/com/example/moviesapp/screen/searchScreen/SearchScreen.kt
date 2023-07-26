@@ -2,7 +2,6 @@ package com.example.movieapp.screen.searchScreen
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -61,12 +59,8 @@ import com.example.moviesapp.data.CategoryRepository
 import com.example.moviesapp.data.MovieRepository
 import com.example.moviesapp.model.CategoryMovie
 import com.example.moviesapp.model.Movie
-import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
-
-
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun SearchScreen(
@@ -92,7 +86,6 @@ fun SearchScreen(
     Scaffold(
         topBar = {
             SearchBarView()
-
         },
         bottomBar = {
             BottomBar(
@@ -141,7 +134,6 @@ fun SearchScreen(
         }
     }
 }
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -152,8 +144,7 @@ fun SearchBarView() {
         mutableListOf("123123123", "12312sdfgsdfsd")
     }
 
-    Column(
-    ) {
+    Column(modifier = Modifier.padding(10.dp)) {
         AnimatedVisibility(visible = !active) {
             Text(
                 text = "Tìm kiếm",
@@ -163,7 +154,6 @@ fun SearchBarView() {
             )
 
         }
-
         SearchBar(
             query = text,
             onQueryChange = { text = it },

@@ -3,17 +3,13 @@ package com.example.moviesapp.data
 import android.content.ContentValues
 import android.util.Log
 import com.example.moviesapp.model.CategoryMovie
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class CategoryRepository() {
-
-
     val db = Firebase.firestore
     suspend fun getAllCategories(): List<CategoryMovie> = withContext(Dispatchers.IO) {
         var categories: MutableList<CategoryMovie> = mutableListOf<CategoryMovie>()
@@ -44,6 +40,4 @@ class CategoryRepository() {
         }
         categories
     }
-
-
 }

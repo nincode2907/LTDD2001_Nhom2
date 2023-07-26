@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.Icon
@@ -39,6 +40,7 @@ import com.example.movieapp.screen.homeScreen.HomeScreen
 import com.example.movieapp.screen.rankingScreen.RankingScreen
 import com.example.movieapp.screen.searchScreen.SearchScreen
 import com.example.moviesapp.screen.AnimatedSplashScreen
+import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
 import com.example.myapplication.screen.mainScreen.MainViewModel
@@ -58,7 +60,7 @@ fun BottomBar(
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
-            BottomNavigation(backgroundColor = Color(0xFF1F1F1D)) {
+            BottomNavigation(backgroundColor = Color.DarkGray) {
                 mainViewModel.uiState.value.navigationItems.forEach { item ->
                     AddItem(
                         screen = item,
@@ -66,7 +68,6 @@ fun BottomBar(
                         navController = navController
                     )
                 }
-
             }
         }
     )
@@ -117,6 +118,10 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                 bottomBarState.value = false
 
             }
+
+            "User" -> {
+                bottomBarState.value = true
+            }
         }
         NavHost(
             modifier = Modifier.padding(),
@@ -151,8 +156,14 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                     bottomBarState = bottomBarState
                 )
             }
-
             composable(NavigationItem.PlayVideo.route) {
+            }
+            composable(NavigationItem.User.route) {
+                UserScreen(
+                    mainViewModel = mainViewModel,
+                    navController = navController,
+                    bottomBarState = bottomBarState
+                )
             }
             composable("CategoryMovies/{nameCate}") { backStackEntry ->
                 CategoryMoviesScreen(
@@ -180,7 +191,6 @@ fun RowScope.AddItem(
     val contentColor =
         if (selected) Color.White else Color.White
 
-
     Box(
         modifier = Modifier
             .clip(CircleShape)
@@ -201,7 +211,6 @@ fun RowScope.AddItem(
 
         ) {
             Icon(
-
                 painter = painterResource(id = if (selected) screen.image else screen.imageSelected),
                 contentDescription = "icon",
                 tint = contentColor

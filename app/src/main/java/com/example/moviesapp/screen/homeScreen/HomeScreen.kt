@@ -23,6 +23,7 @@ import com.example.moviesapp.R
 import com.example.moviesapp.screen.homeScreen.component.Carousel
 import com.example.moviesapp.screen.homeScreen.component.ListFilmHorizontal
 import com.example.moviesapp.screen.homeScreen.component.ListFilmTop5
+
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 
@@ -41,7 +42,6 @@ fun HomeScreen(
             )
         },
     ) { paddingValues ->
-
         Column(
             Modifier
                 .fillMaxSize()
