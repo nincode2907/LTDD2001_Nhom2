@@ -200,10 +200,12 @@ fun ListFilmHorizontal(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(films.size) { film ->
-            if (film == images.size - 1)
-                FilmSeeMore()
-            else
+
                 FilmInList(painterReso = films[film], description = "")
+        }
+        item(){
+            FilmSeeMore()
+
         }
     }
     Spacer(modifier = Modifier.height(18.dp))

@@ -100,26 +100,6 @@ fun ComingSoonScreen(
 
             }
 
-            item {
-                Button(onClick = { isShowBottomSheet = true }) {
-
-                }
-                if (isShowBottomSheet) {
-                    ModalBottomSheet(onDismissRequest = {
-                        coroutine.launch {
-                            sheetState.hide()
-                        }.invokeOnCompletion {
-                            isShowBottomSheet = false
-                        }
-                    }, sheetState = sheetState) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Red)
-                        )
-                    }
-                }
-            }
 
         }
     }
