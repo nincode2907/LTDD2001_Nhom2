@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.moviesapp.R
+import com.example.moviesapp.screen.homeScreen.Page
 import com.example.moviesapp.screen.homeScreen.component.Carousel
 import com.example.moviesapp.screen.homeScreen.component.ListFilmHorizontal
 import com.example.moviesapp.screen.homeScreen.component.ListFilmTop5
@@ -46,20 +47,24 @@ fun HomeScreen(
             Modifier
                 .fillMaxSize()
                 .padding(paddingValues = paddingValues)
-                .background(Color.Black)
+                .background(colorResource(id = R.color.dark))
         ) {
-            App()
+//            App()
+            Page()
         }
     }
 }
 
 val images = listOf(
     R.drawable.onepiece,
-    R.drawable.naruto,
+    R.drawable.honlecuaem,
     R.drawable.demonslayer,
     R.drawable.jujutsukaisen,
-    R.drawable.conan,
-    R.drawable.blackclover
+    R.drawable.connhotmotchong,
+    R.drawable.spiderman,
+    R.drawable.blackclover,
+    R.drawable.naruto,
+    R.drawable.conan
 )
 
 @Composable
@@ -121,15 +126,15 @@ fun App(
 //@Preview(showBackground = true, widthDp = 720, heightDp = 1280)
 //@Preview(showBackground = true, widthDp = 1080, heightDp = 1920)
 //@Preview(showBackground = true, widthDp = 1440, heightDp = 2560)
-@Preview(showBackground = true, widthDp = 1024, heightDp = 768)
+//@Preview(showBackground = true, widthDp = 1024, heightDp = 768)
 //@Preview(showBackground = true, widthDp = 1366, heightDp = 768)
-//@Preview(showBackground = true, widthDp = 564, heightDp = 1254)
+@Preview(showBackground = true, widthDp = 564, heightDp = 1254)
 @Composable
 fun PreviewHome() {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = colorResource(id = R.color.dark)
     ) {
-        App()
+        Page()
     }
 }

@@ -1,20 +1,25 @@
 package com.example.moviesapp.screen.homeScreen.component
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +28,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,24 +39,35 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import com.example.movieapp.screen.homeScreen.images
 import com.example.moviesapp.R
+import com.example.moviesapp.screen.homeScreen.component.StyleStatic.textCommonStyle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -84,7 +101,7 @@ fun Carousel() {
         modifier = Modifier.height(height),
         verticalAlignment = Alignment.Top
     ) { page ->
-        var colorLikeIcon = if (liked) colorResource(id = R.color.tym) else styleStatic.primaryTextColor
+        var colorLikeIcon = if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
         Column(
 
         ) {
@@ -107,7 +124,7 @@ fun Carousel() {
                                 brush = Brush.verticalGradient(
                                     colors = listOf(
                                         Color.Transparent,
-                                        colorResource(id = R.color.black)
+                                        StyleStatic.primaryModeColor
                                     )
                                 )
                             )
@@ -135,7 +152,8 @@ fun Carousel() {
                     },
                     modifier = Modifier
                         .weight(5f)
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 8.dp),
+                    fSize = 16
                 )
                 IconDetail(
                     Icons.Outlined.Info,
@@ -169,6 +187,89 @@ fun Carousel() {
         }
     }
 }
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun CarouselListFilms() {
+    val listTags = listOf("Phim liên quan", "Trailer")
+    val pagerState = rememberPagerState(initialPage = 0)
+    var scope = rememberCoroutineScope()
+
+    val styleActive = textCommonStyle.copy(fontWeight = FontWeight.Bold, fontSize = 17.sp)
+
+    Column() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .background(Color.Black)
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.65f)
+                    .fillMaxHeight()
+                    .background(Color.White, RoundedCornerShape(8.dp))
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+        ){
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                repeat(listTags.size) { it ->
+                    val styleText = if(pagerState.currentPage == it) styleActive
+                    else textCommonStyle.copy(fontWeight = FontWeight.Normal, fontSize = 17.sp)
+                    val colorSpacer = if(pagerState.currentPage == it) StyleStatic.primaryTextColor else Color.Transparent
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .width(150.dp)
+                    ) {
+                        Text(
+                            text = listTags[it],
+                            style = styleText,
+                            modifier = Modifier
+                                .clickable {
+                                    scope.launch {
+                                        pagerState.animateScrollToPage(it)
+                                    }
+                                }
+                                .animateContentSize()
+                        )
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(3.dp)
+                                .background(color = colorSpacer)
+                                .animateContentSize()
+                        )
+                    }
+                }
+            }
+
+            HorizontalPager(
+                count = listTags.size,
+                state = pagerState
+            ) { page ->
+                Column {
+                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
+                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
+                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
+                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
+                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
+                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
+                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun ListFilmHorizontal(
@@ -185,7 +286,7 @@ fun ListFilmHorizontal(
     ){
         Text(
             text = categoryFilm,
-            style = styleStatic.textCommonStyle.copy(
+            style = StyleStatic.textCommonStyle.copy(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -193,7 +294,7 @@ fun ListFilmHorizontal(
         Icon(
             imageVector = Icons.Default.KeyboardArrowRight,
             contentDescription = "Xem tất cả",
-            tint = styleStatic.primaryTextColor
+            tint = StyleStatic.primaryTextColor
         )
     }
 
@@ -218,8 +319,8 @@ fun ListFilmTop5(
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = "Phim Top 5",
-        style = styleStatic.textCommonStyle.copy(
+        text = "Phim Top 5 Hôm Nay",
+        style = StyleStatic.textCommonStyle.copy(
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         ),

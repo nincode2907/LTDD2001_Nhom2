@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,26 +28,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.moviesapp.R
 
 @Composable
 fun IconDetail(
     icon: ImageVector,
     description: String,
-    colorIcon: Color = styleStatic.primaryTextColor,
-    colorText: Color = styleStatic.primaryTextColor,
-    modifier: Modifier
+    colorIcon: Color = StyleStatic.primaryTextColor,
+    colorText: Color = StyleStatic.primaryTextColor,
+    modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
-            .padding(16.dp)
     ) {
         Icon(
             imageVector = icon,
@@ -62,12 +67,38 @@ fun IconDetail(
         )
     }
 }
+@Composable
+fun IconBackBlur(
+    icon: ImageVector,
+    colorIcon: Color = StyleStatic.primaryTextColor,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .padding(10.dp)
+            .width(38.dp)
+            .height(38.dp)
+            .background(
+                Color(android.graphics.Color.parseColor("#33000000")),
+                RoundedCornerShape(percent = 50)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = modifier.size(26.dp),
+            tint = colorIcon,
+        )
+    }
+}
 
 @Composable
 fun ButtonPlay(
     onClick: () -> Unit,
     icon: ImageVector = Icons.Default.PlayArrow,
     text: String = "Xem phim",
+    fSize: Int,
     modifier: Modifier = Modifier
 ) {
     Button(
@@ -84,13 +115,14 @@ fun ButtonPlay(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = styleStatic.primaryTextColor
+                tint = StyleStatic.primaryTextColor
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = text,
-                style = styleStatic.textCommonStyle.copy(
-                    fontSize = 16.sp
+                style = StyleStatic.textCommonStyle.copy(
+                    fontSize = fSize.sp,
+                    fontWeight = FontWeight.Normal
                 )
             )
         }
@@ -100,7 +132,7 @@ fun ButtonPlay(
 @Composable
 fun FilmSeeMore() {
     Box(
-        modifier = styleStatic.modifierFilmInListSize
+        modifier = StyleStatic.modifierFilmInListSize
             .background(colorResource(id = R.color.dark), RoundedCornerShape(6.dp)),
         contentAlignment = Alignment.Center
     ) {
@@ -115,7 +147,7 @@ fun FilmSeeMore() {
         )
         Text(
             text = "XEM TẤT CẢ",
-            style = styleStatic.textCommonStyle
+            style = StyleStatic.textCommonStyle
         )
     }
 }
@@ -124,7 +156,7 @@ fun FilmSeeMore() {
 fun FilmInList(
     painterReso: Int,
     description: String,
-    modifier: Modifier = styleStatic.modifierFilmInListSize
+    modifier: Modifier = StyleStatic.modifierFilmInListSize
         .clip(RoundedCornerShape(6.dp))
 ) {
     Image(
@@ -133,4 +165,33 @@ fun FilmInList(
         modifier = modifier.padding(end = 2.dp),
         contentScale = ContentScale.Crop
     )
+}
+
+@Composable
+fun InfoTopicFilm(
+    topic: String,
+    infomation: String,
+    color: Color = StyleStatic.blurTextWhiteColor
+) {
+    Row(
+        modifier = Modifier.padding(top = 4.dp)
+    ) {
+        Text(
+            text = "$topic:",
+            style = StyleStatic.textCommonStyle.copy(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = color
+            ),
+            modifier = Modifier.width(70.dp)
+        )
+        Text(
+            text = infomation,
+            style = StyleStatic.textCommonStyle.copy(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = color
+            )
+        )
+    }
 }

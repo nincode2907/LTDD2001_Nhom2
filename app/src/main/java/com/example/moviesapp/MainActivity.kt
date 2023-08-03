@@ -28,12 +28,12 @@ import com.example.myapplication.screen.mainScreen.MainScreen
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class MainActivity : ComponentActivity() {
+open class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
-//            MainScreen()
+            MainScreen()
 
             val db = Firebase.firestore
 
