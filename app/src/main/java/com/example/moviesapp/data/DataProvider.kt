@@ -16,7 +16,7 @@ object DataProvider {
                     "h kiếm huyền thoại đắt giá nhất hành tinh mặc dù nó chứa một lời nguyền chết người và" +
                     " một kho báu giá trị. Khi trở lại, cả nhóm phát hiện ra Zoro – " +
                     "người được giao nhiệm vụ trông tàu đã mất tích và bất ngờ bị lính thủy tấn công. ",
-            puppyImageId = R.drawable.onepiece
+            puppyImageId = R.drawable.demonslayer
         )
     val rankingList = listOf(
         ranking,
@@ -32,7 +32,7 @@ object DataProvider {
                     "rút lui. Họ nhìn thấy những tên ấy chạy ra một con tàu chiến giữa biển. 2 ninja quyết chèo thuyền" +
                     " ra để tìm hiểu rõ về con tàu ấy, mặc cho người khác khuyên ngăn, khi bóng họ và tàu khuất dần," +
                     " tất cả chỉ nghe thấy tiếng kêu thất thanh và không thấy họ quay lại nữa. ",
-            puppyImageId = R.drawable.naruto
+            puppyImageId = R.drawable.demonslayer
         ),
         Ranking(
             id = "3",
@@ -42,7 +42,7 @@ object DataProvider {
             description = "Con đường sống duy nhất là đánh bại mọi kẻ thù. Cái chết trong game đồng nghĩa với cái chết ngoài " +
                     "đời thực---- Bằng Nerve Gear, mười ngàn con người lao đầu vào một trò chơi bí ẩn 'Sword Art Online'," +
                     " để rồi bị giam cầm trong đó, buộc phải dấn thân vào một đấu trường sinh tử. ",
-            puppyImageId = R.drawable.swordartonline
+            puppyImageId = R.drawable.demonslayer
         ),
         Ranking(
             id = "4",
@@ -52,7 +52,7 @@ object DataProvider {
             description = "Câu chuyện sẽ xoay quanh Razha, một quốc gia nằm ở phía Tây. Rimuru sẽ thấy mình" +
                     " bị cuốn vào một âm mưu xung quanh nữ hoàng." +
                     " Người ta nói rằng cô ấy sở hữu sức mạnh vô danh.  ",
-            puppyImageId = R.drawable.slime_datta_ken
+            puppyImageId = R.drawable.demonslayer
         ),
         Ranking(
             id = "5",
@@ -62,7 +62,7 @@ object DataProvider {
             description = "Ichigo Kurosaki là một thiếu niên hung hăng, hay gây rắc rối và cậu có được" +
                     " một năng lực đặc bệt là có thể nhìn thấy linh hồn. Câu chuyện bắt đầu với sự " +
                     "xuất hiện bất ngờ của một người lạ ngay trong phòng ngủ của Ichigo. ",
-            puppyImageId = R.drawable.bleach
+            puppyImageId = R.drawable.demonslayer
         ),
         Ranking(
             id = "6",
@@ -71,7 +71,7 @@ object DataProvider {
             age = 14,
             description = "phim hoạt hình chuyển thể từ bộ tiểu thuyết giả tưởng và mở đầu bằng lời tuyên bố tuyệt vọng" +
                     " của Miyo Saimori rằng cô ấy không được mong muốn và vô dụng do thiếu sức mạnh siêu nhiên.  ",
-            puppyImageId = R.drawable.my_happy_marriage
+            puppyImageId = R.drawable.demonslayer
         ),
         Ranking(
             id = "7",
@@ -80,7 +80,7 @@ object DataProvider {
             age = 14,
             description = "Cuối thế kỷ 19—vợ của một ma cà rồng bị sát hại, và thám tử được gọi là người sử dụng lồng được gọi đến để phá án." +
                     " Nhưng còn nhiều điều nữa về vị thám tử và chiếc lồng chim có rèm mà anh ta mang theo... ",
-            puppyImageId = R.drawable.undead_murder_farce
+            puppyImageId = R.drawable.demonslayer
         ),
         Ranking(
             id = "8",
@@ -89,7 +89,7 @@ object DataProvider {
             age = 14,
             description = "Komura thương thầm cô bạn Mie cùng lớp ngồi ngay bàn bên. Tuy trong đầu luôn nghĩ đến cô bạn đeo kính" +
                     " này nhưng cậu lại quá nhút nhát để dám bắt chuyện. Cho đến khi cô quên mang kính... ",
-            puppyImageId = R.drawable.hihicogirl
+            puppyImageId = R.drawable.demonslayer
         ),
         Ranking(
             id = "9",
@@ -100,7 +100,7 @@ object DataProvider {
                     " bị thất lạc và rải rác khắp nơi. Bất kì con quỷ nào hấp thụ được mảnh cơ thể của Sukuna sẽ có được sức mạnh hủy" +
                     "diệt toàn bộ thế giới. May mắn thay, " +
                     "tồn tại ngôi trường bí ẩn đang cố bảo vệ thế giới mong manh khỏi lũ quỷ. ",
-            puppyImageId = R.drawable.jujutsukaisen
+            puppyImageId = R.drawable.demonslayer
         ),
         Ranking(
             id = "10",
@@ -108,28 +108,28 @@ object DataProvider {
             category = "Hành động/ Giả tưởng/ Shounen",
             age = 14,
             description = "Mùa thứ ba của Kimetsu no Yaiba, diễn ra ngay sau Kỹ Viện Trấn. ",
-            puppyImageId = R.drawable.kmsny
+            puppyImageId = R.drawable.demonslayer
         )
     )
 
 
     val banner = Banner(
         id = "1",
-        bannerImage = R.drawable.onepiecebanner1
+        bannerImage = R.drawable.demonslayer
     )
     val bannerList = listOf(
         banner,
         Banner(
             id = "2",
-            bannerImage = R.drawable.zombie
+            bannerImage = R.drawable.demonslayer
         ),
         Banner(
             id = "3",
-            bannerImage = R.drawable.emilia
+            bannerImage = R.drawable.demonslayer
         ),
         Banner(
             id = "4",
-            bannerImage = R.drawable.zerotow
+            bannerImage = R.drawable.demonslayer
         )
     )
 }

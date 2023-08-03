@@ -69,7 +69,6 @@ fun UserScreen(
                         color = Color.White
                     )
                 },
-
                 )
         },
         bottomBar = {

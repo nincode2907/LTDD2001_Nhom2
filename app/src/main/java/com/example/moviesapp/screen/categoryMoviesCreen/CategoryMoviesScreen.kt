@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,8 +37,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,18 +51,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieapp.screen.searchScreen.ItemMovieView
+import com.example.moviesapp.R
 import com.example.moviesapp.data.MovieRepository
 import com.example.moviesapp.model.Movie
+import com.example.moviesapp.screen.homeScreen.component.FilmInList
+import com.example.moviesapp.screen.homeScreen.component.styleStatic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryMoviesScreen(title: String, navController: NavController) {
+fun CategoryMoviesScreen(title: String,id:String, navController: NavController) {
     val movieRepository = MovieRepository()
     var movies by remember { mutableStateOf(emptyList<Movie>()) }
 
     LaunchedEffect(Unit) {
-        movies = movieRepository.getAllMovies()
+        movies = movieRepository.getAllMoviesByIdCategory(id)
     }
+
+
 
     Scaffold(
         modifier = Modifier

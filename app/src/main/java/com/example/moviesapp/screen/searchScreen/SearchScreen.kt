@@ -81,7 +81,7 @@ fun SearchScreen(
     LaunchedEffect(Unit) {
         categories = categoryRepository.getAllCategories()
         categoriesLimit = categoryRepository.getAllCategoriesLimited(6)
-        movies = movieRepository.getAllMovies()
+        movies = movieRepository.getMoviesLimit(32)
     }
     Scaffold(
         topBar = {
@@ -107,7 +107,7 @@ fun SearchScreen(
         ) {
             items(if (boolean) categoriesLimit else categories) { it ->
                 ItemCategoryView(it.name, it.image) {
-                    navController.navigate("CategoryMovies/" + it.name)
+                    navController.navigate("CategoryMovies/" + it.name+"/"+it.id)
                 }
             }
 

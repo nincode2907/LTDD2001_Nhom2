@@ -2,7 +2,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id("com.google.gms.google-services")
-
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id("com.google.dagger.hilt.android")
 
 }
 
@@ -87,5 +89,19 @@ dependencies {
     implementation "androidx.compose.material3:material3:1.1.0"
     //imgload
     implementation("io.coil-kt:coil-compose:2.4.0")
+    //moshi json
+    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+
+
+    //dager hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    kapt "androidx.hilt:hilt-compiler:1.0.0"
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+    //Media3 - ExoPlayer
+    implementation "androidx.media3:media3-exoplayer:1.1.0"
+    implementation "androidx.media3:media3-exoplayer-dash:1.1.0"
+    implementation "androidx.media3:media3-ui:1.1.0"
+
 
 }

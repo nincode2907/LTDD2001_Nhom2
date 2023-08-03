@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
@@ -23,6 +24,7 @@ import com.example.moviesapp.R
 import com.example.moviesapp.screen.homeScreen.component.Carousel
 import com.example.moviesapp.screen.homeScreen.component.ListFilmHorizontal
 import com.example.moviesapp.screen.homeScreen.component.ListFilmTop5
+
 
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
@@ -42,46 +44,41 @@ fun HomeScreen(
             )
         },
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             Modifier
                 .fillMaxSize()
                 .padding(paddingValues = paddingValues)
                 .background(Color.Black)
         ) {
-            App()
+           item {
+               Carousel()
+               ListFilmHorizontal(categoryFilm = "Phim Thể Loại Top 1 Khu Vực")
+               ListFilmTop5()
+               ListFilmHorizontal()
+               ListFilmHorizontal(categoryFilm = "Anime")
+
+           }
+
         }
     }
 }
-
-val images = listOf(
-    R.drawable.onepiece,
-    R.drawable.naruto,
-    R.drawable.demonslayer,
-    R.drawable.jujutsukaisen,
-    R.drawable.conan,
-    R.drawable.blackclover
-)
-
 @Composable
 fun App(
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
-    val scrollState = rememberScrollState()
-
-    Column(
+    LazyColumn(
         verticalArrangement = Arrangement.Top,
-        modifier = modifier
-            .verticalScroll(state = scrollState)
     ) {
-        Carousel()
-        Spacer(modifier = Modifier.height(20.dp))
-        ListFilmHorizontal(films = images, categoryFilm = "Phim Thể Loại Top 1 Khu Vực")
-        ListFilmTop5(films = images.reversed())
-        ListFilmHorizontal(films = images.reversed(), categoryFilm = "Trinh Thám")
-        ListFilmHorizontal(films = images)
-        ListFilmHorizontal(films = images.reversed(), categoryFilm = "Anime")
-        Spacer(modifier = Modifier.height(50.dp))
+        item {
+            Carousel()
+          //  Spacer(modifier = Modifier.height(20.dp))
+            //ListFilmHorizontal(films = images, categoryFilm = "Phim Thể Loại Top 1 Khu Vực")
+           // ListFilmHorizontal(films = images.reversed(), categoryFilm = "Trinh Thám")
+           // ListFilmHorizontal(films = images)
+           // ListFilmHorizontal(films = images.reversed(), categoryFilm = "Anime")
+           // Spacer(modifier = Modifier.height(50.dp))
+        }
     }
 }
 

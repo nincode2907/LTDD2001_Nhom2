@@ -43,39 +43,7 @@ import codes.andreirozov.bottombaranimation.ui.theme.BottomBarAnimationTheme
 import com.example.rank.data.DataProvider.bannerList
 import com.example.rank.data.Ranking
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun BarkHomeContent(navigateToProfile: (Ranking) -> Unit) {
-    val ranks = remember {
-        DataProvider.rankingList
-    }
 
-    LazyColumn(contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-        modifier = Modifier
-            .fillMaxSize()
-    )
-    {
-        stickyHeader {
-            Card(modifier =Modifier
-                .fillMaxHeight(),
-                colors = CardDefaults.cardColors(Color.Black)
-            ) {
-                Text(text = "Nổi bật", style = MaterialTheme.typography.bodyLarge, fontStyle = FontStyle.Italic,
-                    color = Color.White)
-                Banner()
-                Text(text = "Top phim", style = MaterialTheme.typography.bodyLarge, fontStyle = FontStyle.Italic,
-                    color = Color.White)
-            }
-        }
-
-        items(
-            items = ranks,
-            itemContent = {
-               // RankingListItem( ranking = it, navigateToProfile)
-            }
-        )
-    }
-}
 
 @Composable
 fun Banner() {

@@ -66,7 +66,6 @@ fun ComingSoonScreen(
     var isShowBottomSheet by remember {
         mutableStateOf(false)
     }
-
     val coroutine = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
     Scaffold(
@@ -104,8 +103,6 @@ fun ComingSoonScreen(
         }
     }
 }
-
-
 data class Movies(
     val day: Int,
     val month: Int,
@@ -115,9 +112,9 @@ data class Movies(
 )
 
 val movieList = listOf(
-    Movies(22, 6, "One Piêc", R.drawable.tntm, " Nguyệt Tẫn Minh"),
-    Movies(11, 12, "TNTM ", R.drawable.tntm, "Trường Nguyệt Tẫn Minh"),
-    Movies(5, 9, "TNTM ", R.drawable.tntm, "Trường Nguyệt Tẫn Minh"),
+    Movies(22, 6, "One Piêc", R.drawable.demonslayer, " Nguyệt Tẫn Minh"),
+    Movies(11, 12, "TNTM ", R.drawable.demonslayer, "Trường Nguyệt Tẫn Minh"),
+    Movies(5, 9, "TNTM ", R.drawable.demonslayer, "Trường Nguyệt Tẫn Minh"),
     /*Thêm phim ở đây*/
 )
 
@@ -187,7 +184,6 @@ fun MovieList(
                         .weight(2f)
                         .padding(end = 10.dp)
                 )
-
                 Row(
                     modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(5.dp)

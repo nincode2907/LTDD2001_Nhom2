@@ -44,9 +44,6 @@ fun IconDetail(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .padding(16.dp)
     ) {
         Icon(
             imageVector = icon,
@@ -54,7 +51,6 @@ fun IconDetail(
             modifier = modifier.size(30.dp),
             tint = colorIcon,
         )
-        Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = description,
             color = colorText,
@@ -76,26 +72,22 @@ fun ButtonPlay(
         shape = RoundedCornerShape(percent = 50),
         modifier = modifier
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = styleStatic.primaryTextColor
+
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = styleStatic.primaryTextColor
+        )
+        Text(
+            text = text,
+            style = styleStatic.textCommonStyle.copy(
+                fontSize = 16.sp
             )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = text,
-                style = styleStatic.textCommonStyle.copy(
-                    fontSize = 16.sp
-                )
-            )
-        }
+        )
     }
 }
+
 
 @Composable
 fun FilmSeeMore() {
@@ -122,15 +114,17 @@ fun FilmSeeMore() {
 
 @Composable
 fun FilmInList(
-    painterReso: Int,
-    description: String,
-    modifier: Modifier = styleStatic.modifierFilmInListSize
-        .clip(RoundedCornerShape(6.dp))
+    description: String
 ) {
     Image(
-        painter = painterResource(id = painterReso),
+        modifier = Modifier
+            .width(120.dp)
+            .height(185.dp)
+            .clip(
+                RoundedCornerShape(6.dp)
+            ),
+        painter = painterResource(id = R.drawable.demonslayer),
         contentDescription = description,
-        modifier = modifier.padding(end = 2.dp),
-        contentScale = ContentScale.Crop
-    )
+        contentScale = ContentScale.Crop,
+        )
 }

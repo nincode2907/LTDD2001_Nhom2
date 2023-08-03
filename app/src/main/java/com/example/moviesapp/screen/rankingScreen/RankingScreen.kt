@@ -27,10 +27,8 @@ import androidx.navigation.NavController
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 import com.example.rank.Banner
-import com.example.rank.BarkHomeContent
 import com.example.rank.RankingListItem
 import com.example.rank.data.DataProvider
-import com.example.rank.data.Ranking
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -96,7 +94,7 @@ fun RankingScreen(
             }
             items(ranks) { it ->
                 RankingListItem(it) {
-                     navController.navigate("test")
+
                 }
 
             }
@@ -104,18 +102,6 @@ fun RankingScreen(
     }
 }
 
-@Composable
-fun test() {
-    Text(text = "title", color = Color.Black)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-fun Rank(navigateToProfile: (Ranking) -> Unit) {
-
-    BarkHomeContent(navigateToProfile = navigateToProfile)
 
 
-}
 

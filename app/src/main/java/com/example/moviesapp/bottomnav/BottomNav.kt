@@ -38,7 +38,6 @@ import androidx.navigation.compose.rememberNavController
 import codes.andreirozov.bottombaranimation.ui.theme.BottomBarAnimationTheme
 import com.example.movieapp.screen.homeScreen.HomeScreen
 import com.example.movieapp.screen.rankingScreen.RankingScreen
-import com.example.movieapp.screen.rankingScreen.test
 import com.example.movieapp.screen.searchScreen.SearchScreen
 import com.example.moviesapp.screen.AnimatedSplashScreen
 import com.example.moviesapp.screen.userScreen.UserScreen
@@ -46,6 +45,7 @@ import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.myapplication.model.NavigationItem
+import com.example.myapplication.screen.PlayMovieScreen.PlayMovie
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -117,7 +117,6 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
             "PlayVideo" -> {
                 // Hide BottomBar
                 bottomBarState.value = false
-
             }
 
             "User" -> {
@@ -127,8 +126,9 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
         NavHost(
             modifier = Modifier.padding(),
             navController = navController,
-            // startDestination = "Splash",
-            startDestination = NavigationItem.Ranking.route
+            startDestination = "Splash",
+            //startDestination = NavigationItem.PlayVideo.route,
+
         ) {
             composable(NavigationItem.Home.route) {
                 HomeScreen(
@@ -167,9 +167,11 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                     bottomBarState = bottomBarState
                 )
             }
-            composable("CategoryMovies/{nameCate}") { backStackEntry ->
+            composable("CategoryMovies/{nameCate}/{idCate}") { backStackEntry ->
                 CategoryMoviesScreen(
                     backStackEntry.arguments?.getString("nameCate")!!,
+                    backStackEntry.arguments?.getString("idCate")!!,
+
                     navController = navController
                 )
             }
@@ -177,8 +179,8 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                 AnimatedSplashScreen(navController = navController)
             }
 
-            composable(route = "test") {
-                test()
+            composable(NavigationItem.PlayVideo.route) {
+                PlayMovie()
             }
         }
     }
