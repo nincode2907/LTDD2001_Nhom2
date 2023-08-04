@@ -38,9 +38,6 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.example.movieapp.screen.homeScreen.images
 import com.example.moviesapp.R
 import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms

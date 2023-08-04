@@ -15,6 +15,7 @@ sealed class NavigationItem(val route: String, val title: String,
 
     object PlayVideo : NavigationItem("PlayVideo", "PlayVideo", R.drawable.baseline_home_24, R.drawable.baseline_home_24)
 
+    object User : NavigationItem("User", "User", R.drawable.iconuser, R.drawable.iconuser)
 
 
 }

@@ -2,7 +2,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id("com.google.gms.google-services")
-
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id("com.google.dagger.hilt.android")
 
 }
 
@@ -61,6 +63,8 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
     implementation 'com.google.firebase:firebase-common-ktx:20.3.3'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.5.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -69,24 +73,35 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
     //navigation
-    def nav_version = "2.5.3"
+    def nav_version = "2.6.0"
     implementation "androidx.navigation:navigation-compose:$nav_version"
 
     //material
     implementation("androidx.compose.material:material:1.4.1")
-
     //carousel
     implementation "com.google.accompanist:accompanist-pager:0.20.0"
     implementation 'androidx.compose.ui:ui-util:1.4.3'
-    implementation ('io.coil-kt:coil-compose:2.2.2')
     implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
     implementation 'com.google.firebase:firebase-firestore-ktx'
-
     //serachbar
     implementation "androidx.compose.material3:material3:1.1.0"
-
+    //imgload
     implementation("io.coil-kt:coil-compose:2.4.0")
+    //moshi json
+    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+
+
+    //dager hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    kapt "androidx.hilt:hilt-compiler:1.0.0"
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+    //Media3 - ExoPlayer
+    implementation "androidx.media3:media3-exoplayer:1.1.0"
+    implementation "androidx.media3:media3-exoplayer-dash:1.1.0"
+    implementation "androidx.media3:media3-ui:1.1.0"
+
 
 }
