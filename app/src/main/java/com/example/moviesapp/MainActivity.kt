@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.example.myapplication.screen.mainScreen.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
-
+//import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.R)

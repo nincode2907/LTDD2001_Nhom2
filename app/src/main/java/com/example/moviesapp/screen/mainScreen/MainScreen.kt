@@ -9,5 +9,4 @@ import com.example.petadoption.bottomnav.BottomBarAnimationApp
 fun MainScreen() {
     val mainViewModel = MainViewModel()
     BottomBarAnimationApp(mainViewModel = mainViewModel)
-
 }
