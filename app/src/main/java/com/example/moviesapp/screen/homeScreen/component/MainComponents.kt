@@ -1,7 +1,6 @@
 package com.example.moviesapp.screen.homeScreen.component
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,12 +16,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,19 +32,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.movieapp.screen.homeScreen.images
+import androidx.navigation.NavController
 import com.example.moviesapp.R
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic.textCommonStyle
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -57,11 +48,15 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Carousel() {
+fun Carousel(
+    films: List<FilmInfo>,
+    navController: NavController
+) {
     val pagerState = rememberPagerState(initialPage = 0)
     var scope = rememberCoroutineScope()
     var liked by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
+    val pages = 6
 
     // Chiều cao sẽ bằng 70% kích thước màn hình
     val screenHeight = configuration.screenHeightDp.dp
@@ -80,162 +75,55 @@ fun Carousel() {
 //            }
 //        }
 //    }
-
-    HorizontalPager(
-        count = images.size,
-        state = pagerState,
-        modifier = Modifier.height(height),
-        verticalAlignment = Alignment.Top
-    ) { page ->
-        var colorLikeIcon = if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
-        Column(
-
+    Column() {
+        HorizontalPager(
+            count = pages,
+            state = pagerState,
+            modifier = Modifier.height(height),
+            verticalAlignment = Alignment.Top
+        ) { page ->
+                ItemPoster(
+                    imageUrl = films[page].poster,
+                    heightImg = imageHeight,
+                    navController,
+                    onClick = {
+                    navController.navigate("FilmDetail/" + films[page].id)
+                })
+        }
+        Row(
+            Modifier
+                .height(50.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            Box(
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                Image(
-                    painter = painterResource(id = images[page]),
-                    contentDescription = null,
-                    modifier = Modifier.height(imageHeight),
-                    contentScale = ContentScale.Crop
-                )
-
-                repeat(2) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        StyleStatic.primaryModeColor
-                                    )
-                                )
-                            )
+            repeat(pages) { iteration ->
+                val color =
+                    if (pagerState.currentPage == iteration) Color.White else colorResource(
+                        id = R.color.gray
                     )
-                }
-                Column() {
-                    HorizontalPager(
-                        count = 5,
-                        state = pagerState,
-                        modifier = Modifier.height(height),
-                        verticalAlignment = Alignment.Top
-                    ) { page ->
-                        when (page) {
-                            0 -> ItemPoster(img = R.drawable.demonslayer)
-                            1 -> ItemPoster(img = R.drawable.demonslayer)
-                            2 -> ItemPoster(img = R.drawable.demonslayer)
-                            3 -> ItemPoster(img = R.drawable.demonslayer)
-                            4 -> ItemPoster(img = R.drawable.demonslayer)
-                            5 -> ItemPoster(img = R.drawable.demonslayer)
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                        .size(8.dp)
+                        .clickable {
+                            scope.launch {
+                                pagerState.scrollToPage(iteration)
+                            }
                         }
-                    }
-                    Row(
-                        Modifier
-                            .height(50.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        repeat(5) { iteration ->
-                            val color =
-                                if (pagerState.currentPage == iteration) Color.White else colorResource(
-                                    id = R.color.gray
-                                )
-                            Box(
-                                modifier = Modifier
-                                    .padding(2.dp)
-                                    .clip(CircleShape)
-                                    .background(color)
-                                    .size(8.dp)
-                                    .clickable {
-                                        scope.launch {
-                                            pagerState.scrollToPage(iteration)
-                                        }
-                                    }
-                            )
-                            ButtonPlay(
-                                onClick = {
-                                    liked = !liked
-                                },
-                                modifier = Modifier
-                                    .weight(5f)
-                                    .padding(horizontal = 8.dp),
-                                fSize = 16
-                            )
-                            IconDetail(
-                                Icons.Outlined.Info,
-                                "Chi tiết",
-                                modifier = Modifier.weight(2f)
-                            )
-                        }
-                    }
-                }
+                )
             }
         }
     }
 }
-@Composable
-fun ItemPoster(img: Int) {
-    Box(
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Image(
-            painter = painterResource(id = img),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(360.dp)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            colorResource(id = R.color.black)
-                        )
-                    )
-                )
-        )
-        Row(
-            modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconDetail(
-                Icons.Outlined.Favorite,
-                "Thêm vào DS",
-                colorIcon = Color.White,
-                modifier = Modifier
-                    .clickable {
 
-                    }
-            )
-            ButtonPlay(
-                onClick = {
-
-                }, fSize = 14,
-                modifier = Modifier
-                    .weight(5f)
-                    .padding(horizontal = 8.dp)
-            )
-            IconDetail(
-                Icons.Outlined.Info,
-                "Chi tiết",
-                modifier = Modifier
-                    .clickable {
-
-                    }
-            )
-        }
-    }
-}
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun CarouselListFilms() {
+fun CarouselListFilms(
+    film: FilmInfo,
+    navController: NavController
+) {
     val listTags = listOf("Phim liên quan", "Trailer")
     val pagerState = rememberPagerState(initialPage = 0)
     var scope = rememberCoroutineScope()
@@ -264,7 +152,9 @@ fun CarouselListFilms() {
                     .padding(horizontal = 16.dp)
         ){
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp)
             ) {
                 repeat(listTags.size) { it ->
                     val styleText = if(pagerState.currentPage == it) styleActive
@@ -303,32 +193,30 @@ fun CarouselListFilms() {
                 count = listTags.size,
                 state = pagerState
             ) { page ->
-                Column {
-                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
-                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
-                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
-                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
-                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
-                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
-                    Text(text = "Xin chào quý vị", style = StyleStatic.textCommonStyle)
+                when(page) {
+                    0 -> RelatedMovies(relatedFilms = listFilms.shuffled(), navController)
+                    1 -> YoutubeTrailer(film.trailer)
                 }
             }
         }
     }
 }
 
-
 @Composable
 fun ListFilmHorizontal(
-    categoryFilm: String = "Phim Mới",
+    films: List<FilmInfo> ,
+    categoryFilms: String = "Phim Mới",
+    navController: NavController
 ) {
-    Column(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-        TitleRowViewMovie(categoryFilm)
+    Column(modifier = Modifier.padding(15.dp)) {
+        TitleRowViewMovie(categoryFilms)
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(5) { film ->
-                FilmInList(painterReso = R.drawable.demonslayer)
+            items(films) { film ->
+                FilmInList(imageUrl = film.poster, onClick = {
+                    navController.navigate("FilmDetail/" + film.id)
+                })
             }
             item {
                 FilmSeeMore()
@@ -360,64 +248,46 @@ fun TitleRowViewMovie(title: String) {
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun ListFilmTop5(
-    films: List<Int> ,
-    modifier: Modifier = Modifier
+    films: List<FilmInfo> ,
+    navController: NavController
 ) {
-    Text(
-        text = "Phim Top 5 Hôm Nay",
-        style = StyleStatic.textCommonStyle.copy(
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
-        ),
-        modifier = Modifier
-            .padding(horizontal = 18.dp)
-    )
-
+    var index = 1
     Column(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-        TitleRowViewMovie("Phim top 5")
+        Text(
+            text = "Phim Top 5 Hôm Nay",
+            style = StyleStatic.textCommonStyle.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            ),
+            modifier = Modifier
+                .padding(horizontal = 18.dp)
+        )
 
         LazyRow() {
-            items(5) { film ->
-                ItemMovieTop5(R.drawable.demonslayer, film)
+            items(films.take(5)) {film ->
+                ItemMovieTop5(film.poster, index, onClick = {
+                    navController.navigate("FilmDetail/" + film.id)
+                })
+                index++
             }
         }
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
-fun ItemMovieTop5(img: Int, number: Int) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomStart,
+fun RelatedMovies (
+    relatedFilms: List <FilmInfo>,
+    navController: NavController
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Row()
-        {
-            Spacer(modifier = Modifier.width(35.dp))
-            FilmInList(painterReso = img)
+        for(film in relatedFilms) {
+            ItemRelatedFilm(film, onClick = {
+                navController.navigate("FilmDetail/" + film.id)
+            })
         }
-        Text(
-            text = (number + 1).toString(),
-            style = TextStyle(
-                fontSize = 130.sp,
-                fontWeight = FontWeight.ExtraBold,
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        colorResource(id = R.color.black),
-                        Color.White
-                    )
-                ),
-                lineHeight = 0.sp,
-                textAlign = TextAlign.Start,
-                letterSpacing = 0.sp
-            ),
-            modifier = Modifier
-                .padding(all = 0.dp)
-                .height(135.dp)
-        )
     }
 }
-

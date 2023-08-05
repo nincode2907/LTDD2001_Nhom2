@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.Icon
@@ -40,12 +39,13 @@ import com.example.movieapp.screen.homeScreen.HomeScreen
 import com.example.movieapp.screen.rankingScreen.RankingScreen
 import com.example.movieapp.screen.searchScreen.SearchScreen
 import com.example.moviesapp.screen.AnimatedSplashScreen
-import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
-import com.example.myapplication.screen.mainScreen.MainViewModel
+import com.example.moviesapp.screen.homeScreen.Film
+import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.PlayMovieScreen.PlayMovie
+import com.example.myapplication.screen.mainScreen.MainViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -172,6 +172,13 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                     backStackEntry.arguments?.getString("nameCate")!!,
                     backStackEntry.arguments?.getString("idCate")!!,
 
+                    navController = navController
+                )
+            }
+
+            composable("FilmDetail/{filmId}") { backStackEntry ->
+                Film(
+                    backStackEntry.arguments?.getString("filmId")!!,
                     navController = navController
                 )
             }
