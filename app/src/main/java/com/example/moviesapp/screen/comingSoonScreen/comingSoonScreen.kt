@@ -3,6 +3,7 @@ package com.example.moviesapp.screen.comingSoonScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,18 +42,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 import com.example.moviesapp.R
-import com.example.moviesapp.screen.categoryMoviesCreen.TopBarScreen
+import com.example.moviesapp.ShareViewModel
+import com.example.moviesapp.model.Movie
+import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -61,7 +70,9 @@ import kotlinx.coroutines.launch
 fun ComingSoonScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    bottomBarState: MutableState<Boolean>
+    bottomBarState: MutableState<Boolean>,
+    movies: List<Movie>,
+    shareViewModel: ShareViewModel
 ) {
     var isShowBottomSheet by remember {
         mutableStateOf(false)
@@ -73,7 +84,12 @@ fun ComingSoonScreen(
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(Color.Black),
                 title = {
-                    TopBarScreen(title = "Sắp ra mắt")
+                    Text(
+                        text = "Sắp ra mắt",
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 },
 
                 )
@@ -92,10 +108,12 @@ fun ComingSoonScreen(
                 .padding(paddingValues = paddingValues)
                 .background(Color.Black)
         ) {
-            items(movieList) { movie ->
-                MovieList(
-                    movie = movie
-                )
+            items(movies) { movie ->
+                MovieList(movie = movie){
+                    shareViewModel.addMovie(movie)
+                    navController.navigate("movie")
+                }
+
 
             }
 
@@ -103,25 +121,12 @@ fun ComingSoonScreen(
         }
     }
 }
-data class Movies(
-    val day: Int,
-    val month: Int,
-    val title: String,
-    val imageRes: Int,
-    val content: String
-)
 
-val movieList = listOf(
-    Movies(22, 6, "One Piêc", R.drawable.demonslayer, " Nguyệt Tẫn Minh"),
-    Movies(11, 12, "TNTM ", R.drawable.demonslayer, "Trường Nguyệt Tẫn Minh"),
-    Movies(5, 9, "TNTM ", R.drawable.demonslayer, "Trường Nguyệt Tẫn Minh"),
-    /*Thêm phim ở đây*/
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieList(
-    movie: Movies,
+    movie: Movie,onClick: () -> Unit
 ) {
     var isShowBottomSheet by remember {
         mutableStateOf(false)
@@ -129,10 +134,12 @@ fun MovieList(
 
     val coroutine = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
+    val month = movie.releaseDate?.month
+    val day = movie.releaseDate?.day
     Column(
         modifier = Modifier
             .background(Color.Black)
-            .padding(10.dp),
+            .padding(10.dp).clickable(onClick=onClick),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -144,20 +151,23 @@ fun MovieList(
             )
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    text = "Ngày " + movie.day,
+                    text = "Ngày " + day,
                     color = Color.White,
                     fontSize = 17.sp, fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Tháng " + movie.month,
+                    text = "Tháng " + month,
                     color = Color(0xFFB3B3B3),
                     fontSize = 15.sp, fontWeight = FontWeight.Normal,
                     fontStyle = FontStyle.Italic
                 )
             }
         }
-        Image(
-            painter = painterResource(id = movie.imageRes),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(movie.image)
+                .crossfade(true)
+                .build(),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -174,15 +184,14 @@ fun MovieList(
                 verticalAlignment = Alignment.Top
             ) {
                 Text(
-                    text = movie.title,
-                    fontSize = 28.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(2f)
-                        .padding(end = 10.dp)
+                    modifier = Modifier.weight(2f),
+                    text = movie.name.toString(),
+                    style = StyleStatic.textCommonStyle.copy(
+                        fontSize = 30.sp,
+                        fontFamily = fontFamilyHeading,
+                        fontWeight = FontWeight.Bold
+                    )
+
                 )
                 Row(
                     modifier = Modifier.weight(1f),
@@ -211,11 +220,15 @@ fun MovieList(
         }
 
         Text(
-            text = movie.content,
-            fontSize = 17.sp,
-            color = Color.White,
-            fontWeight = FontWeight.Normal,
-            textAlign = TextAlign.Start,
+            text = movie.description.toString(),
+            style = StyleStatic.textCommonStyle.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                textIndent = TextIndent(6.sp)
+            ),
+            maxLines = 4,
+            modifier = Modifier.padding(vertical = 8.dp),
+            overflow = TextOverflow.Ellipsis
         )
 
 
@@ -228,9 +241,11 @@ fun MovieList(
                 isShowBottomSheet = false
             }
         }, sheetState = sheetState) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            )
         }
     }
 

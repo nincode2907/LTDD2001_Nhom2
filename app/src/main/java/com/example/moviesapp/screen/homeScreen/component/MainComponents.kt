@@ -1,5 +1,6 @@
 package com.example.moviesapp.screen.homeScreen.component
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -24,6 +26,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,23 +43,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.moviesapp.R
+import com.example.moviesapp.ShareViewModel
+import com.example.moviesapp.model.Movie
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic.textCommonStyle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Carousel(
-    films: List<FilmInfo>,
-    navController: NavController
+    movies: List<Movie>,
+    navController: NavController,
+    shareViewModel: ShareViewModel
 ) {
-    val pagerState = rememberPagerState(initialPage = 0)
+    val pagerState = rememberPagerState()
     var scope = rememberCoroutineScope()
     var liked by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
-    val pages = 6
 
     // Chiều cao sẽ bằng 70% kích thước màn hình
     val screenHeight = configuration.screenHeightDp.dp
@@ -77,17 +83,18 @@ fun Carousel(
 //    }
     Column() {
         HorizontalPager(
-            count = pages,
+            count = movies.size,
             state = pagerState,
             modifier = Modifier.height(height),
             verticalAlignment = Alignment.Top
         ) { page ->
-                ItemPoster(
-                    imageUrl = films[page].poster,
-                    heightImg = imageHeight,
-                    navController,
-                    onClick = {
-                    navController.navigate("FilmDetail/" + films[page].id)
+            ItemPoster(
+                imageUrl = movies[page].image.toString(),
+                heightImg = imageHeight,
+                navController,
+                onClick = {
+                    shareViewModel.addMovie(newMovie = movies[page])
+                    navController.navigate("movie")
                 })
         }
         Row(
@@ -96,7 +103,7 @@ fun Carousel(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            repeat(pages) { iteration ->
+            repeat(movies.size) { iteration ->
                 val color =
                     if (pagerState.currentPage == iteration) Color.White else colorResource(
                         id = R.color.gray
@@ -121,8 +128,10 @@ fun Carousel(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun CarouselListFilms(
-    film: FilmInfo,
-    navController: NavController
+    movie: Movie,
+    navController: NavController,
+    movies: List<Movie>,
+    shareViewModel: ShareViewModel
 ) {
     val listTags = listOf("Phim liên quan", "Trailer")
     val pagerState = rememberPagerState(initialPage = 0)
@@ -146,20 +155,21 @@ fun CarouselListFilms(
         }
         Spacer(modifier = Modifier.height(6.dp))
 
-        Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-        ){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp)
             ) {
                 repeat(listTags.size) { it ->
-                    val styleText = if(pagerState.currentPage == it) styleActive
+                    val styleText = if (pagerState.currentPage == it) styleActive
                     else textCommonStyle.copy(fontWeight = FontWeight.Normal, fontSize = 17.sp)
-                    val colorSpacer = if(pagerState.currentPage == it) StyleStatic.primaryTextColor else Color.Transparent
+                    val colorSpacer =
+                        if (pagerState.currentPage == it) StyleStatic.primaryTextColor else Color.Transparent
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -193,9 +203,9 @@ fun CarouselListFilms(
                 count = listTags.size,
                 state = pagerState
             ) { page ->
-                when(page) {
-                    0 -> RelatedMovies(relatedFilms = listFilms.shuffled(), navController)
-                    1 -> YoutubeTrailer(film.trailer)
+                when (page) {
+                    0 -> RelatedMovies(movies, navController, shareViewModel = shareViewModel)
+                    1 -> YoutubeTrailer(movie.trailer.toString())
                 }
             }
         }
@@ -204,18 +214,20 @@ fun CarouselListFilms(
 
 @Composable
 fun ListFilmHorizontal(
-    films: List<FilmInfo> ,
+    movies: List<Movie>,
     categoryFilms: String = "Phim Mới",
-    navController: NavController
+    navController: NavController,
+    shareViewModel: ShareViewModel
 ) {
     Column(modifier = Modifier.padding(15.dp)) {
         TitleRowViewMovie(categoryFilms)
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(films) { film ->
-                FilmInList(imageUrl = film.poster, onClick = {
-                    navController.navigate("FilmDetail/" + film.id)
+            items(movies) { film ->
+                FilmInList(imageUrl = film.image.toString(), onClick = {
+                    shareViewModel.addMovie(newMovie = film)
+                    navController.navigate("movie")
                 })
             }
             item {
@@ -250,8 +262,9 @@ fun TitleRowViewMovie(title: String) {
 
 @Composable
 fun ListFilmTop5(
-    films: List<FilmInfo> ,
-    navController: NavController
+    movies: List<Movie>,
+    navController: NavController,
+    shareViewModel: ShareViewModel
 ) {
     var index = 1
     Column(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -266,9 +279,10 @@ fun ListFilmTop5(
         )
 
         LazyRow() {
-            items(films.take(5)) {film ->
-                ItemMovieTop5(film.poster, index, onClick = {
-                    navController.navigate("FilmDetail/" + film.id)
+            items(movies) { film ->
+                ItemMovieTop5(film.image.toString(), index, onClick = {
+                    shareViewModel.addMovie(newMovie = film)
+                    navController.navigate("movie")
                 })
                 index++
             }
@@ -277,17 +291,21 @@ fun ListFilmTop5(
 }
 
 @Composable
-fun RelatedMovies (
-    relatedFilms: List <FilmInfo>,
-    navController: NavController
+fun RelatedMovies(
+    movies: List<Movie>,
+    navController: NavController,
+    shareViewModel: ShareViewModel
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        for(film in relatedFilms) {
+        for(film in movies) {
             ItemRelatedFilm(film, onClick = {
-                navController.navigate("FilmDetail/" + film.id)
+                shareViewModel.addMovie(film)
+                navController.navigate("movie")
             })
         }
     }
+
+
 }

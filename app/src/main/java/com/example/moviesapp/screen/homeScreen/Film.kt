@@ -38,40 +38,28 @@ import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.moviesapp.ShareViewModel
+import com.example.moviesapp.model.Movie
 import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
 import com.example.moviesapp.screen.homeScreen.component.IconBackBlur
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
+import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import com.example.moviesapp.screen.homeScreen.component.listFilms
 import com.example.myapplication.model.NavigationItem
 
 
-data class FilmInfo(
-    val name : String,
-    val description : String,
-    val thumbnail : String,
-    val poster : String,
-    val yearRelease : Int,
-    val episodeTotal : String,
-    val time : String,
-    val country : String,
-    val category: String,
-)
+
 
 @Composable
 fun Film(
-    filmId: String = "JK0cthc",
-    navController: NavController
-){
-    val filmFind = listFilms.find { it.id == filmId }
-    var film by remember { mutableStateOf(filmFind) }
-
-    if (filmFind != null) {
-        film = filmFind
-    }
-
+    shareViewModel: ShareViewModel,
+    navController: NavController,
+    movies:List<Movie>
+) {
+    val movie = shareViewModel.movie
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,15 +72,15 @@ fun Film(
                 Box(
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    Box (
+                    Box(
                         contentAlignment = Alignment.Center
-                            ){
+                    ) {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(film?.poster)
+                                .data(movie!!.image)
                                 .crossfade(true)
                                 .build(),
-                            contentDescription = film?.name,
+                            contentDescription = movie.name,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(240.dp)
@@ -104,7 +92,7 @@ fun Film(
                             colorIcon = StyleStatic.primaryTextColor,
                             size = "big",
                             onClick = {
-
+                                navController.popBackStack(NavigationItem.Home.route,false)
                             }
                         )
                     }
@@ -125,12 +113,13 @@ fun Film(
                         )
                     }
                 }
-                Column( modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                 ) {
                     Text(
-                        text = film?.name.toString(),
+                        text = movie!!.name.toString(),
                         style = StyleStatic.textCommonStyle.copy(
                             fontSize = 38.sp,
                             fontFamily = fontFamilyHeading,
@@ -147,7 +136,7 @@ fun Film(
                             color = StyleStatic.blurTextWhiteColor
                         )
                         Text(
-                            text = film?.yearRelease.toString(),
+                            text = movie.releaseDate.toString(),
                             style = styleInRow
                         )
 
@@ -158,7 +147,7 @@ fun Film(
                         )
 
                         Text(
-                            text = film?.episodeTotal.toString(),
+                            text = movie.episodeTotal.toString(),
                             style = styleInRow
                         )
 
@@ -169,13 +158,13 @@ fun Film(
                         )
 
                         Text(
-                            text = film?.time.toString(),
+                            text = movie.time.toString(),
                             style = styleInRow
                         )
                     }
 
                     Text(
-                        text = film?.description.toString(),
+                        text = movie.description.toString(),
                         style = StyleStatic.textCommonStyle.copy(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Normal,
@@ -188,12 +177,13 @@ fun Film(
 
                     InfoTopicFilm(
                         topic = "Quốc gia",
-                        infomation = film?.country.toString()
+                        infomation = movie.country.toString()
                     )
 
-                    InfoTopicFilm(
+                    InfoCategoryFilm(
                         topic = "Thể loại",
-                        infomation = film?.categories.toString()
+                        infomation = movie.category!!
+
                     )
 
                     ButtonPlay(
@@ -208,20 +198,23 @@ fun Film(
                         IconDetail(
                             icon = Icons.Outlined.Add,
                             description = "Thêm vào DS",
-                            modifier = Modifier.padding(horizontal = 5.dp))
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
 
                         IconDetail(
                             icon = Icons.Outlined.Share,
                             description = "Chia sẻ",
-                            modifier = Modifier.padding(horizontal = 5.dp))
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
 
                         IconDetail(
                             icon = Icons.Default.FavoriteBorder,
                             description = "Yêu thích",
-                            modifier = Modifier.padding(horizontal = 5.dp))
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
                     }
                 }
-                CarouselListFilms(film!!, navController)
+                CarouselListFilms(movie = movie!!,navController,movies, shareViewModel = shareViewModel)
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }

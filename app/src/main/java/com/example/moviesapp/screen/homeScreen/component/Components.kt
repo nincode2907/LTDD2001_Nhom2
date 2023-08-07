@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -49,6 +51,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviesapp.R
+import com.example.moviesapp.model.Movie
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -69,7 +72,8 @@ fun IconDetail(
         Icon(
             imageVector = icon,
             contentDescription = description,
-            modifier = modifier.size(30.dp)
+            modifier = modifier
+                .size(30.dp)
                 .clip(RoundedCornerShape(percent = 50)),
             tint = colorIcon,
         )
@@ -80,6 +84,7 @@ fun IconDetail(
         )
     }
 }
+
 @Composable
 fun IconBackBlur(
     onClick: () -> Unit,
@@ -90,9 +95,9 @@ fun IconBackBlur(
 ) {
 
     val sizeI =
-        if(size == "big") 60
-        else if(size == "small") 32
-            else 46
+        if (size == "big") 60
+        else if (size == "small") 32
+        else 46
 
     Box(
         modifier = modifier
@@ -108,7 +113,8 @@ fun IconBackBlur(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = modifier.size((sizeI-12).dp)
+            modifier = modifier
+                .size((sizeI - 12).dp)
                 .clip(RoundedCornerShape(percent = 50))
                 .clickable { onClick() },
             tint = colorIcon
@@ -225,8 +231,41 @@ fun InfoTopicFilm(
 }
 
 @Composable
+fun InfoCategoryFilm(
+    topic: String,
+    infomation: List<String>,
+    color: Color = StyleStatic.blurTextWhiteColor
+) {
+    LazyRow(
+        modifier = Modifier.padding(top = 4.dp)
+    ) {
+        item() {
+            Text(
+                text = "$topic:",
+                style = StyleStatic.textCommonStyle.copy(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = color
+                ),
+                modifier = Modifier.width(70.dp)
+            )
+        }
+        items(infomation) { it ->
+            Text(
+                text = it + ",",
+                style = StyleStatic.textCommonStyle.copy(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = color
+                )
+            )
+        }
+    }
+}
+
+@Composable
 fun ItemRelatedFilm(
-    film: FilmInfo,
+    movie: Movie,
     onClick: () -> Unit
 ) {
     Row(
@@ -236,16 +275,16 @@ fun ItemRelatedFilm(
             .padding(bottom = 8.dp)
             .clickable { onClick() }
     ) {
-        Box (
+        Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.padding(end = 10.dp)
-        ){
+        ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(film.poster)
+                    .data(movie.image)
                     .crossfade(true)
                     .build(),
-                contentDescription = film.name,
+                contentDescription = movie.name,
                 modifier = Modifier
                     .width(180.dp)
                     .fillMaxHeight()
@@ -264,7 +303,7 @@ fun ItemRelatedFilm(
 
         Column {
             Text(
-                text = film.name,
+                text = movie.name.toString(),
                 style = StyleStatic.textCommonStyle.copy(
                     fontSize = 14.sp
                 )
@@ -279,7 +318,7 @@ fun ItemRelatedFilm(
                     color = StyleStatic.blurTextWhiteColor
                 )
                 Text(
-                    text = film.yearRelease.toString(),
+                    text = movie.releaseDate.toString(),
                     style = styleInRow
                 )
 
@@ -290,13 +329,13 @@ fun ItemRelatedFilm(
                 )
 
                 Text(
-                    text = film.time,
+                    text = movie.time.toString(),
                     style = styleInRow
                 )
             }
 
             Text(
-                text = film.description,
+                text = movie.description.toString(),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 style = StyleStatic.textCommonStyle.copy(
@@ -438,17 +477,17 @@ fun YoutubeTrailer(
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = {
-        var view = YouTubePlayerView(it)
-        val fragment = view.addYouTubePlayerListener(
-            object : AbstractYouTubePlayerListener() {
-                override fun onReady(youTubePlayer: YouTubePlayer) {
-                    super.onReady(youTubePlayer)
-                    youTubePlayer.loadVideo(videoId, 0f)
-                    youTubePlayer.pause()
-                    youTubePlayer.mute()
+            var view = YouTubePlayerView(it)
+            val fragment = view.addYouTubePlayerListener(
+                object : AbstractYouTubePlayerListener() {
+                    override fun onReady(youTubePlayer: YouTubePlayer) {
+                        super.onReady(youTubePlayer)
+                        youTubePlayer.loadVideo(videoId, 0f)
+                        youTubePlayer.pause()
+                        youTubePlayer.mute()
+                    }
                 }
-            }
-        )
-        view
-    })
+            )
+            view
+        })
 }
