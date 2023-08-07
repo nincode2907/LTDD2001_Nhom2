@@ -1,5 +1,6 @@
 package com.example.moviesapp.screen.homeScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +43,7 @@ import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
 import com.example.moviesapp.screen.homeScreen.component.IconBackBlur
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
+import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import com.example.moviesapp.screen.homeScreen.component.listFilms
@@ -67,6 +69,7 @@ fun Film(
 ){
     val filmFind = listFilms.find { it.id == filmId }
     var film by remember { mutableStateOf(filmFind) }
+    val context = LocalContext.current
 
     if (filmFind != null) {
         film = filmFind
@@ -104,7 +107,7 @@ fun Film(
                             colorIcon = StyleStatic.primaryTextColor,
                             size = "big",
                             onClick = {
-
+                                Toast.makeText(context, "Film not available!!", Toast.LENGTH_SHORT).show()
                             }
                         )
                     }
@@ -146,32 +149,8 @@ fun Film(
                             fontWeight = FontWeight.SemiBold,
                             color = StyleStatic.blurTextWhiteColor
                         )
-                        Text(
-                            text = film?.yearRelease.toString(),
-                            style = styleInRow
-                        )
-
-                        Text(
-                            text = "•",
-                            style = styleInRow,
-                            modifier = Modifier.padding(horizontal = 4.dp)
-                        )
-
-                        Text(
-                            text = film?.episodeTotal.toString(),
-                            style = styleInRow
-                        )
-
-                        Text(
-                            text = "•",
-                            style = styleInRow,
-                            modifier = Modifier.padding(horizontal = 4.dp)
-                        )
-
-                        Text(
-                            text = film?.time.toString(),
-                            style = styleInRow
-                        )
+                        val infos = listOf(film?.yearRelease.toString(),film?.episodeTotal.toString(), film?.time.toString())
+                        InfoSpaceDot(infos = infos,style = styleInRow)
                     }
 
                     Text(
@@ -197,7 +176,9 @@ fun Film(
                     )
 
                     ButtonPlay(
-                        onClick = {},
+                        onClick = {
+                            Toast.makeText(context, "Film not available!!", Toast.LENGTH_SHORT).show()
+                        },
                         modifier = Modifier
                             .padding(vertical = 12.dp)
                             .fillMaxWidth(),
@@ -208,17 +189,20 @@ fun Film(
                         IconDetail(
                             icon = Icons.Outlined.Add,
                             description = "Thêm vào DS",
-                            modifier = Modifier.padding(horizontal = 5.dp))
+                            colorText = StyleStatic.blurTextWhiteColor,
+                            modifier = Modifier.padding(end = 16.dp))
 
                         IconDetail(
                             icon = Icons.Outlined.Share,
                             description = "Chia sẻ",
-                            modifier = Modifier.padding(horizontal = 5.dp))
+                            colorText = StyleStatic.blurTextWhiteColor,
+                            modifier = Modifier.padding(end = 16.dp))
 
                         IconDetail(
                             icon = Icons.Default.FavoriteBorder,
                             description = "Yêu thích",
-                            modifier = Modifier.padding(horizontal = 5.dp))
+                            colorText = StyleStatic.blurTextWhiteColor,
+                            modifier = Modifier.padding(end = 16.dp))
                     }
                 }
                 CarouselListFilms(film!!, navController)
