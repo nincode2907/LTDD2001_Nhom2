@@ -39,10 +39,16 @@ import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.moviesapp.ShareViewModel
+import com.example.moviesapp.model.Movie
+
 import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
 import com.example.moviesapp.screen.homeScreen.component.IconBackBlur
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
+
+import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
+
 import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
@@ -50,31 +56,14 @@ import com.example.moviesapp.screen.homeScreen.component.listFilms
 import com.example.myapplication.model.NavigationItem
 
 
-data class FilmInfo(
-    val name : String,
-    val description : String,
-    val thumbnail : String,
-    val poster : String,
-    val yearRelease : Int,
-    val episodeTotal : String,
-    val time : String,
-    val country : String,
-    val category: String,
-)
-
 @Composable
 fun Film(
-    filmId: String = "JK0cthc",
-    navController: NavController
-){
-    val filmFind = listFilms.find { it.id == filmId }
-    var film by remember { mutableStateOf(filmFind) }
+    shareViewModel: ShareViewModel,
+    navController: NavController,
+    movies:List<Movie>
+) {
+    val movie = shareViewModel.movie
     val context = LocalContext.current
-
-    if (filmFind != null) {
-        film = filmFind
-    }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -87,15 +76,15 @@ fun Film(
                 Box(
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    Box (
+                    Box(
                         contentAlignment = Alignment.Center
-                            ){
+                    ) {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(film?.poster)
+                                .data(movie!!.image)
                                 .crossfade(true)
                                 .build(),
-                            contentDescription = film?.name,
+                            contentDescription = movie.name,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(240.dp)
@@ -107,6 +96,7 @@ fun Film(
                             colorIcon = StyleStatic.primaryTextColor,
                             size = "big",
                             onClick = {
+                              //  navController.popBackStack(NavigationItem.Home.route,false)
                                 Toast.makeText(context, "Film not available!!", Toast.LENGTH_SHORT).show()
                             }
                         )
@@ -128,12 +118,13 @@ fun Film(
                         )
                     }
                 }
-                Column( modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                 ) {
                     Text(
-                        text = film?.name.toString(),
+                        text = movie!!.name.toString(),
                         style = StyleStatic.textCommonStyle.copy(
                             fontSize = 38.sp,
                             fontFamily = fontFamilyHeading,
@@ -149,12 +140,38 @@ fun Film(
                             fontWeight = FontWeight.SemiBold,
                             color = StyleStatic.blurTextWhiteColor
                         )
-                        val infos = listOf(film?.yearRelease.toString(),film?.episodeTotal.toString(), film?.time.toString())
-                        InfoSpaceDot(infos = infos,style = styleInRow)
+                        Text(
+                            text = movie.releaseDate.toString(),
+                            style = styleInRow
+                        )
+
+                        Text(
+                            text = "•",
+                            style = styleInRow,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        )
+
+                        Text(
+                            text = movie.episodeTotal.toString(),
+                            style = styleInRow
+                        )
+
+                        Text(
+                            text = "•",
+                            style = styleInRow,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        )
+
+                        Text(
+                            text = movie.time.toString(),
+                            style = styleInRow
+                        )
+//                        val infos = listOf("2002","tron bo", "100p")
+//                        InfoSpaceDot(infos = infos,style = styleInRow)
                     }
 
                     Text(
-                        text = film?.description.toString(),
+                        text = movie.description.toString(),
                         style = StyleStatic.textCommonStyle.copy(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Normal,
@@ -167,12 +184,13 @@ fun Film(
 
                     InfoTopicFilm(
                         topic = "Quốc gia",
-                        infomation = film?.country.toString()
+                        infomation = movie.country.toString()
                     )
 
-                    InfoTopicFilm(
+                    InfoCategoryFilm(
                         topic = "Thể loại",
-                        infomation = film?.categories.toString()
+                        infomation = movie.category!!
+
                     )
 
                     ButtonPlay(
@@ -197,7 +215,6 @@ fun Film(
                             description = "Chia sẻ",
                             colorText = StyleStatic.blurTextWhiteColor,
                             modifier = Modifier.padding(end = 16.dp))
-
                         IconDetail(
                             icon = Icons.Default.FavoriteBorder,
                             description = "Yêu thích",
@@ -205,7 +222,7 @@ fun Film(
                             modifier = Modifier.padding(end = 16.dp))
                     }
                 }
-                CarouselListFilms(film!!, navController)
+                CarouselListFilms(movie = movie!!,navController,movies, shareViewModel = shareViewModel)
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }

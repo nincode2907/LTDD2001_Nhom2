@@ -56,7 +56,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.moviesapp.R
 import com.example.moviesapp.data.CategoryRepository
-import com.example.moviesapp.data.MovieRepository
+import com.example.moviesapp.data.moviesData.MovieRepository
 import com.example.moviesapp.model.CategoryMovie
 import com.example.moviesapp.model.Movie
 import com.example.myapplication.screen.mainScreen.MainViewModel
@@ -69,7 +69,6 @@ fun SearchScreen(
     bottomBarState: MutableState<Boolean>
 ) {
     val categoryRepository = CategoryRepository()
-    val movieRepository = MovieRepository()
     var categories by remember { mutableStateOf(emptyList<CategoryMovie>()) }
     var categoriesLimit by remember { mutableStateOf(emptyList<CategoryMovie>()) }
     var movies by remember { mutableStateOf(emptyList<Movie>()) }
@@ -81,7 +80,6 @@ fun SearchScreen(
     LaunchedEffect(Unit) {
         categories = categoryRepository.getAllCategories()
         categoriesLimit = categoryRepository.getAllCategoriesLimited(6)
-        movies = movieRepository.getMoviesLimit(32)
     }
     Scaffold(
         topBar = {
@@ -127,9 +125,9 @@ fun SearchScreen(
             }
             items(movies) { it ->
 
-                ItemMovieView(it.image) {
-
-                }
+//                ItemMovieView(it.image) {
+//
+//                }
             }
         }
     }
