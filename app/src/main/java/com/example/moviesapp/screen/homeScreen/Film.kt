@@ -51,8 +51,6 @@ import com.example.moviesapp.screen.homeScreen.component.listFilms
 import com.example.myapplication.model.NavigationItem
 
 
-
-
 @Composable
 fun Film(
     shareViewModel: ShareViewModel,

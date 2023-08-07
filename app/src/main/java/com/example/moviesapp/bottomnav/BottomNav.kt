@@ -146,7 +146,8 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                     mainViewModel = mainViewModel,
                     navController = navController,
                     bottomBarState = bottomBarState,
-                    shareViewModel = shareViewModel
+                    shareViewModel = shareViewModel,
+                    movies = moviesState.value
                 )
             }
             composable(NavigationItem.Ranking.route) {

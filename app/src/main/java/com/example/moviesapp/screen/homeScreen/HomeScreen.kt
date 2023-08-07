@@ -39,11 +39,11 @@ fun HomeScreen(
     navController: NavController,
     bottomBarState: MutableState<Boolean>,
     shareViewModel: ShareViewModel,
+    movies:List<Movie>
     
 ) {
 
-    val homeViewModel: HomeViewModel = hiltViewModel()
-    val moviesState = homeViewModel.movies.collectAsState()
+
     Scaffold(
         bottomBar = {
             BottomBar(
@@ -63,34 +63,34 @@ fun HomeScreen(
         ) {
             item {
                 Carousel(
-                    moviesState.value.filter { it.outstanding == true },
+                    movies.filter { it.outstanding == true },
                     navController,
                     shareViewModel
                 )
                 ListFilmHorizontal(
-                    moviesState.value,
+                    movies,
                     categoryFilms = "Phim Thể Loại Top 1 Khu Vực",
                     navController,
                     shareViewModel = shareViewModel
                 )
                 ListFilmTop5(
-                    moviesState.value,
+                    movies,
                     navController = navController,
                     shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
-                    moviesState.value,
+                    movies,
                     categoryFilms = "Trinh Thám",
                     navController,
                     shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
-                    moviesState.value,
+                    movies,
                     navController = navController,
                     shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
-                    moviesState.value,
+                    movies,
                     categoryFilms = "Phim Chiếu Rạp Mới",
                     navController,
                     shareViewModel = shareViewModel
