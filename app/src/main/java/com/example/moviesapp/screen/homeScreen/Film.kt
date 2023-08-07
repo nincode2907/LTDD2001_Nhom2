@@ -1,5 +1,6 @@
 package com.example.moviesapp.screen.homeScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,11 +41,15 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
+
 import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
 import com.example.moviesapp.screen.homeScreen.component.IconBackBlur
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
+
 import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
+
+import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import com.example.moviesapp.screen.homeScreen.component.listFilms
@@ -58,6 +63,7 @@ fun Film(
     movies:List<Movie>
 ) {
     val movie = shareViewModel.movie
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,7 +96,8 @@ fun Film(
                             colorIcon = StyleStatic.primaryTextColor,
                             size = "big",
                             onClick = {
-                                navController.popBackStack(NavigationItem.Home.route,false)
+                              //  navController.popBackStack(NavigationItem.Home.route,false)
+                                Toast.makeText(context, "Film not available!!", Toast.LENGTH_SHORT).show()
                             }
                         )
                     }
@@ -159,6 +166,8 @@ fun Film(
                             text = movie.time.toString(),
                             style = styleInRow
                         )
+//                        val infos = listOf("2002","tron bo", "100p")
+//                        InfoSpaceDot(infos = infos,style = styleInRow)
                     }
 
                     Text(
@@ -185,7 +194,9 @@ fun Film(
                     )
 
                     ButtonPlay(
-                        onClick = {},
+                        onClick = {
+                            Toast.makeText(context, "Film not available!!", Toast.LENGTH_SHORT).show()
+                        },
                         modifier = Modifier
                             .padding(vertical = 12.dp)
                             .fillMaxWidth(),
@@ -196,20 +207,19 @@ fun Film(
                         IconDetail(
                             icon = Icons.Outlined.Add,
                             description = "Thêm vào DS",
-                            modifier = Modifier.padding(horizontal = 5.dp)
-                        )
+                            colorText = StyleStatic.blurTextWhiteColor,
+                            modifier = Modifier.padding(end = 16.dp))
 
                         IconDetail(
                             icon = Icons.Outlined.Share,
                             description = "Chia sẻ",
-                            modifier = Modifier.padding(horizontal = 5.dp)
-                        )
-
+                            colorText = StyleStatic.blurTextWhiteColor,
+                            modifier = Modifier.padding(end = 16.dp))
                         IconDetail(
                             icon = Icons.Default.FavoriteBorder,
                             description = "Yêu thích",
-                            modifier = Modifier.padding(horizontal = 5.dp)
-                        )
+                            colorText = StyleStatic.blurTextWhiteColor,
+                            modifier = Modifier.padding(end = 16.dp))
                     }
                 }
                 CarouselListFilms(movie = movie!!,navController,movies, shareViewModel = shareViewModel)

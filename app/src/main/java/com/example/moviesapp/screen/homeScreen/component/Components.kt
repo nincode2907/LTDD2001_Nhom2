@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Info
@@ -52,6 +53,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
+import com.example.moviesapp.screen.homeScreen.component.StyleStatic.blurTextWhiteColor
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -67,7 +69,6 @@ fun IconDetail(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier
     ) {
         Icon(
             imageVector = icon,
@@ -94,10 +95,12 @@ fun IconBackBlur(
     modifier: Modifier = Modifier
 ) {
 
-    val sizeI =
-        if (size == "big") 60
-        else if (size == "small") 32
-        else 46
+
+    val sizeI = when(size) {
+        "big" -> 60
+        "small" -> 32
+        else -> 46
+    }
 
     Box(
         modifier = modifier
@@ -183,6 +186,29 @@ fun FilmSeeMore() {
 }
 
 @Composable
+fun InfoTopicFilm(
+    topic: String,
+    infomation: String,
+    style: TextStyle = StyleStatic.textCommonStyle.copy(fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = StyleStatic.blurTextWhiteColor
+    )
+) {
+    Row(
+        modifier = Modifier.padding(top = 4.dp)
+    ) {
+        Text(
+            text = "$topic:",
+            style = style,
+            modifier = Modifier.width(70.dp)
+        )
+        Text(
+            text = infomation,
+            style = style
+        )
+    }
+}
+@Composable
 fun FilmInList(
     imageUrl: String,
     modifier: Modifier = StyleStatic.modifierFilmInListSize
@@ -201,34 +227,7 @@ fun FilmInList(
     )
 }
 
-@Composable
-fun InfoTopicFilm(
-    topic: String,
-    infomation: String,
-    color: Color = StyleStatic.blurTextWhiteColor
-) {
-    Row(
-        modifier = Modifier.padding(top = 4.dp)
-    ) {
-        Text(
-            text = "$topic:",
-            style = StyleStatic.textCommonStyle.copy(
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = color
-            ),
-            modifier = Modifier.width(70.dp)
-        )
-        Text(
-            text = infomation,
-            style = StyleStatic.textCommonStyle.copy(
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = color
-            )
-        )
-    }
-}
+
 
 @Composable
 fun InfoCategoryFilm(
@@ -332,6 +331,8 @@ fun ItemRelatedFilm(
                     text = movie.time.toString(),
                     style = styleInRow
                 )
+//                val infos = listOf("film.yearRelease.toString()","film.time")
+//                InfoSpaceDot(infos = infos,style = styleInRow)
             }
 
             Text(
@@ -453,6 +454,21 @@ fun ItemPoster(
             )
         }
     }
+}
+
+@Composable
+fun InfoSpaceDot(
+    infos: List<String>,
+    style: TextStyle
+) {
+   for(info in infos) {
+       if(info != infos.get(0))
+           Text(text = "•",
+               style = style,
+               modifier = Modifier.padding(horizontal = 4.dp)
+           )
+       Text(text = info, style = style)
+   }
 }
 
 //@Composable

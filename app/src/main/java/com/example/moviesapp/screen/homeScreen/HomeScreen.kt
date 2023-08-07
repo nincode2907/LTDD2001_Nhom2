@@ -42,8 +42,6 @@ fun HomeScreen(
     movies:List<Movie>
     
 ) {
-
-
     Scaffold(
         bottomBar = {
             BottomBar(
