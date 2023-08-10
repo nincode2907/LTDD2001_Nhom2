@@ -16,7 +16,6 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,24 +37,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import codes.andreirozov.bottombaranimation.ui.theme.BottomBarAnimationTheme
 import com.example.movieapp.screen.homeScreen.HomeScreen
 import com.example.movieapp.screen.rankingScreen.RankingScreen
 import com.example.movieapp.screen.searchScreen.SearchScreen
 import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
-import com.example.moviesapp.model.MovieNavigation
-import com.example.moviesapp.model.MoviesNavType
 
 import com.example.moviesapp.screen.AnimatedSplashScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
-import com.example.moviesapp.screen.homeScreen.Film
+import com.example.moviesapp.screen.playMovieScreen.Film
 import com.example.moviesapp.screen.homeScreen.HomeViewModel
 import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.myapplication.model.NavigationItem
+import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 import com.example.myapplication.screen.mainScreen.MainViewModel
-import com.squareup.moshi.Moshi
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -86,7 +82,6 @@ fun BottomBar(
 @Composable
 fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
 
-    // State of bottomBar, set state to false, if current page route is "car_details"
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
     val shareViewModel: ShareViewModel = viewModel()
 
@@ -138,7 +133,7 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
             modifier = Modifier.padding(),
             navController = navController,
             //startDestination = "Splash",
-            startDestination = NavigationItem.Home.route,
+           startDestination = NavigationItem.Home.route,
 
             ) {
             composable(NavigationItem.Home.route) {
@@ -147,7 +142,7 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                     navController = navController,
                     bottomBarState = bottomBarState,
                     shareViewModel = shareViewModel,
-                    movies = moviesState.value
+                    movies = moviesState.value,
                 )
             }
             composable(NavigationItem.Ranking.route) {
@@ -189,21 +184,39 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
 //                    navController = navController
 //                )
             }
-
+//
             composable("movie") {
                 Film(shareViewModel = shareViewModel, navController = navController,moviesState.value)
             }
+//            composable(
+//                MovieBookNavigation.route,
+//                arguments = listOf(navArgument(MovieBookNavigation.movieArg) {
+//                    nullable = true
+//                    type = MoviesNavType()
+//                })
+//            ) {
+//                val movie = MovieBookNavigation.from(it)
+//                test(movie = movie!!)
+//                Film(
+//                    shareViewModel = shareViewModel,
+//                    navController = navController,
+//                    moviesState.value,
+//                    movie = movie!!
+             //  )
+          //  }
             composable(route = "Splash") {
                 AnimatedSplashScreen(navController = navController)
             }
 
-            composable(NavigationItem.PlayVideo.route) {
-                //PlayMovie()
-            }
+
         }
     }
 }
 
+@Composable
+fun test(movie: Movie) {
+    Text(text = movie.toString())
+}
 
 @Composable
 fun RowScope.AddItem(

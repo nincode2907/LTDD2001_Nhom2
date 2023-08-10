@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
+import com.google.firebase.Timestamp
+import com.google.type.DateTime
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDate
 import java.util.Date
 
 @Parcelize
@@ -16,14 +19,15 @@ data class Movie(
     val name: String? = null,
     val description: String? = null,
     val image: String? = null,
-    val releaseDate: Date? = null,
+    val releaseDate: Timestamp? = null,
     val episodeTotal: String? = null,
     val time: String? = null,
     val country: String? = null,
     val trailer: String? = null,
     val category: List<String>? = null,
     val view: Int? = null,
-    val outstanding: Boolean? = false
+    val outstanding: Boolean? = false,
+    val linkUriMovie:String? = null
 ) : Parcelable {
     companion object {
 
@@ -31,10 +35,14 @@ data class Movie(
 
         fun adapter(): JsonAdapter<Movie> = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
             .adapter<Movie>(Movie::class.java)
+
     }
 
     override fun toString(): String {
         return adapter().toJson(this)
+    }
+    fun getList(): List<String>? {
+        return this.category
     }
 
 
@@ -55,13 +63,13 @@ class MoviesNavType : NavType<Movie>(isNullableAllowed = true) {
     }
 }
 
-object MovieNavigation {
+object MovieBookNavigation {
     const val movieArg = "movieArg"
-    const val route = "movie?${movieArg}={$movieArg}"
+    const val route = "movieBook?${movieArg}={$movieArg}"
 
 
     fun createRoute(movie: Movie): String {
-        return "movie?${movieArg}=${movie.toString()}"
+        return "movieBook?${movieArg}=${movie.toString()}"
     }
 
     fun from(entry: NavBackStackEntry) = entry.arguments?.getParcelable<Movie>(movieArg)

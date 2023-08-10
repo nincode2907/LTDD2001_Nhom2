@@ -12,11 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.moviesapp.R
 import com.example.moviesapp.ShareViewModel
@@ -24,9 +22,9 @@ import com.example.moviesapp.model.Movie
 import com.example.moviesapp.screen.homeScreen.component.Carousel
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
-import com.example.moviesapp.screen.homeScreen.HomeViewModel
 import com.example.moviesapp.screen.homeScreen.component.ListFilmHorizontal
 import com.example.moviesapp.screen.homeScreen.component.ListFilmTop5
+import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 
 
 @SuppressLint(
@@ -39,8 +37,8 @@ fun HomeScreen(
     navController: NavController,
     bottomBarState: MutableState<Boolean>,
     shareViewModel: ShareViewModel,
-    movies:List<Movie>
-    
+    movies: List<Movie>,
+
 ) {
     Scaffold(
         bottomBar = {
@@ -63,7 +61,8 @@ fun HomeScreen(
                 Carousel(
                     movies.filter { it.outstanding == true },
                     navController,
-                    shareViewModel
+                    shareViewModel,
+
                 )
                 ListFilmHorizontal(
                     movies,

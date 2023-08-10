@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -26,7 +25,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +44,7 @@ import com.example.moviesapp.R
 import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic.textCommonStyle
+import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -57,8 +56,9 @@ import kotlinx.coroutines.launch
 fun Carousel(
     movies: List<Movie>,
     navController: NavController,
-    shareViewModel: ShareViewModel
+    shareViewModel: ShareViewModel,
 ) {
+
     val pagerState = rememberPagerState()
     var scope = rememberCoroutineScope()
     var liked by remember { mutableStateOf(false) }
@@ -95,6 +95,7 @@ fun Carousel(
                 onClick = {
                     shareViewModel.addMovie(newMovie = movies[page])
                     navController.navigate("movie")
+
                 })
         }
         Row(

@@ -317,7 +317,7 @@ fun ItemRelatedFilm(
                     color = StyleStatic.blurTextWhiteColor
                 )
                 Text(
-                    text = movie.releaseDate.toString(),
+                    text = movie.releaseDate?.toDate().toString(),
                     style = styleInRow
                 )
 
