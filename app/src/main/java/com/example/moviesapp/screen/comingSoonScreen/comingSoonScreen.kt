@@ -63,6 +63,7 @@ import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,24 +110,20 @@ fun ComingSoonScreen(
                 .background(Color.Black)
         ) {
             items(movies) { movie ->
-                MovieList(movie = movie){
-                    shareViewModel.addMovie(movie)
+                MovieList(movie = movie) {
                     navController.navigate("movie")
                 }
-
-
             }
-
-
         }
     }
 }
 
 
+@SuppressLint("NewApi")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieList(
-    movie: Movie,onClick: () -> Unit
+    movie: Movie, onClick: () -> Unit
 ) {
     var isShowBottomSheet by remember {
         mutableStateOf(false)
@@ -134,12 +131,15 @@ fun MovieList(
 
     val coroutine = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
-    val month = movie.releaseDate?.month
-    val day = movie.releaseDate?.day
+//    val month = movie.releaseDate?.month
+//    val day = movie.releaseDate?.day
+    //val date = LocalDate.parse(movie.releaseDate)
+    //val date = movie.releaseDate?.toDate()
     Column(
         modifier = Modifier
             .background(Color.Black)
-            .padding(10.dp).clickable(onClick=onClick),
+            .padding(10.dp)
+            .clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -151,12 +151,12 @@ fun MovieList(
             )
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    text = "Ngày " + day,
+                    text = "Ngày " + movie.releaseDate?.toDate()?.day,
                     color = Color.White,
                     fontSize = 17.sp, fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Tháng " + month,
+                    text = "Tháng " + movie.releaseDate?.toDate()?.month,
                     color = Color(0xFFB3B3B3),
                     fontSize = 15.sp, fontWeight = FontWeight.Normal,
                     fontStyle = FontStyle.Italic
@@ -273,8 +273,8 @@ fun IconButtonView(modifier: Modifier, img: Int, title: String, onClick: () -> U
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun GreetingPreview() {
-
-}
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//fun GreetingPreview() {
+//
+//}

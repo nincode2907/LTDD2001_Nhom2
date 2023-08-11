@@ -150,7 +150,7 @@ fun Film(
                     Row(
                         modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
                     ) {
-                        calendar.time = movie.releaseDate
+                        calendar.time = movie.releaseDate?.toDate()
                         val styleInRow = StyleStatic.textCommonStyle.copy(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,

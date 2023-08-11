@@ -14,6 +14,8 @@ class MoviesRemoteDataSource @Inject constructor( var db: FirebaseFirestore) {
         val result = db.collection("movies").get().await()
         for (document in result) {
             val movie = document.toObject<Movie>()
+            val date = document.getDate("releaseDate")
+
             movies.add(movie)
         }
         return movies

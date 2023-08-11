@@ -16,9 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,8 +56,9 @@ import kotlinx.coroutines.launch
 fun Carousel(
     movies: List<Movie>,
     navController: NavController,
-    shareViewModel: ShareViewModel
+    shareViewModel: ShareViewModel,
 ) {
+
     val pagerState = rememberPagerState()
     var scope = rememberCoroutineScope()
     var liked by remember { mutableStateOf(false) }
@@ -93,7 +93,7 @@ fun Carousel(
                 heightImg = imageHeight,
                 navController,
                 onClick = {
-                    shareViewModel.addMovie(newMovie = movies[page])
+//                    shareViewModel.addMovie(newMovie = movies[page])
                     navController.navigate("movie")
                 })
         }
@@ -125,56 +125,56 @@ fun Carousel(
     }
 }
 
-@Composable
-fun ListFilmHorizontal(
-    films: List<FilmInfo> ,
-    categoryFilms: String = "Phim Mới",
-    navController: NavController
-) {
-    Column(modifier = Modifier.padding(15.dp)) {
-        TitleRowViewMovie(categoryFilms)
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(films) { film ->
-                FilmInList(imageUrl = film.poster, onClick = {
-                    navController.navigate("FilmDetail/" + film.id)
-                })
-            }
-            item {
-                FilmSeeMore()
-            }
-        }
-    }
-}
-
-@Composable
-fun ListFilmTop5(
-    films: List<FilmInfo> ,
-    navController: NavController
-) {
-    var index = 1
-    Column(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-        Text(
-            text = "Phim Top 5 Hôm Nay",
-            style = StyleStatic.textCommonStyle.copy(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
-            ),
-            modifier = Modifier
-                .padding(horizontal = 18.dp)
-        )
-
-        LazyRow() {
-            items(films.take(5)) {film ->
-                ItemMovieTop5(film.poster, index, onClick = {
-                    navController.navigate("FilmDetail/" + film.id)
-                })
-                index++
-            }
-        }
-    }
-}
+//@Composable
+//fun ListFilmHorizontal(
+//    films: List<FilmInfo> ,
+//    categoryFilms: String = "Phim Mới",
+//    navController: NavController
+//) {
+//    Column(modifier = Modifier.padding(15.dp)) {
+//        TitleRowViewMovie(categoryFilms)
+//        LazyRow(
+//            horizontalArrangement = Arrangement.spacedBy(8.dp)
+//        ) {
+//            items(films) { film ->
+//                FilmInList(imageUrl = film.poster, onClick = {
+//                    navController.navigate("FilmDetail/" + film.id)
+//                })
+//            }
+//            item {
+//                FilmSeeMore()
+//            }
+//        }
+//    }
+//}
+//
+//@Composable
+//fun ListFilmTop5(
+//    films: List<FilmInfo> ,
+//    navController: NavController
+//) {
+//    var index = 1
+//    Column(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+//        Text(
+//            text = "Phim Top 5 Hôm Nay",
+//            style = StyleStatic.textCommonStyle.copy(
+//                fontSize = 16.sp,
+//                fontWeight = FontWeight.Medium
+//            ),
+//            modifier = Modifier
+//                .padding(horizontal = 18.dp)
+//        )
+//
+//        LazyRow() {
+//            items(films.take(5)) {film ->
+//                ItemMovieTop5(film.poster, index, onClick = {
+//                    navController.navigate("FilmDetail/" + film.id)
+//                })
+//                index++
+//            }
+//        }
+//    }
+//}
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -278,7 +278,7 @@ fun ListFilmHorizontal(
         ) {
             items(movies) { film ->
                 FilmInList(imageUrl = film.image.toString(), onClick = {
-                    shareViewModel.addMovie(newMovie = film)
+//                    shareViewModel.addMovie(newMovie = film)
                     navController.navigate("movie")
                 })
             }
@@ -317,7 +317,6 @@ fun ListFilmTop5(
     navController: NavController,
     shareViewModel: ShareViewModel
 ) {
-    var index = 1
     Column(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
         Text(
             text = "Phim Top 5 Hôm Nay",
@@ -328,14 +327,12 @@ fun ListFilmTop5(
             modifier = Modifier
                 .padding(horizontal = 18.dp)
         )
-
         LazyRow() {
-            items(movies) { film ->
-                ItemMovieTop5(film.image.toString(), index, onClick = {
-                    shareViewModel.addMovie(newMovie = film)
+            itemsIndexed(movies.take(5)) { index, film ->
+                ItemMovieTop5(film.image.toString(), index+1, onClick = {
+//                    shareViewModel.addMovie(newMovie = film)
                     navController.navigate("movie")
                 })
-                index++
             }
         }
     }
@@ -353,7 +350,7 @@ fun RelatedMovies(
     ) {
         for(film in movies) {
             ItemRelatedFilm(film, onClick = {
-                shareViewModel.addMovie(film)
+//                shareViewModel.addMovie(film)
                 navController.navigate("movie")
             })
         }

@@ -303,6 +303,7 @@ fun ItemRelatedFilm(
         }
 
         Column {
+            calendar.time = movie.releaseDate?.toDate()
             Text(
                 text = movie.name.toString(),
                 style = StyleStatic.textCommonStyle.copy(
@@ -313,7 +314,6 @@ fun ItemRelatedFilm(
             Row(
                 modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)
             ) {
-                calendar.time = movie.releaseDate
                 val styleInRow = StyleStatic.textCommonStyle.copy(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -421,7 +421,6 @@ fun ItemPoster(
                 "Thêm vào DS",
                 modifier = Modifier
                     .clickable {
-
                     }
             )
             ButtonPlay(
