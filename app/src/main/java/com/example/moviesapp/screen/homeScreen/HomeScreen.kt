@@ -40,7 +40,6 @@ fun HomeScreen(
     bottomBarState: MutableState<Boolean>,
     shareViewModel: ShareViewModel,
     movies:List<Movie>
-    
 ) {
     Scaffold(
         bottomBar = {
@@ -66,29 +65,29 @@ fun HomeScreen(
                     shareViewModel
                 )
                 ListFilmHorizontal(
-                    movies,
+                    movies.shuffled(),
                     categoryFilms = "Phim Thể Loại Top 1 Khu Vực",
                     navController,
                     shareViewModel = shareViewModel
                 )
                 ListFilmTop5(
-                    movies,
+                    movies.shuffled(),
                     navController = navController,
                     shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
-                    movies,
+                    movies.shuffled(),
                     categoryFilms = "Trinh Thám",
                     navController,
                     shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
-                    movies,
+                    movies.shuffled(),
                     navController = navController,
                     shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
-                    movies,
+                    movies.shuffled(),
                     categoryFilms = "Phim Chiếu Rạp Mới",
                     navController,
                     shareViewModel = shareViewModel

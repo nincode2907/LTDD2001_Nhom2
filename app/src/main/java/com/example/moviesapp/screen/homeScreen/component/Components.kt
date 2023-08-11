@@ -57,6 +57,7 @@ import com.example.moviesapp.screen.homeScreen.component.StyleStatic.blurTextWhi
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import java.util.Calendar
 
 @Composable
 fun IconDetail(
@@ -69,11 +70,12 @@ fun IconDetail(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
+        modifier = modifier
     ) {
         Icon(
             imageVector = icon,
             contentDescription = description,
-            modifier = modifier
+            modifier = Modifier
                 .size(30.dp)
                 .clip(RoundedCornerShape(percent = 50)),
             tint = colorIcon,
@@ -104,9 +106,7 @@ fun IconBackBlur(
 
     Box(
         modifier = modifier
-            .padding(10.dp)
-            .width(sizeI.dp)
-            .height(sizeI.dp)
+            .size(sizeI.dp)
             .background(
                 Color(android.graphics.Color.parseColor("#33000000")),
                 RoundedCornerShape(percent = 50)
@@ -116,7 +116,8 @@ fun IconBackBlur(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = modifier
+            modifier = Modifier
+                .padding(all = 6.dp)
                 .size((sizeI - 12).dp)
                 .clip(RoundedCornerShape(percent = 50))
                 .clickable { onClick() },
@@ -251,7 +252,7 @@ fun InfoCategoryFilm(
         }
         items(infomation) { it ->
             Text(
-                text = it + ",",
+                text = it + ", ",
                 style = StyleStatic.textCommonStyle.copy(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -267,6 +268,7 @@ fun ItemRelatedFilm(
     movie: Movie,
     onClick: () -> Unit
 ) {
+    val calendar = Calendar.getInstance()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -311,28 +313,14 @@ fun ItemRelatedFilm(
             Row(
                 modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)
             ) {
+                calendar.time = movie.releaseDate
                 val styleInRow = StyleStatic.textCommonStyle.copy(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = StyleStatic.blurTextWhiteColor
                 )
-                Text(
-                    text = movie.releaseDate.toString(),
-                    style = styleInRow
-                )
-
-                Text(
-                    text = "•",
-                    style = styleInRow,
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
-
-                Text(
-                    text = movie.time.toString(),
-                    style = styleInRow
-                )
-//                val infos = listOf("film.yearRelease.toString()","film.time")
-//                InfoSpaceDot(infos = infos,style = styleInRow)
+                val infos = listOf(calendar.get(Calendar.YEAR).toString(),movie.time.toString())
+                InfoSpaceDot(infos = infos,style = styleInRow)
             }
 
             Text(

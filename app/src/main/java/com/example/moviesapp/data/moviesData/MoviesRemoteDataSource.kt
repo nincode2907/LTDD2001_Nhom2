@@ -28,4 +28,9 @@ class MoviesRemoteDataSource @Inject constructor( var db: FirebaseFirestore) {
         }
         return movies
     }
+
+    suspend fun addMovie(movie: Movie) {
+        val collection = db.collection("movies")
+        collection.add(movie).await()
+    }
 }

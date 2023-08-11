@@ -9,8 +9,4 @@ import com.example.moviesapp.model.Movie
 class ShareViewModel : ViewModel() {
     var movie by mutableStateOf<Movie?>(null)
         private set
-
-    fun addMovie(newMovie: Movie){
-        movie = newMovie
-    }
 }

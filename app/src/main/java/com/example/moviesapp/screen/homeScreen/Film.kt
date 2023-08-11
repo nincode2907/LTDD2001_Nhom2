@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,10 +21,6 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,25 +32,26 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
-
 import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
 import com.example.moviesapp.screen.homeScreen.component.IconBackBlur
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
-
 import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
-
 import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
-import com.example.moviesapp.screen.homeScreen.component.listFilms
 import com.example.myapplication.model.NavigationItem
+import java.util.Calendar
 
 
 @Composable
@@ -64,6 +62,9 @@ fun Film(
 ) {
     val movie = shareViewModel.movie
     val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val player = ExoPlayer.Builder(context).build()
+    ExoPlayerView(player = player)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,8 +97,22 @@ fun Film(
                             colorIcon = StyleStatic.primaryTextColor,
                             size = "big",
                             onClick = {
-                              //  navController.popBackStack(NavigationItem.Home.route,false)
-                                Toast.makeText(context, "Film not available!!", Toast.LENGTH_SHORT).show()
+
+
+                                // Build the media item.
+                                val mediaItem = MediaItem.fromUri("https://img-place.com/rc2atam5shwp.mp4")
+
+                                // Set the media item to be played.
+                                player.setMediaItem(mediaItem)
+
+                                // Prepare the player.
+                                player.prepare()
+
+                                // Start the playback.
+                                player.play()
+
+                                //  navController.popBackStack(NavigationItem.Home.route,false)
+//                                Toast.makeText(context, "Film not available!!", Toast.LENGTH_SHORT).show()
                             }
                         )
                     }
@@ -135,39 +150,15 @@ fun Film(
                     Row(
                         modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
                     ) {
+                        calendar.time = movie.releaseDate
                         val styleInRow = StyleStatic.textCommonStyle.copy(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = StyleStatic.blurTextWhiteColor
                         )
-                        Text(
-                            text = movie.releaseDate.toString(),
-                            style = styleInRow
-                        )
+                        val infos = listOf(calendar.get(Calendar.YEAR).toString(),movie.episodeTotal.toString(), movie.time.toString())
 
-                        Text(
-                            text = "•",
-                            style = styleInRow,
-                            modifier = Modifier.padding(horizontal = 4.dp)
-                        )
-
-                        Text(
-                            text = movie.episodeTotal.toString(),
-                            style = styleInRow
-                        )
-
-                        Text(
-                            text = "•",
-                            style = styleInRow,
-                            modifier = Modifier.padding(horizontal = 4.dp)
-                        )
-
-                        Text(
-                            text = movie.time.toString(),
-                            style = styleInRow
-                        )
-//                        val infos = listOf("2002","tron bo", "100p")
-//                        InfoSpaceDot(infos = infos,style = styleInRow)
+                        InfoSpaceDot(infos = infos,style = styleInRow)
                     }
 
                     Text(
@@ -255,6 +246,17 @@ fun Film(
     }
 }
 
+@Composable
+fun ExoPlayerView(player: ExoPlayer) {
+    AndroidView(
+        factory = { context ->
+            PlayerView(context).apply {
+                this.player = player
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+}
 //@Preview(showBackground = true, widthDp = 564, heightDp = 1254)
 //@Composable
 //fun PreviewHome() {
