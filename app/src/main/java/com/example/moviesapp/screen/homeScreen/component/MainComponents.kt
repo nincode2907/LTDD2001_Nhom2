@@ -93,7 +93,7 @@ fun Carousel(
                 heightImg = imageHeight,
                 navController,
                 onClick = {
-//                    shareViewModel.addMovie(newMovie = movies[page])
+                    shareViewModel.addMovie(newMovie = movies[page])
                     navController.navigate("movie")
                 })
         }

@@ -155,9 +155,7 @@ fun Film(
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center
-                            ) {
-
-                            }
+                            ) {}
 
                             repeat(3) {
                                 Box(
