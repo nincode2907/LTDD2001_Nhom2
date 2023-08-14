@@ -278,7 +278,7 @@ fun ListFilmHorizontal(
         ) {
             items(movies) { film ->
                 FilmInList(imageUrl = film.image.toString(), onClick = {
-//                    shareViewModel.addMovie(newMovie = film)
+                    shareViewModel.addMovie(newMovie = film)
                     navController.navigate("movie")
                 })
             }
@@ -330,7 +330,7 @@ fun ListFilmTop5(
         LazyRow() {
             itemsIndexed(movies.take(5)) { index, film ->
                 ItemMovieTop5(film.image.toString(), index+1, onClick = {
-//                    shareViewModel.addMovie(newMovie = film)
+                    shareViewModel.addMovie(newMovie = film)
                     navController.navigate("movie")
                 })
             }
