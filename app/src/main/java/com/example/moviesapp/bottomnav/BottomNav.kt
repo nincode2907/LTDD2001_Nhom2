@@ -37,12 +37,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import codes.andreirozov.bottombaranimation.ui.theme.BottomBarAnimationTheme
 import com.example.movieapp.screen.homeScreen.HomeScreen
 import com.example.movieapp.screen.rankingScreen.RankingScreen
 import com.example.movieapp.screen.searchScreen.SearchScreen
 import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
+import com.example.moviesapp.model.MovieBookNavigation
+import com.example.moviesapp.model.MoviesNavType
 
 import com.example.moviesapp.screen.AnimatedSplashScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
@@ -58,11 +61,11 @@ import com.example.myapplication.screen.mainScreen.MainViewModel
 fun BottomBar(
     mainViewModel: MainViewModel,
     navController: NavController,
-    bottomBarState: MutableState<Boolean>
+    bottomBarState: Boolean
 ) {
     val navStackBackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navStackBackEntry?.destination
-    AnimatedVisibility(visible = bottomBarState.value,
+    AnimatedVisibility(visible = bottomBarState,
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
@@ -80,95 +83,58 @@ fun BottomBar(
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
-
-    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
-    val shareViewModel: ShareViewModel = viewModel()
-
+fun BottomBarAnimationApp() {
+    val mainViewModel: MainViewModel = hiltViewModel()
     val homeViewModel: HomeViewModel = hiltViewModel()
     val moviesState = homeViewModel.movies.collectAsState()
+    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+
     BottomBarAnimationTheme {
         val navController = rememberNavController()
 
-        // Subscribe to navBackStackEntry, required to get current route
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-        // Control TopBar and BottomBar
-        when (navBackStackEntry?.destination?.route) {
-            "Splash" -> {
-                // Hide BottomBar
-                bottomBarState.value = false
-            }
-
-            "Home" -> {
-                // Show BottomBar
-                bottomBarState.value = true
-            }
-
-            "Ranking" -> {
-                // Show BottomBar
-                bottomBarState.value = true
-            }
-
-            "Search" -> {
-                // Show BottomBar
-                bottomBarState.value = true
-            }
-
-            "Calendar" -> {
-                // Show BottomBar
-                bottomBarState.value = true
-            }
-
-            "PlayVideo" -> {
-                // Hide BottomBar
-                bottomBarState.value = false
-            }
-
-            "User" -> {
-                bottomBarState.value = true
-            }
-        }
         NavHost(
-            modifier = Modifier.padding(),
             navController = navController,
-            //startDestination = "Splash",
-           startDestination = NavigationItem.Home.route,
+            startDestination = NavigationItem.Home.route,
 
             ) {
             composable(NavigationItem.Home.route) {
                 HomeScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    bottomBarState = bottomBarState,
-                    shareViewModel = shareViewModel,
+                    bottomBarState = true,
                     movies = moviesState.value,
                 )
+            }
+
+            composable(
+                MovieBookNavigation.route,
+                arguments = listOf(navArgument(MovieBookNavigation.movieArg) {
+                    nullable = true
+                    type = MoviesNavType()
+                })
+            ) {
+                val movie = MovieBookNavigation.from(it)
+                Film(movie = movie!!, navController = navController, moviesState.value,)
             }
             composable(NavigationItem.Ranking.route) {
                 RankingScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    bottomBarState = bottomBarState
                 )
             }
             composable(NavigationItem.Search.route) {
                 SearchScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    bottomBarState = bottomBarState
                 )
             }
             composable(NavigationItem.ComingSoon.route) {
                 ComingSoonScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    bottomBarState = bottomBarState,
                     movies = moviesState.value,
-                    shareViewModel = shareViewModel
                 )
             }
-            composable(NavigationItem.PlayVideo.route) {}
             composable(NavigationItem.User.route) {
                 UserScreen(
                     mainViewModel = mainViewModel,
@@ -176,47 +142,13 @@ fun BottomBarAnimationApp(mainViewModel: MainViewModel) {
                     bottomBarState = bottomBarState
                 )
             }
-            composable("CategoryMovies/{nameCate}/{idCate}") { backStackEntry ->
-//                CategoryMoviesScreen(
-//                    backStackEntry.arguments?.getString("nameCate")!!,
-//                    backStackEntry.arguments?.getString("idCate")!!,
-//
-//                    navController = navController
-//                )
-            }
-//
-            composable("movie") {
-                Film(shareViewModel = shareViewModel, navController = navController,moviesState.value)
-            }
-//            composable(
-//                MovieBookNavigation.route,
-//                arguments = listOf(navArgument(MovieBookNavigation.movieArg) {
-//                    nullable = true
-//                    type = MoviesNavType()
-//                })
-//            ) {
-//                val movie = MovieBookNavigation.from(it)
-//                test(movie = movie!!)
-//                Film(
-//                    shareViewModel = shareViewModel,
-//                    navController = navController,
-//                    moviesState.value,
-//                    movie = movie!!
-//               )
-//            }
-            composable(route = "Splash") {
-                AnimatedSplashScreen(navController = navController)
-            }
+
 
 
         }
     }
 }
 
-@Composable
-fun test(movie: Movie) {
-    Text(text = movie.toString())
-}
 
 @Composable
 fun RowScope.AddItem(

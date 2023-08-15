@@ -35,7 +35,6 @@ import com.example.rank.data.DataProvider
 fun RankingScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    bottomBarState: MutableState<Boolean>,
 ) {
     val ranks = remember {
         DataProvider.rankingList
@@ -59,7 +58,7 @@ fun RankingScreen(
             BottomBar(
                 mainViewModel = mainViewModel,
                 navController = navController,
-                bottomBarState = bottomBarState
+                bottomBarState = true
             )
         },
     ) { paddingValues ->

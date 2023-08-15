@@ -74,7 +74,7 @@ fun UserScreen(
             BottomBar(
                 mainViewModel = mainViewModel,
                 navController = navController,
-                bottomBarState = bottomBarState
+                bottomBarState = true
             )
         },
     ) { paddingValues ->

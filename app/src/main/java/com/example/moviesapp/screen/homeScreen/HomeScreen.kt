@@ -35,8 +35,7 @@ import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 fun HomeScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    bottomBarState: MutableState<Boolean>,
-    shareViewModel: ShareViewModel,
+    bottomBarState:Boolean,
     movies: List<Movie>
 ) {
     Scaffold(
@@ -60,107 +59,33 @@ fun HomeScreen(
                 Carousel(
                     movies.filter { it.outstanding == true },
                     navController,
-                    shareViewModel,
 
                 )
                 ListFilmHorizontal(
                     movies.shuffled(),
                     categoryFilms = "Phim Thể Loại Top 1 Khu Vực",
-                    navController,
-                    shareViewModel = shareViewModel
+                    navController
                 )
                 ListFilmTop5(
                     movies.shuffled(),
                     navController = navController,
-                    shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
                     movies.shuffled(),
                     categoryFilms = "Trinh Thám",
                     navController,
-                    shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
                     movies.shuffled(),
                     navController = navController,
-                    shareViewModel = shareViewModel
                 )
                 ListFilmHorizontal(
                     movies.shuffled(),
                     categoryFilms = "Phim Chiếu Rạp Mới",
                     navController,
-                    shareViewModel = shareViewModel
                 )
                 Spacer(modifier = Modifier.height(50.dp))
             }
         }
     }
 }
-
-@Composable
-fun App(
-    navController: NavController,
-) {
-    LazyColumn(
-        verticalArrangement = Arrangement.Top
-    ) {
-        item {
-            //  Carousel(homeViewModel, navController)
-//            ListFilmHorizontal(films = listFilms.shuffled(), categoryFilms = "Phim Thể Loại Top 1 Khu Vực", navController)
-//            ListFilmTop5(films = listFilms, navController = navController)
-//            ListFilmHorizontal(films = listFilms.reversed(), categoryFilms = "Trinh Thám", navController)
-//            ListFilmHorizontal(films = listFilms.shuffled(), navController = navController)
-//            ListFilmHorizontal(films = listFilms.shuffled(), categoryFilms = "Phim Chiếu Rạp Mới", navController)
-//            Spacer(modifier = Modifier.height(50.dp))
-        }
-    }
-}
-
-//@Composable
-//fun WaterDropAnimation(initialRadius: Float, onAnimationEnd: () -> Unit) {
-//    val animationSpec = remember { tween<Float>(durationMillis = 500) }
-//
-//    val radiusAnimatable = remember { Animatable(initialRadius) }
-//
-//    LaunchedEffect(Unit) {
-//        radiusAnimatable.animateTo(300f, animationSpec)
-//        onAnimationEnd()
-//    }
-//
-//    Surface(
-//        modifier = Modifier
-//            .padding(16.dp)
-//            .graphicsLayer {
-//                scaleX = 1 + radiusAnimatable.value / 1000 // Adjust the scale of the drop
-//                scaleY = 1 + radiusAnimatable.value / 1000 // Adjust the scale of the drop
-//            },
-//        shape = CircleShape,
-//        color = Color.Blue
-//    ) {
-//        Canvas(modifier = Modifier.fillMaxSize()) {
-//            drawRoundRect(
-//                color = Color.Cyan,
-//                size = Size(radiusAnimatable.value * 2, radiusAnimatable.value * 2),
-//                cornerRadius = CornerRadius(radiusAnimatable.value)
-//            )
-//        }
-//    }
-//}
-
-//@Preview(showBackground = true, widthDp = 320, heightDp = 640)
-//@Preview(showBackground = true, widthDp = 480, heightDp = 800)
-//@Preview(showBackground = true, widthDp = 720, heightDp = 1280)
-//@Preview(showBackground = true, widthDp = 1080, heightDp = 1920)
-//@Preview(showBackground = true, widthDp = 1440, heightDp = 2560)
-//@Preview(showBackground = true, widthDp = 1024, heightDp = 768)
-//@Preview(showBackground = true, widthDp = 1366, heightDp = 768)
-//@Preview(showBackground = true, widthDp = 564, heightDp = 1254)
-//@Composable
-//fun PreviewHome() {
-//    Surface(
-//        modifier = Modifier.fillMaxSize(),
-//        color = colorResource(id = R.color.dark)
-//    ) {
-//        App()
-//    }
-//}

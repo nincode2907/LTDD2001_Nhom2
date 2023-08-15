@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
@@ -51,6 +52,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
@@ -69,18 +71,21 @@ import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
 import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
-import com.example.moviesapp.screen.homeScreen.component.listFilms
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
+import java.util.Calendar
+
+
 
 
 @Composable
 fun Film(
-    shareViewModel: ShareViewModel,
+    movie: Movie,
     navController: NavController,
-    movies: List<Movie>
+    movies:List<Movie>
 ) {
-    val movie = shareViewModel.movie
+    val calendar = Calendar.getInstance()
+
     val viewModel: PlayMovieViewModel = hiltViewModel()
     var lifecycle by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
@@ -99,13 +104,9 @@ fun Film(
     var isFullScreen by remember {
         mutableStateOf(true)
     }
-
-    Scaffold() { paddingValues ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-                .padding(paddingValues)) {
+    Scaffold() {
+        paddingValues ->
+        Column(modifier = Modifier.fillMaxSize().background(Color.Black).padding(paddingValues)) {
             AndroidView(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -153,9 +154,6 @@ fun Film(
                         Box(
                             contentAlignment = Alignment.BottomCenter
                         ) {
-                            Box(
-                                contentAlignment = Alignment.Center
-                            ) {}
 
                             repeat(3) {
                                 Box(
@@ -190,37 +188,15 @@ fun Film(
                             Row(
                                 modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
                             ) {
+                                calendar.time = movie.releaseDate?.toDate()
                                 val styleInRow = StyleStatic.textCommonStyle.copy(
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = StyleStatic.blurTextWhiteColor
                                 )
-                                Text(
-                                    text = movie.releaseDate?.toDate().toString(),
-                                    style = styleInRow
-                                )
+                                val infos = listOf(calendar.get(Calendar.YEAR).toString(),movie.episodeTotal.toString(), movie.time.toString())
 
-                                Text(
-                                    text = "•",
-                                    style = styleInRow,
-                                    modifier = Modifier.padding(horizontal = 4.dp)
-                                )
-
-                                Text(
-                                    text = movie.episodeTotal.toString(),
-                                    style = styleInRow
-                                )
-
-                                Text(
-                                    text = "•",
-                                    style = styleInRow,
-                                    modifier = Modifier.padding(horizontal = 4.dp)
-                                )
-
-                                Text(
-                                    text = movie.time.toString(),
-                                    style = styleInRow
-                                )
+                                InfoSpaceDot(infos = infos,style = styleInRow)
                             }
 
                             Text(
@@ -261,29 +237,21 @@ fun Film(
                                     icon = Icons.Outlined.Add,
                                     description = "Thêm vào DS",
                                     colorText = StyleStatic.blurTextWhiteColor,
-                                    modifier = Modifier.padding(end = 16.dp)
-                                )
+                                    modifier = Modifier.padding(end = 16.dp))
 
                                 IconDetail(
                                     icon = Icons.Outlined.Share,
                                     description = "Chia sẻ",
                                     colorText = StyleStatic.blurTextWhiteColor,
-                                    modifier = Modifier.padding(end = 16.dp)
-                                )
+                                    modifier = Modifier.padding(end = 16.dp))
                                 IconDetail(
                                     icon = Icons.Default.FavoriteBorder,
                                     description = "Yêu thích",
                                     colorText = StyleStatic.blurTextWhiteColor,
-                                    modifier = Modifier.padding(end = 16.dp)
-                                )
+                                    modifier = Modifier.padding(end = 16.dp))
                             }
                         }
-                        CarouselListFilms(
-                            movie = movie!!,
-                            navController,
-                            movies,
-                            shareViewModel = shareViewModel
-                        )
+                        CarouselListFilms(movie = movie!!,navController,movies)
                         Spacer(modifier = Modifier.height(30.dp))
                     }
                 }
@@ -315,14 +283,20 @@ fun Film(
                 }
             }
         }
-
-
     }
-
-
 }
 
-
+@Composable
+fun ExoPlayerView(player: ExoPlayer) {
+    AndroidView(
+        factory = { context ->
+            PlayerView(context).apply {
+                this.player = player
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+}
 fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()

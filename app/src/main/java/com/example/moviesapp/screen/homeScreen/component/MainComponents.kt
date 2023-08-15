@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import com.example.moviesapp.R
 import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
+import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic.textCommonStyle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -56,7 +57,6 @@ import kotlinx.coroutines.launch
 fun Carousel(
     movies: List<Movie>,
     navController: NavController,
-    shareViewModel: ShareViewModel,
 ) {
 
     val pagerState = rememberPagerState()
@@ -93,8 +93,8 @@ fun Carousel(
                 heightImg = imageHeight,
                 navController,
                 onClick = {
-                    shareViewModel.addMovie(newMovie = movies[page])
-                    navController.navigate("movie")
+
+                    navController.navigate(MovieBookNavigation.createRoute(movie = movies[page]))
                 })
         }
         Row(
@@ -182,7 +182,6 @@ fun CarouselListFilms(
     movie: Movie,
     navController: NavController,
     movies: List<Movie>,
-    shareViewModel: ShareViewModel
 ) {
     val listTags = listOf("Phim liên quan", "Trailer")
     val pagerState = rememberPagerState(initialPage = 0)
@@ -207,11 +206,11 @@ fun CarouselListFilms(
         Spacer(modifier = Modifier.height(6.dp))
 
 
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -256,7 +255,7 @@ fun CarouselListFilms(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> RelatedMovies(movies, navController, shareViewModel = shareViewModel)
+                    0 -> RelatedMovies(movies, navController,)
                     1 -> YoutubeTrailer(movie.trailer.toString())
                 }
             }
@@ -269,7 +268,6 @@ fun ListFilmHorizontal(
     movies: List<Movie>,
     categoryFilms: String = "Phim Mới",
     navController: NavController,
-    shareViewModel: ShareViewModel
 ) {
     Column(modifier = Modifier.padding(15.dp)) {
         TitleRowViewMovie(categoryFilms)
@@ -278,8 +276,7 @@ fun ListFilmHorizontal(
         ) {
             items(movies) { film ->
                 FilmInList(imageUrl = film.image.toString(), onClick = {
-                    shareViewModel.addMovie(newMovie = film)
-                    navController.navigate("movie")
+                    navController.navigate(MovieBookNavigation.createRoute(movie = film))
                 })
             }
             item {
@@ -288,6 +285,7 @@ fun ListFilmHorizontal(
         }
     }
 }
+
 @Composable
 fun TitleRowViewMovie(title: String) {
     Row(
@@ -315,7 +313,6 @@ fun TitleRowViewMovie(title: String) {
 fun ListFilmTop5(
     movies: List<Movie>,
     navController: NavController,
-    shareViewModel: ShareViewModel
 ) {
     Column(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
         Text(
@@ -329,9 +326,9 @@ fun ListFilmTop5(
         )
         LazyRow() {
             itemsIndexed(movies.take(5)) { index, film ->
-                ItemMovieTop5(film.image.toString(), index+1, onClick = {
-                    shareViewModel.addMovie(newMovie = film)
-                    navController.navigate("movie")
+                ItemMovieTop5(film.image.toString(), index + 1, onClick = {
+                    navController.navigate(MovieBookNavigation.createRoute(movie = film))
+
                 })
             }
         }
@@ -343,15 +340,14 @@ fun ListFilmTop5(
 fun RelatedMovies(
     movies: List<Movie>,
     navController: NavController,
-    shareViewModel: ShareViewModel
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        for(film in movies) {
+        for (film in movies) {
             ItemRelatedFilm(film, onClick = {
-//                shareViewModel.addMovie(film)
-                navController.navigate("movie")
+                navController.navigate(MovieBookNavigation.createRoute(movie = film))
+
             })
         }
     }

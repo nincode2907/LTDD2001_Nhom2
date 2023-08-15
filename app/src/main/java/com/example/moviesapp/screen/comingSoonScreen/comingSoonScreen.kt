@@ -61,6 +61,7 @@ import com.example.petadoption.bottomnav.BottomBar
 import com.example.moviesapp.R
 import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
+import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -71,15 +72,9 @@ import java.time.LocalDate
 fun ComingSoonScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    bottomBarState: MutableState<Boolean>,
     movies: List<Movie>,
-    shareViewModel: ShareViewModel
 ) {
-    var isShowBottomSheet by remember {
-        mutableStateOf(false)
-    }
-    val coroutine = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -99,7 +94,7 @@ fun ComingSoonScreen(
             BottomBar(
                 mainViewModel = mainViewModel,
                 navController = navController,
-                bottomBarState = bottomBarState
+                bottomBarState = true
             )
         },
     ) { paddingValues ->
@@ -111,7 +106,7 @@ fun ComingSoonScreen(
         ) {
             items(movies) { movie ->
                 MovieList(movie = movie) {
-                    navController.navigate("movie")
+                    navController.navigate(MovieBookNavigation.createRoute(movie = movie))
                 }
             }
         }
@@ -131,10 +126,7 @@ fun MovieList(
 
     val coroutine = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
-//    val month = movie.releaseDate?.month
-//    val day = movie.releaseDate?.day
-    //val date = LocalDate.parse(movie.releaseDate)
-    //val date = movie.releaseDate?.toDate()
+
     Column(
         modifier = Modifier
             .background(Color.Black)

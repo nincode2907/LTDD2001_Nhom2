@@ -66,7 +66,6 @@ import com.example.petadoption.bottomnav.BottomBar
 fun SearchScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    bottomBarState: MutableState<Boolean>
 ) {
     val categoryRepository = CategoryRepository()
     var categories by remember { mutableStateOf(emptyList<CategoryMovie>()) }
@@ -89,7 +88,7 @@ fun SearchScreen(
             BottomBar(
                 mainViewModel = mainViewModel,
                 navController = navController,
-                bottomBarState = bottomBarState
+                bottomBarState = true
             )
         },
     ) { paddingValues ->
