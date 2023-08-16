@@ -43,11 +43,14 @@ import com.example.movieapp.screen.homeScreen.HomeScreen
 import com.example.movieapp.screen.rankingScreen.RankingScreen
 import com.example.movieapp.screen.searchScreen.SearchScreen
 import com.example.moviesapp.ShareViewModel
+import com.example.moviesapp.model.CategoryMovieBookNavigation
+import com.example.moviesapp.model.CategoryMovieNavType
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.model.MoviesNavType
 
 import com.example.moviesapp.screen.AnimatedSplashScreen
+import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
 import com.example.moviesapp.screen.playMovieScreen.Film
 import com.example.moviesapp.screen.homeScreen.HomeViewModel
@@ -126,7 +129,19 @@ fun BottomBarAnimationApp() {
                 SearchScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
+                    movies = moviesState.value
                 )
+            }
+
+            composable(
+                CategoryMovieBookNavigation.route,
+                arguments = listOf(navArgument(CategoryMovieBookNavigation.categoryMovieArg) {
+                    nullable = true
+                    type = CategoryMovieNavType()
+                })
+            ) {
+                val category = CategoryMovieBookNavigation.from(it)
+                CategoryMoviesScreen(category!!,navController,moviesState.value)
             }
             composable(NavigationItem.ComingSoon.route) {
                 ComingSoonScreen(

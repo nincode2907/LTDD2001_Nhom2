@@ -36,7 +36,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,13 +52,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.moviesapp.R
-import com.example.moviesapp.data.CategoryRepository
-import com.example.moviesapp.data.moviesData.MovieRepository
 import com.example.moviesapp.model.CategoryMovie
+import com.example.moviesapp.model.CategoryMovieBookNavigation
 import com.example.moviesapp.model.Movie
+import com.example.moviesapp.model.MovieBookNavigation
+import com.example.moviesapp.screen.homeScreen.HomeViewModel
+import com.example.moviesapp.screen.searchScreen.SearchSreenViewModel
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
@@ -66,20 +69,15 @@ import com.example.petadoption.bottomnav.BottomBar
 fun SearchScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
+    movies:List<Movie>
 ) {
-    val categoryRepository = CategoryRepository()
-    var categories by remember { mutableStateOf(emptyList<CategoryMovie>()) }
-    var categoriesLimit by remember { mutableStateOf(emptyList<CategoryMovie>()) }
-    var movies by remember { mutableStateOf(emptyList<Movie>()) }
 
     var boolean by remember {
         mutableStateOf(true)
     }
 
-    LaunchedEffect(Unit) {
-        categories = categoryRepository.getAllCategories()
-        categoriesLimit = categoryRepository.getAllCategoriesLimited(6)
-    }
+    val searchSreenViewModel: SearchSreenViewModel = hiltViewModel()
+    val categoriesState = searchSreenViewModel.categories.collectAsState()
     Scaffold(
         topBar = {
             SearchBarView()
@@ -102,9 +100,9 @@ fun SearchScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp)
         ) {
-            items(if (boolean) categoriesLimit else categories) { it ->
-                ItemCategoryView(it.name, it.image) {
-                    navController.navigate("CategoryMovies/" + it.name+"/"+it.id)
+            items(if (boolean) categoriesState.value.take(6) else categoriesState.value) { it ->
+                ItemCategoryView(it) {
+                    navController.navigate(CategoryMovieBookNavigation.createRoute(it))
                 }
             }
 
@@ -124,9 +122,11 @@ fun SearchScreen(
             }
             items(movies) { it ->
 
-//                ItemMovieView(it.image) {
-//
-//                }
+                ItemMovieView(it) {
+                    navController.navigate( MovieBookNavigation.createRoute(it))
+
+
+                }
             }
         }
     }
@@ -213,7 +213,7 @@ fun SearchBarView() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemCategoryView(title: String, image: String, onClick: () -> Unit) {
+fun ItemCategoryView(categoryMovie: CategoryMovie, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .height(90.dp)
@@ -226,7 +226,7 @@ fun ItemCategoryView(title: String, image: String, onClick: () -> Unit) {
         Box() {
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
-                model = image,
+                model = categoryMovie.image,
                 contentDescription = "",
                 contentScale = ContentScale.Crop
             )
@@ -237,7 +237,7 @@ fun ItemCategoryView(title: String, image: String, onClick: () -> Unit) {
                 contentAlignment = Alignment.BottomStart
             ) {
                 Text(
-                    text = title,
+                    text = categoryMovie.name,
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
@@ -250,7 +250,7 @@ fun ItemCategoryView(title: String, image: String, onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemMovieView(image: String, onClick: () -> Unit) {
+fun ItemMovieView(movie: Movie, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .height(90.dp)
@@ -263,7 +263,7 @@ fun ItemMovieView(image: String, onClick: () -> Unit) {
         Box() {
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
-                model = image,
+                model = movie.image,
                 contentDescription = "",
                 contentScale = ContentScale.Crop
             )

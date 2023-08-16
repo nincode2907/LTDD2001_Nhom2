@@ -125,56 +125,6 @@ fun Carousel(
     }
 }
 
-//@Composable
-//fun ListFilmHorizontal(
-//    films: List<FilmInfo> ,
-//    categoryFilms: String = "Phim Mới",
-//    navController: NavController
-//) {
-//    Column(modifier = Modifier.padding(15.dp)) {
-//        TitleRowViewMovie(categoryFilms)
-//        LazyRow(
-//            horizontalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            items(films) { film ->
-//                FilmInList(imageUrl = film.poster, onClick = {
-//                    navController.navigate("FilmDetail/" + film.id)
-//                })
-//            }
-//            item {
-//                FilmSeeMore()
-//            }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun ListFilmTop5(
-//    films: List<FilmInfo> ,
-//    navController: NavController
-//) {
-//    var index = 1
-//    Column(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-//        Text(
-//            text = "Phim Top 5 Hôm Nay",
-//            style = StyleStatic.textCommonStyle.copy(
-//                fontSize = 16.sp,
-//                fontWeight = FontWeight.Medium
-//            ),
-//            modifier = Modifier
-//                .padding(horizontal = 18.dp)
-//        )
-//
-//        LazyRow() {
-//            items(films.take(5)) {film ->
-//                ItemMovieTop5(film.poster, index, onClick = {
-//                    navController.navigate("FilmDetail/" + film.id)
-//                })
-//                index++
-//            }
-//        }
-//    }
-//}
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable

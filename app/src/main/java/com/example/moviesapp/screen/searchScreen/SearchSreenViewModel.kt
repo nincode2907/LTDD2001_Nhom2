@@ -1,28 +1,28 @@
-//package com.example.moviesapp.screen.searchScreen
-//
-//import android.util.Log
-//import androidx.lifecycle.LiveData
-//import androidx.lifecycle.MutableLiveData
-//import androidx.lifecycle.ViewModel
-//import androidx.lifecycle.viewModelScope
-//import com.example.moviesapp.data.CategoryRepository
-//import com.example.moviesapp.model.CategoryMovie
-//import kotlinx.coroutines.flow.MutableStateFlow
-//import kotlinx.coroutines.flow.StateFlow
-//import kotlinx.coroutines.launch
-//
-//class SearchSreenViewModel  constructor ( val categoryRepository: CategoryRepository) : ViewModel() {
-//
-////    private val _categories = MutableStateFlow(SearchSreenState())
-////    val categories: StateFlow<SearchSreenState> get() = _categories
-////
-////    init {
-////        loadCategories()
-////    }
-////
-////    private fun loadCategories() {
-////        viewModelScope.launch {
-////            _categories.value.categories = categoryRepository.getAllCategories()
-////        }
-////    }
-//}
+package com.example.moviesapp.screen.searchScreen
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.moviesapp.data.categoriesData.CategoriesRepository
+import com.example.moviesapp.model.CategoryMovie
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class SearchSreenViewModel @Inject  constructor ( val categoryRepository : CategoriesRepository) : ViewModel() {
+    private val _categories = MutableStateFlow<List<CategoryMovie>>(emptyList())
+    val categories: StateFlow<List<CategoryMovie>> get() = _categories
+
+
+    init {
+        getAllMovies()
+    }
+    private fun getAllMovies() {
+        viewModelScope.launch {
+            _categories.value = categoryRepository.getAllCategory()
+        }
+    }
+
+}
