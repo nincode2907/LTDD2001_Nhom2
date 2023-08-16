@@ -64,12 +64,13 @@ import com.example.moviesapp.screen.homeScreen.HomeViewModel
 import com.example.moviesapp.screen.searchScreen.SearchSreenViewModel
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun SearchScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    movies:List<Movie>
+    movies: List<Movie>
 ) {
 
     var boolean by remember {
@@ -100,7 +101,7 @@ fun SearchScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp)
         ) {
-            items(if (boolean) categoriesState.value.take(6) else categoriesState.value) { it ->
+            items(if (boolean) categoriesState.value.sortedBy { it.name }.take(6) else categoriesState.value.sortedBy { it.name }) { it ->
                 ItemCategoryView(it) {
                     navController.navigate(CategoryMovieBookNavigation.createRoute(it))
                 }
@@ -120,10 +121,10 @@ fun SearchScreen(
                     color = Color.White, textAlign = TextAlign.Start
                 )
             }
-            items(movies) { it ->
+            items(movies.sortedByDescending { it.view ?: 0 }.take(36)) { it ->
 
                 ItemMovieView(it) {
-                    navController.navigate( MovieBookNavigation.createRoute(it))
+                    navController.navigate(MovieBookNavigation.createRoute(it))
 
 
                 }
@@ -131,6 +132,7 @@ fun SearchScreen(
         }
     }
 }
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

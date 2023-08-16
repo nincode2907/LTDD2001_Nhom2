@@ -104,7 +104,7 @@ fun ComingSoonScreen(
                 .padding(paddingValues = paddingValues)
                 .background(Color.Black)
         ) {
-            items(movies) { movie ->
+            items(movies.sortedByDescending { it.releaseDate }.take(3)) { movie ->
                 MovieList(movie = movie) {
                     navController.navigate(MovieBookNavigation.createRoute(movie = movie))
                 }

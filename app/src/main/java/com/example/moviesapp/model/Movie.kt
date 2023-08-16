@@ -15,7 +15,6 @@ import java.util.Date
 
 @Parcelize
 data class Movie(
-    var id: String? = null,
     val name: String? = null,
     val description: String? = null,
     val image: String? = null,

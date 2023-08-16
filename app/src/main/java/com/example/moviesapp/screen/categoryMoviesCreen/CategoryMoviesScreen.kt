@@ -55,11 +55,12 @@ import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryMoviesScreen(categoryMovie: CategoryMovie, navController: NavController,movies:List<Movie>) {
+fun CategoryMoviesScreen(
+    categoryMovie: CategoryMovie,
+    navController: NavController,
+    movies: List<Movie>,
 
-
-
-
+) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -72,6 +73,7 @@ fun CategoryMoviesScreen(categoryMovie: CategoryMovie, navController: NavControl
                 },
                 navigationIcon = {
                     IconButton(onClick = {
+
                         navController.popBackStack()
                     }) {
                         Icon(Icons.Filled.ArrowBack, "backIcon", tint = Color.White)
@@ -90,11 +92,14 @@ fun CategoryMoviesScreen(categoryMovie: CategoryMovie, navController: NavControl
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp)
         ) {
-            item(span = { GridItemSpan(2) }) {
 
-            }
             item(span = { GridItemSpan(2) }) {
-                Top5Movies(categoryMovie,movies,navController)
+                Top5Movies(
+                    categoryMovie,
+                    movies.filter { categoryMovie.name in it.category.orEmpty() }
+                        .sortedByDescending { it.view ?: 0 }.take(5),
+                    navController
+                )
             }
 
             item(span = { GridItemSpan(2) }) {
@@ -106,18 +111,20 @@ fun CategoryMoviesScreen(categoryMovie: CategoryMovie, navController: NavControl
                     color = Color.White, textAlign = TextAlign.Start
                 )
             }
-            items(movies) { it ->
+            items(movies.filter { categoryMovie.name in it.category.orEmpty() }) { it ->
 
-                ItemMovieView(it.image!!) {
+                ItemMovieView(it) {
+                    navController.navigate(MovieBookNavigation.createRoute(movie = it))
 
                 }
             }
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemMovieView(image: String, onClick: () -> Unit) {
+fun ItemMovieView(movie: Movie, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .height(90.dp)
@@ -130,13 +137,14 @@ fun ItemMovieView(image: String, onClick: () -> Unit) {
         Box() {
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
-                model = image,
+                model = movie.image,
                 contentDescription = "",
                 contentScale = ContentScale.Crop
             )
         }
     }
 }
+
 @Composable
 fun TopBarScreen(title: String) {
     Text(
@@ -148,8 +156,8 @@ fun TopBarScreen(title: String) {
 }
 
 @Composable
-fun Top5Movies(categoryMovie: CategoryMovie,movies: List<Movie>,navController: NavController,) {
-    Column( verticalArrangement = Arrangement.spacedBy(5.dp)) {
+fun Top5Movies(categoryMovie: CategoryMovie, movies: List<Movie>, navController: NavController) {
+    Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "Top 5 phim " + categoryMovie.name,

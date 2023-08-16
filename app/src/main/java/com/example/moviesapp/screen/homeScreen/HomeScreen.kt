@@ -25,19 +25,22 @@ import com.example.petadoption.bottomnav.BottomBar
 import com.example.moviesapp.screen.homeScreen.component.ListFilmHorizontal
 import com.example.moviesapp.screen.homeScreen.component.ListFilmTop5
 import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
+import java.time.LocalDateTime
 
 
 @SuppressLint(
     "StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition",
-    "UnsafeOptInUsageError"
+    "UnsafeOptInUsageError", "NewApi"
 )
 @Composable
 fun HomeScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    bottomBarState:Boolean,
+    bottomBarState: Boolean,
     movies: List<Movie>
 ) {
+    val currentDate = LocalDateTime.now()
+
     Scaffold(
         bottomBar = {
             BottomBar(
@@ -57,10 +60,10 @@ fun HomeScreen(
         ) {
             item {
                 Carousel(
-                    movies.filter { it.outstanding == true },
+                    movies.filter { it.outstanding == true }.sortedByDescending { it.view ?: 0 },
                     navController,
 
-                )
+                    )
                 ListFilmHorizontal(
                     movies.shuffled(),
                     categoryFilms = "Phim Thể Loại Top 1 Khu Vực",
@@ -71,17 +74,17 @@ fun HomeScreen(
                     navController = navController,
                 )
                 ListFilmHorizontal(
-                    movies.shuffled(),
+                    movies.filter { "Trinh Thám" in it.category.orEmpty() },
                     categoryFilms = "Trinh Thám",
                     navController,
                 )
                 ListFilmHorizontal(
-                    movies.shuffled(),
+                    movies.sortedByDescending { it.releaseDate }.take(10),
                     navController = navController,
                 )
                 ListFilmHorizontal(
-                    movies.shuffled(),
-                    categoryFilms = "Phim Chiếu Rạp Mới",
+                    movies.filter { "Phim Chiếu Rạp" in it.category.orEmpty() },
+                    categoryFilms = "Phim Chiếu Rạp",
                     navController,
                 )
                 Spacer(modifier = Modifier.height(50.dp))
