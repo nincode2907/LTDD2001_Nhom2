@@ -97,7 +97,7 @@ fun BottomBarAnimationApp() {
 
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.Home.route,
+            startDestination = NavigationItem.Search.route,
 
             ) {
             composable(NavigationItem.Home.route) {

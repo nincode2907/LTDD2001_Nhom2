@@ -42,10 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.moviesapp.R
-import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic.textCommonStyle
+import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -132,6 +132,7 @@ fun CarouselListFilms(
     movie: Movie,
     navController: NavController,
     movies: List<Movie>,
+    viewModel: PlayMovieViewModel,
 ) {
     val listTags = listOf("Phim liên quan", "Trailer")
     val pagerState = rememberPagerState(initialPage = 0)
@@ -205,7 +206,7 @@ fun CarouselListFilms(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> RelatedMovies(movies, navController,)
+                    0 -> RelatedMovies(movies, navController,viewModel)
                     1 -> YoutubeTrailer(movie.trailer.toString())
                 }
             }
@@ -290,12 +291,14 @@ fun ListFilmTop5(
 fun RelatedMovies(
     movies: List<Movie>,
     navController: NavController,
+    viewModel: PlayMovieViewModel,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         for (film in movies) {
             ItemRelatedFilm(film, onClick = {
+                viewModel.stopVideo()
                 navController.navigate(MovieBookNavigation.createRoute(movie = film))
 
             })
