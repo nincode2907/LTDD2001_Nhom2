@@ -22,4 +22,6 @@ class MovieRepository @Inject constructor(var moviesRemoteDataSource: MoviesRemo
     suspend fun getMoviesPoster(): List<Movie> {
         return moviesRemoteDataSource.getMoviesPoster()
     }
+
+
 }

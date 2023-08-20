@@ -35,6 +35,8 @@ class MoviesRemoteDataSource @Inject constructor( var db: FirebaseFirestore) {
         val collection = db.collection("movies")
         collection.add(movie).await()
     }
+
+
 }
 
 

@@ -56,7 +56,6 @@ import com.example.moviesapp.screen.playMovieScreen.Film
 import com.example.moviesapp.screen.homeScreen.HomeViewModel
 import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.myapplication.model.NavigationItem
-import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 import com.example.myapplication.screen.mainScreen.MainViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -97,7 +96,7 @@ fun BottomBarAnimationApp() {
 
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.Search.route,
+            startDestination = NavigationItem.AnimatedSplash.route,
 
             ) {
             composable(NavigationItem.Home.route) {
@@ -156,6 +155,9 @@ fun BottomBarAnimationApp() {
                     navController = navController,
                     bottomBarState = bottomBarState
                 )
+            }
+            composable(NavigationItem.AnimatedSplash.route){
+                AnimatedSplashScreen(navController)
             }
 
 

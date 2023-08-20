@@ -17,5 +17,7 @@ sealed class NavigationItem(val route: String, val title: String,
 
     object User : NavigationItem("User", "User", R.drawable.iconuser, R.drawable.iconuser)
 
+    object AnimatedSplash:NavigationItem("AnimatedSplash","AnimatedSplashScreen",R.drawable.baseline_home_24,R.drawable.baseline_home_24)
+
 
 }

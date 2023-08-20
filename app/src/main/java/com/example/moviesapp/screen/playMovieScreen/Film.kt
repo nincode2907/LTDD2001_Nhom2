@@ -95,7 +95,7 @@ fun Film(
         mutableStateOf(true)
     }
     Scaffold() {
-        paddingValues ->
+            paddingValues ->
         Column(modifier = Modifier.fillMaxSize().background(Color.Black).padding(paddingValues)) {
             AndroidView(
                 modifier = Modifier
