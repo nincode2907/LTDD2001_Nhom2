@@ -77,7 +77,6 @@ fun AnimatedSplashScreen(navController: NavController) {
                 spaceBetween = 10.dp,
                 travelDistance = 20.dp,
 
-
                 )
         }
     }

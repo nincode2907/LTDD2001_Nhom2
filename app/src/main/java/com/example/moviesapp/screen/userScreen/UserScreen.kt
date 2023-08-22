@@ -1,5 +1,6 @@
 package com.example.moviesapp.screen.userScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.moviesapp.R
+import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 
@@ -54,7 +56,7 @@ import com.example.petadoption.bottomnav.BottomBar
 fun UserScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    bottomBarState: MutableState<Boolean>
+    googleAuthUiClient: GoogleAuthUiClient,
 ) {
     Scaffold(
         topBar = {
@@ -68,7 +70,7 @@ fun UserScreen(
                         color = Color.White
                     )
                 },
-                )
+            )
         },
         bottomBar = {
             BottomBar(
@@ -99,7 +101,11 @@ fun UserScreen(
                     color = Color.White,
                 )
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                        if (googleAuthUiClient.getSignedInUser() == null) {
+                            navController.navigate("signIn")
+                        }
+                    },
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = Color.White,
                         contentColor = Color.Black
@@ -110,10 +116,11 @@ fun UserScreen(
                 )
                 {
                     Text(
-                        text = "Tiếp tục với Galaxy Play",
+                        text = if (googleAuthUiClient.getSignedInUser() == null) "Tiếp tục với Galaxy Play" else "Chào mừng đến với Galaxy Play",
                         textAlign = TextAlign.Justify,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
+                        maxLines = 1
                     )
                 }
             }
@@ -125,7 +132,15 @@ fun UserScreen(
                         .fillMaxWidth()
                         .height(50.dp)
                         .background(Color.DarkGray)
-                        .padding(10.dp),
+                        .padding(10.dp)
+                        .clickable {
+                            if (googleAuthUiClient.getSignedInUser() != null) {
+                                navController.navigate("profile")
+                            } else {
+                                navController.navigate("signIn")
+
+                            }
+                        },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
@@ -134,29 +149,47 @@ fun UserScreen(
                         contentDescription = null,
                         tint = Color.White,
                     )
-                    Text(
-                        text = "Thiết lập tài khoản",
-                        fontSize = 20.sp,
-                        color = Color.White,
-                        modifier = Modifier.weight(1f)
-
-                    )
-                    IconButton(onClick = { })
-                    {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowRight,
-                            contentDescription = null,
-                            modifier = Modifier.size(45.dp),
-                            tint = Color.White
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = "Thiết lập tài khoản",
+                            fontSize = 20.sp,
+                            color = Color.White,
                         )
+
+                        if (googleAuthUiClient.getSignedInUser() == null) {
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowRight,
+                                contentDescription = null,
+                                modifier = Modifier.size(45.dp),
+                                tint = Color.White
+                            )
+                        } else {
+                            Text(
+                                text = googleAuthUiClient.getSignedInUser()!!.username.toString(),
+                                fontSize = 15.sp,
+                                color = Color.White,
+                            )
+                        }
                     }
+
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
                         .background(Color.DarkGray)
-                        .padding(10.dp),
+                        .padding(10.dp)
+                        .clickable {
+                            if (googleAuthUiClient.getSignedInUser() != null) {
+
+                            } else {
+                                navController.navigate("signIn")
+
+                            }
+                        },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
@@ -188,7 +221,15 @@ fun UserScreen(
                         .fillMaxWidth()
                         .height(50.dp)
                         .background(Color.DarkGray)
-                        .padding(10.dp),
+                        .padding(10.dp)
+                        .clickable {
+                            if (googleAuthUiClient.getSignedInUser() != null) {
+
+                            } else {
+                                navController.navigate("signIn")
+
+                            }
+                        },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 )
@@ -210,20 +251,26 @@ fun UserScreen(
                             text = "Nhập Mã",
                             fontSize = 10.sp,
                             color = Color.White,
-                            textAlign =  TextAlign.Center
-                            )
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
-            Column(verticalArrangement = Arrangement.spacedBy(5.dp),
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Version 0.0.0",
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Version 0.0.0",
                     fontSize = 17.sp,
-                    color = Color(0xFF6B6B6B))
-                Text(text = "Hotline: 123456789",
+                    color = Color(0xFF6B6B6B)
+                )
+                Text(
+                    text = "Hotline: 123456789",
                     fontSize = 17.sp,
-                    color = Color(0xFF919191))
+                    color = Color(0xFF919191)
+                )
             }
         }
 

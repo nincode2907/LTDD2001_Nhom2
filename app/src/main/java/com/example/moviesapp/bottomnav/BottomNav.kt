@@ -1,6 +1,12 @@
 package com.example.petadoption.bottomnav
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -16,18 +22,22 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -48,6 +58,9 @@ import com.example.moviesapp.model.CategoryMovieNavType
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.model.MoviesNavType
+import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
+import com.example.moviesapp.presentation.signIn.SignInScreen
+import com.example.moviesapp.presentation.signIn.SignInViewModel
 
 import com.example.moviesapp.screen.AnimatedSplashScreen
 import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
@@ -57,6 +70,8 @@ import com.example.moviesapp.screen.homeScreen.HomeViewModel
 import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.mainScreen.MainViewModel
+import com.plcoding.composegooglesignincleanarchitecture.presentation.profile.ProfileScreen
+import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -85,18 +100,19 @@ fun BottomBar(
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BottomBarAnimationApp() {
+fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
     val mainViewModel: MainViewModel = hiltViewModel()
     val homeViewModel: HomeViewModel = hiltViewModel()
     val moviesState = homeViewModel.movies.collectAsState()
-    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+    val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
 
     BottomBarAnimationTheme {
         val navController = rememberNavController()
 
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.AnimatedSplash.route,
+            startDestination = NavigationItem.User.route,
 
             ) {
             composable(NavigationItem.Home.route) {
@@ -116,7 +132,7 @@ fun BottomBarAnimationApp() {
                 })
             ) {
                 val movie = MovieBookNavigation.from(it)
-                Film(movie = movie!!, navController = navController, moviesState.value,)
+                Film(movie = movie!!, navController = navController, moviesState.value)
             }
             composable(NavigationItem.Ranking.route) {
                 RankingScreen(
@@ -140,7 +156,7 @@ fun BottomBarAnimationApp() {
                 })
             ) {
                 val category = CategoryMovieBookNavigation.from(it)
-                CategoryMoviesScreen(category!!,navController,moviesState.value)
+                CategoryMoviesScreen(category!!, navController, moviesState.value)
             }
             composable(NavigationItem.ComingSoon.route) {
                 ComingSoonScreen(
@@ -153,13 +169,82 @@ fun BottomBarAnimationApp() {
                 UserScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    bottomBarState = bottomBarState
+                    googleAuthUiClient
+
                 )
             }
-            composable(NavigationItem.AnimatedSplash.route){
+            composable(NavigationItem.AnimatedSplash.route) {
                 AnimatedSplashScreen(navController)
             }
 
+
+            composable("signIn") {
+                val viewModel: SignInViewModel = hiltViewModel()
+                val state by viewModel.state.collectAsState()
+
+//                LaunchedEffect(key1 = Unit) {
+//                    if (googleAuthUiClient.getSignedInUser() != null) {
+//                        navController.navigate("profile")
+//                    }
+//                }
+
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartIntentSenderForResult(),
+                    onResult = { result ->
+                        if (result.resultCode == ComponentActivity.RESULT_OK) {
+                            coroutine.launch {
+                                val signInResult = googleAuthUiClient.signInWithIntent(
+                                    intent = result.data ?: return@launch
+                                )
+                                viewModel.onSignInResult(signInResult)
+                            }
+                        }
+                    }
+                )
+
+                LaunchedEffect(key1 = state.isSignInSuccessful) {
+                    if (state.isSignInSuccessful) {
+                        Toast.makeText(
+                            context,
+                            "Sign in successful",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        navController.navigate(NavigationItem.User.route)
+                        viewModel.resetState()
+                    }
+                }
+                SignInScreen(
+                    state = state,
+                    onSignInClick = {
+                        coroutine.launch {
+                            val signInIntentSender = googleAuthUiClient.signIn()
+                            launcher.launch(
+                                IntentSenderRequest.Builder(
+                                    signInIntentSender ?: return@launch
+                                ).build()
+                            )
+                        }
+                    },
+                    navController
+                )
+            }
+            composable("profile") {
+                ProfileScreen(
+                    userData = googleAuthUiClient.getSignedInUser(),
+                    onSignOut = {
+                        coroutine.launch {
+                            googleAuthUiClient.signOut()
+                            Toast.makeText(
+                                context,
+                                "Signed out",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            navController.popBackStack()
+                        }
+                    }
+                )
+            }
 
 
         }
