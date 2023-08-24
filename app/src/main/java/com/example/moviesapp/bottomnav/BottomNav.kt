@@ -22,13 +22,12 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,8 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -52,10 +49,8 @@ import codes.andreirozov.bottombaranimation.ui.theme.BottomBarAnimationTheme
 import com.example.movieapp.screen.homeScreen.HomeScreen
 import com.example.movieapp.screen.rankingScreen.RankingScreen
 import com.example.movieapp.screen.searchScreen.SearchScreen
-import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.CategoryMovieBookNavigation
 import com.example.moviesapp.model.CategoryMovieNavType
-import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.model.MoviesNavType
 import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
@@ -70,8 +65,17 @@ import com.example.moviesapp.screen.homeScreen.HomeViewModel
 import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.mainScreen.MainViewModel
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.plcoding.composegooglesignincleanarchitecture.presentation.profile.ProfileScreen
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -106,6 +110,13 @@ fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
     val moviesState = homeViewModel.movies.collectAsState()
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val loginManager = LoginManager.getInstance()
+    val callbackManager = remember { CallbackManager.Factory.create() }
+    val launcher = rememberLauncherForActivityResult(
+        loginManager.createLogInActivityResultContract(callbackManager, null)
+    ) {
+    }
 
     BottomBarAnimationTheme {
         val navController = rememberNavController()
@@ -182,11 +193,6 @@ fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
                 val viewModel: SignInViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsState()
 
-//                LaunchedEffect(key1 = Unit) {
-//                    if (googleAuthUiClient.getSignedInUser() != null) {
-//                        navController.navigate("profile")
-//                    }
-//                }
 
                 val launcher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartIntentSenderForResult(),
@@ -216,7 +222,7 @@ fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
                 }
                 SignInScreen(
                     state = state,
-                    onSignInClick = {
+                    onSignInGoogleClick = {
                         coroutine.launch {
                             val signInIntentSender = googleAuthUiClient.signIn()
                             launcher.launch(

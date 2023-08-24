@@ -1,6 +1,8 @@
 package com.example.moviesapp.presentation.signIn
 
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +24,10 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -43,11 +48,22 @@ import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.Blue500
 import codes.andreirozov.bottombaranimation.ui.theme.Grey900
 import com.example.moviesapp.R
+import com.example.myapplication.model.NavigationItem
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun SignInScreen(
     state: SignInState,
-    onSignInClick: () -> Unit,
+    onSignInGoogleClick: () -> Unit,
     navController: NavController
 
 ) {
@@ -133,9 +149,11 @@ fun SignInScreen(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF949699),
-                modifier = Modifier.absolutePadding(right = 2.dp).clickable {
-                    navController.popBackStack()
-                }
+                modifier = Modifier
+                    .absolutePadding(right = 2.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    }
             )
         }
         Text(
@@ -153,7 +171,7 @@ fun SignInScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedButton(
-                onClick = onSignInClick,
+                onClick = onSignInGoogleClick,
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = Color.White,
                     contentColor = Color.Black
@@ -182,36 +200,7 @@ fun SignInScreen(
                     )
                 }
             }
-            OutlinedButton(
-                onClick = onSignInClick,
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black
-                ),
-                modifier = Modifier
-                    .width(265.dp)
-                    .height(37.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.facebook),
-                        contentDescription = null,
-                        modifier = Modifier.size(33.dp)
-                    )
-                    Spacer(modifier = Modifier.absolutePadding(right = 13.dp))
-                    Text(
-                        text = "Tiếp tục với Facebook",
-                        color = Color.Black,
-                        textAlign = TextAlign.Left,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+            FacebookButton(onAuthComplete = { navController.navigate(NavigationItem.User.route)}, onAuthError = {} )
             Spacer(modifier = Modifier.absolutePadding(bottom = 12.dp))
 
             Row(
@@ -277,6 +266,84 @@ fun SignInScreen(
                     textAlign = TextAlign.Center,
                     fontSize = 14.sp)
             }
+        }
+    }
+}
+
+@Composable
+fun FacebookButton(
+    onAuthComplete: () -> Unit,
+    onAuthError: (Exception) -> Unit,
+    modifier: Modifier = Modifier,
+
+) {
+    val scope = rememberCoroutineScope()
+    val loginManager = LoginManager.getInstance()
+    val callbackManager = remember { CallbackManager.Factory.create() }
+    val launcher = rememberLauncherForActivityResult(
+        loginManager.createLogInActivityResultContract(callbackManager, null)
+    ) {
+    }
+
+    DisposableEffect(Unit) {
+        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onCancel() {
+
+            }
+
+            override fun onError(error: FacebookException) {
+                onAuthError(error)
+            }
+
+            override fun onSuccess(result: LoginResult) {
+                scope.launch {
+                    val token = result.accessToken.token
+                    val credential = FacebookAuthProvider.getCredential(token)
+                    val authResult = Firebase.auth.signInWithCredential(credential).await()
+                    if (authResult.user != null) {
+                        onAuthComplete()
+                    } else {
+                        onAuthError(IllegalStateException("Unable to sign in with Facebook"))
+                    }
+                }
+            }
+        })
+
+        onDispose {
+            loginManager.unregisterCallback(callbackManager)
+        }
+    }
+    OutlinedButton(
+        onClick = {
+            launcher.launch(listOf("email", "public_profile"))
+
+        },
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.White,
+            contentColor = Color.Black
+        ),
+        modifier = Modifier
+            .width(265.dp)
+            .height(37.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.facebook),
+                contentDescription = null,
+                modifier = Modifier.size(33.dp)
+            )
+            Spacer(modifier = Modifier.absolutePadding(right = 13.dp))
+            Text(
+                text = "Tiếp tục với Facebook",
+                color = Color.Black,
+                textAlign = TextAlign.Left,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
