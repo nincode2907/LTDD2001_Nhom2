@@ -1,7 +1,6 @@
 package com.example.petadoption.bottomnav
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -22,7 +21,6 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -66,16 +64,9 @@ import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
 import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
-import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.plcoding.composegooglesignincleanarchitecture.presentation.profile.ProfileScreen
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -104,19 +95,17 @@ fun BottomBar(
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
+fun BottomBarAnimationApp(
+    googleAuthUiClient: GoogleAuthUiClient,
+) {
     val mainViewModel: MainViewModel = hiltViewModel()
     val homeViewModel: HomeViewModel = hiltViewModel()
     val moviesState = homeViewModel.movies.collectAsState()
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val loginManager = LoginManager.getInstance()
-    val callbackManager = remember { CallbackManager.Factory.create() }
-    val launcher = rememberLauncherForActivityResult(
-        loginManager.createLogInActivityResultContract(callbackManager, null)
-    ) {
-    }
+
+
 
     BottomBarAnimationTheme {
         val navController = rememberNavController()
@@ -124,7 +113,6 @@ fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
         NavHost(
             navController = navController,
             startDestination = NavigationItem.User.route,
-
             ) {
             composable(NavigationItem.Home.route) {
                 HomeScreen(
@@ -192,9 +180,7 @@ fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
             composable("signIn") {
                 val viewModel: SignInViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsState()
-
-
-                val launcher = rememberLauncherForActivityResult(
+                val launcherGoogle = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartIntentSenderForResult(),
                     onResult = { result ->
                         if (result.resultCode == ComponentActivity.RESULT_OK) {
@@ -208,6 +194,8 @@ fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
                     }
                 )
 
+
+
                 LaunchedEffect(key1 = state.isSignInSuccessful) {
                     if (state.isSignInSuccessful) {
                         Toast.makeText(
@@ -215,7 +203,6 @@ fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
                             "Sign in successful",
                             Toast.LENGTH_LONG
                         ).show()
-
                         navController.navigate(NavigationItem.User.route)
                         viewModel.resetState()
                     }
@@ -225,7 +212,7 @@ fun BottomBarAnimationApp(googleAuthUiClient: GoogleAuthUiClient) {
                     onSignInGoogleClick = {
                         coroutine.launch {
                             val signInIntentSender = googleAuthUiClient.signIn()
-                            launcher.launch(
+                            launcherGoogle.launch(
                                 IntentSenderRequest.Builder(
                                     signInIntentSender ?: return@launch
                                 ).build()

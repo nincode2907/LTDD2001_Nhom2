@@ -1,12 +1,21 @@
 package com.example.moviesapp.screen.comingSoonScreen
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
@@ -39,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -48,6 +59,7 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
 import coil.compose.AsyncImage
@@ -120,6 +132,9 @@ fun MovieList(
 
     val coroutine = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
+    val heightBottomSheet = LocalConfiguration.current.screenHeightDp * 0.4
+    val currentLinkState = remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -220,23 +235,99 @@ fun MovieList(
 
     }
     if (isShowBottomSheet) {
-        ModalBottomSheet(onDismissRequest = {
-            coroutine.launch {
-                sheetState.hide()
-            }.invokeOnCompletion {
-                isShowBottomSheet = false
+        ModalBottomSheet(
+            modifier = Modifier
+                .height(heightBottomSheet.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(topEnd = 30.dp, topStart = 30.dp),
+            onDismissRequest = {
+                coroutine.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    isShowBottomSheet = false
+                }
+            },
+            sheetState = sheetState
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "Chia sẻ",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .absolutePadding(left = 8.dp)
+                )
+                LazyRow(
+                    contentPadding = PaddingValues(vertical = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                )
+                {
+                    items(bsList) { item ->
+                        BottomSheetItem(item = item) {
+                            val intent = Intent(Intent.ACTION_VIEW, item.link.toUri())
+                            context.startActivity(intent)
+                            coroutine.launch {
+                                isShowBottomSheet = false
+                                sheetState.hide()
+                            }
+                        }
+                    }
+                }
+
+                Divider(thickness = 1.dp, color = Color.Gray)
+                val clipboardManager =
+                    LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboardManager.setPrimaryClip(
+                    ClipData.newPlainText(
+                        "Link",
+                        currentLinkState.value
+                    )
+                )
+                IconButton(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp),
+                    onClick = {
+                        currentLinkState.value = "Em làm hỏng ra thầy ơi"
+                        Toast.makeText(
+                            context,
+                            "Đã sao chép liên kết thành công!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        coroutine.launch {
+                            isShowBottomSheet = false
+                            sheetState.hide()
+                        }
+                    })
+                {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.copy),
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Sao chép liên kết",
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
             }
-        }, sheetState = sheetState) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
-            )
         }
-        
-        ModalBottomSheet(onDismissRequest = { /*TODO*/ }) {
-            
-        }
+
+
     }
 
 }
@@ -263,8 +354,45 @@ fun IconButtonView(modifier: Modifier, img: Int, title: String, onClick: () -> U
     }
 }
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun GreetingPreview() {
-//
-//}
+
+@Composable
+fun BottomSheetItem(item: BottomSheetItem, onClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier
+            .width(100.dp)
+            .height(100.dp), onClick = onClick
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .absolutePadding(bottom = 2.dp)
+                .fillMaxSize()
+        )
+        {
+            Image(
+                painter = painterResource(id = item.icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .absolutePadding(bottom = 2.dp)
+            )
+            Text(
+                text = item.title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier.padding(1.dp)
+            )
+        }
+    }
+}
+
+data class BottomSheetItem(val title: String, val icon: Int, val link: String)
+
+val bsList = listOf(
+    BottomSheetItem("Facebook", R.drawable.icfacebook, "https://www.facebook.com"),
+    BottomSheetItem("Messenger", R.drawable.messenger, "https://m.me/"),
+    BottomSheetItem("Gmail", R.drawable.gmail, "https://mail.google.com"),
+    BottomSheetItem("Discord", R.drawable.discord, "https://www.discord.com"),
+)

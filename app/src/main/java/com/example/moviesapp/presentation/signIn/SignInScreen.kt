@@ -276,7 +276,7 @@ fun FacebookButton(
     onAuthError: (Exception) -> Unit,
     modifier: Modifier = Modifier,
 
-) {
+    ) {
     val scope = rememberCoroutineScope()
     val loginManager = LoginManager.getInstance()
     val callbackManager = remember { CallbackManager.Factory.create() }
@@ -332,7 +332,7 @@ fun FacebookButton(
             modifier = Modifier.fillMaxWidth()
         ) {
             Image(
-                painter = painterResource(id = R.drawable.facebook),
+                painter = painterResource(id = R.drawable.icfacebook),
                 contentDescription = null,
                 modifier = Modifier.size(33.dp)
             )
