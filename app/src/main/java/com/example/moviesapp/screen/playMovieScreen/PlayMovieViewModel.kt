@@ -19,7 +19,7 @@ class PlayMovieViewModel @Inject constructor(
     init {
         player.prepare()
         player.setMediaItem(
-            MediaItem.fromUri( "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
+            MediaItem.fromUri( "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
         )
     }
 
