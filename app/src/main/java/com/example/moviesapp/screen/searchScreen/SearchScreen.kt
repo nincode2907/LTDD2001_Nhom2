@@ -1,6 +1,7 @@
 package com.example.movieapp.screen.searchScreen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,9 +36,9 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,7 +61,6 @@ import com.example.moviesapp.model.CategoryMovie
 import com.example.moviesapp.model.CategoryMovieBookNavigation
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
-import com.example.moviesapp.screen.homeScreen.HomeViewModel
 import com.example.moviesapp.screen.searchScreen.SearchSreenViewModel
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
@@ -81,7 +81,7 @@ fun SearchScreen(
     val categoriesState = searchSreenViewModel.categories.collectAsState()
     Scaffold(
         topBar = {
-            SearchBarView()
+            SearchBarView(movies, searchSreenViewModel)
         },
         bottomBar = {
             BottomBar(
@@ -101,7 +101,8 @@ fun SearchScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp)
         ) {
-            items(if (boolean) categoriesState.value.sortedBy { it.name }.take(6) else categoriesState.value.sortedBy { it.name }) { it ->
+            items(if (boolean) categoriesState.value.sortedBy { it.name }
+                .take(6) else categoriesState.value.sortedBy { it.name }) { it ->
                 ItemCategoryView(it) {
                     navController.navigate(CategoryMovieBookNavigation.createRoute(it))
                 }
@@ -136,11 +137,11 @@ fun SearchScreen(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarView() {
+fun SearchBarView(movies: List<Movie>, searchSreenViewModel: SearchSreenViewModel) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     var items = remember {
-        mutableListOf("123123123", "12312sdfgsdfsd")
+        mutableStateListOf<String>()
     }
 
     Column(modifier = Modifier.padding(10.dp)) {
@@ -157,9 +158,12 @@ fun SearchBarView() {
             query = text,
             onQueryChange = { text = it },
             onSearch = {
+
                 items.add(text)
-                active = false
+
                 text = ""
+
+
             },
             active = active,
             onActiveChange = { active = it },
@@ -197,7 +201,11 @@ fun SearchBarView() {
                     )
                 )
                 items.forEach {
-                    Row(modifier = Modifier.padding(all = 14.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(all = 14.dp)
+                            .clickable { text = it }) {
                         Icon(
                             modifier = Modifier.padding(end = 10.dp),
                             painter = painterResource(id = R.drawable.baseline_history_24),
@@ -207,6 +215,7 @@ fun SearchBarView() {
                         Text(text = it, color = Color.White)
                     }
                 }
+                
             }
         }
     }

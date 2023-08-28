@@ -15,8 +15,6 @@ class SearchSreenViewModel @Inject  constructor ( val categoryRepository : Categ
     private val _categories = MutableStateFlow<List<CategoryMovie>>(emptyList())
     val categories: StateFlow<List<CategoryMovie>> get() = _categories
 
-
-
     init {
         getAllMovies()
     }

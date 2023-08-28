@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MoviesApp</string>
+
+    <string name="facebook_app_id">256678230630959</string>
+    <string name="fb_login_protocol_scheme">fb256678230630959</string>
+    <string name="facebook_client_token">56789</string>
 </resources>

@@ -20,14 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,9 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextIndent
@@ -52,13 +46,9 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.example.moviesapp.ShareViewModel
 import com.example.moviesapp.model.Movie
 
 import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
@@ -105,7 +95,7 @@ fun Film(
         mutableStateOf(true)
     }
     Scaffold() {
-        paddingValues ->
+            paddingValues ->
         Column(modifier = Modifier.fillMaxSize().background(Color.Black).padding(paddingValues)) {
             AndroidView(
                 modifier = Modifier
@@ -251,7 +241,7 @@ fun Film(
                                     modifier = Modifier.padding(end = 16.dp))
                             }
                         }
-                        CarouselListFilms(movie = movie!!,navController,movies)
+                        CarouselListFilms(movie = movie!!,navController,movies,viewModel)
                         Spacer(modifier = Modifier.height(30.dp))
                     }
                 }
@@ -268,6 +258,7 @@ fun Film(
                         colorIcon = StyleStatic.primaryTextColor,
                         size = "small",
                         onClick = {
+                            viewModel.stopVideo()
                             navController.popBackStack()
                         }
                     )
@@ -277,6 +268,8 @@ fun Film(
                         colorIcon = StyleStatic.primaryTextColor,
                         size = "small",
                         onClick = {
+                            viewModel.stopVideo()
+
                             navController.navigate(NavigationItem.Home.route)
                         }
                     )
@@ -286,17 +279,7 @@ fun Film(
     }
 }
 
-@Composable
-fun ExoPlayerView(player: ExoPlayer) {
-    AndroidView(
-        factory = { context ->
-            PlayerView(context).apply {
-                this.player = player
-            }
-        },
-        modifier = Modifier.fillMaxSize()
-    )
-}
+
 fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()

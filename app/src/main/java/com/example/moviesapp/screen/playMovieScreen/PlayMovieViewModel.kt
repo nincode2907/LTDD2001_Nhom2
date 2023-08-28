@@ -28,6 +28,9 @@ class PlayMovieViewModel @Inject constructor(
             MediaItem.fromUri(uri),
         )
     }
+    fun stopVideo(){
+        player.stop()
+    }
 
     override fun onCleared() {
         super.onCleared()
