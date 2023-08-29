@@ -14,8 +14,7 @@ class MoviesRemoteDataSource @Inject constructor( var db: FirebaseFirestore) {
         val result = db.collection("movies").get().await()
         for (document in result) {
             val movie = document.toObject<Movie>()
-            val date = document.getDate("releaseDate")
-
+            movie.id = document.id.toString()
             movies.add(movie)
         }
         return movies
@@ -26,15 +25,13 @@ class MoviesRemoteDataSource @Inject constructor( var db: FirebaseFirestore) {
         val result = db.collection("movies").whereEqualTo("outstanding",true).get().await()
         for (document in result) {
             val movie = document.toObject<Movie>()
+            movie.id = document.id.toString()
             movies.add(movie)
         }
         return movies
     }
 
-    suspend fun addMovie(movie: Movie) {
-        val collection = db.collection("movies")
-        collection.add(movie).await()
-    }
+
 
 
 }

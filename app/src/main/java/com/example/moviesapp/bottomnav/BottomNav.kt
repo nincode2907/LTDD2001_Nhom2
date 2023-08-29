@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -92,7 +93,7 @@ fun BottomBar(
             }
         })
 }
-
+@UnstableApi
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun BottomBarAnimationApp(

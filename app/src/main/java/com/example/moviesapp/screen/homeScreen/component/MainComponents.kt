@@ -298,7 +298,7 @@ fun RelatedMovies(
     ) {
         for (film in movies) {
             ItemRelatedFilm(film, onClick = {
-                viewModel.stopVideo()
+               // viewModel.stopVideo()
                 navController.navigate(MovieBookNavigation.createRoute(movie = film))
 
             })
