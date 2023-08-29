@@ -19,7 +19,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Info
@@ -28,6 +29,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +58,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
-import com.example.moviesapp.screen.homeScreen.component.StyleStatic.blurTextWhiteColor
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -63,6 +67,7 @@ import java.util.Calendar
 fun IconDetail(
     icon: ImageVector,
     description: String,
+    onClick: () -> Unit,
     colorIcon: Color = StyleStatic.primaryTextColor,
     colorText: Color = StyleStatic.primaryTextColor,
     modifier: Modifier = Modifier
@@ -77,7 +82,11 @@ fun IconDetail(
             contentDescription = description,
             modifier = Modifier
                 .size(30.dp)
-                .clip(RoundedCornerShape(percent = 50)),
+                .clip(RoundedCornerShape(percent = 50))
+                .clickable {
+                    onClick()
+                }
+            ,
             tint = colorIcon,
         )
         Text(
@@ -250,9 +259,11 @@ fun InfoCategoryFilm(
                 modifier = Modifier.width(70.dp)
             )
         }
-        items(infomation) { it ->
+        items(infomation) {
+            val cate = if (it.equals(infomation[infomation.size - 1])) "$it." else "$it, "
+
             Text(
-                text = it + ", ",
+                text = cate,
                 style = StyleStatic.textCommonStyle.copy(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -382,6 +393,9 @@ fun ItemPoster(
     navController: NavController,
     onClick: () -> Unit
 ) {
+    var liked by remember { mutableStateOf(false) }
+    var colorLikeIcon =
+        if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
     Box(
         contentAlignment = Alignment.BottomCenter
     ) {
@@ -417,16 +431,16 @@ fun ItemPoster(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconDetail(
-                Icons.Outlined.FavoriteBorder,
-                "Thêm vào DS",
-                modifier = Modifier
-                    .clickable {
-                    }
+                icon = if(liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                description = "Yêu thích",
+                colorIcon = colorLikeIcon,
+                onClick = {
+                    liked = !liked
+                }
             )
             ButtonPlay(
-                onClick = {
-                    onClick()
-                }, fSize = 14,
+                onClick = onClick
+                , fSize = 14,
                 modifier = Modifier
                     .weight(5f)
                     .padding(horizontal = 8.dp)
@@ -434,10 +448,7 @@ fun ItemPoster(
             IconDetail(
                 Icons.Outlined.Info,
                 "Chi tiết",
-                modifier = Modifier
-                    .clickable {
-                        onClick()
-                    }
+                   onClick = onClick
             )
         }
     }

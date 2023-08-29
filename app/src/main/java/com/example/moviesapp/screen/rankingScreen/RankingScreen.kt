@@ -1,6 +1,5 @@
 package com.example.movieapp.screen.rankingScreen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,14 +15,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.moviesapp.R
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 import com.example.rank.Banner
@@ -42,7 +42,7 @@ fun RankingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(Color.Black),
+                colors = TopAppBarDefaults.topAppBarColors(colorResource(id = R.color.dark)),
                 title = {
                     Text(
                         text = "Rankking",
@@ -66,7 +66,7 @@ fun RankingScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(colorResource(id = R.color.dark))
                 .padding(paddingValues)
         )
         {
@@ -74,7 +74,7 @@ fun RankingScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxHeight(),
-                    colors = CardDefaults.cardColors(Color.Black)
+                    colors = CardDefaults.cardColors(colorResource(id = R.color.dark))
                 ) {
                     Text(
                         text = "Nổi bật",

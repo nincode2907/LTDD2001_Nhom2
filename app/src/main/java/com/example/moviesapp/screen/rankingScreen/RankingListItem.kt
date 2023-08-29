@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -41,8 +42,8 @@ fun RankingListItem(ranking: Ranking, onClick: () -> Unit) {
         modifier = Modifier
             .padding(horizontal = 8.dp, vertical = 8.dp)
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(Color.Black),
-        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(colorResource(id = R.color.dark)),
+        elevation = CardDefaults.cardElevation(20.dp),
         shape = RoundedCornerShape(corner = CornerSize(10.dp))
 
     ) {
@@ -63,7 +64,7 @@ fun RankingListItem(ranking: Ranking, onClick: () -> Unit) {
                 Row {
                     Text(text = ranking.title, style = typography.bodyLarge,
                         color = Color.White,
-                        maxLines = 1,
+                        maxLines =1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .size(width = 175.dp, height = 30.dp))

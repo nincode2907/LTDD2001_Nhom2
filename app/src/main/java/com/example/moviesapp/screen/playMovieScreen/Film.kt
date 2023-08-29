@@ -3,8 +3,12 @@ package com.example.moviesapp.screen.playMovieScreen
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +23,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Share
@@ -31,41 +36,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.media3.ui.BuildConfig
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
+import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
-
 import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
 import com.example.moviesapp.screen.homeScreen.component.IconBackBlur
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
-
 import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
-
 import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 import java.util.Calendar
-
-
 
 
 @Composable
@@ -75,12 +80,18 @@ fun Film(
     movies:List<Movie>
 ) {
     val calendar = Calendar.getInstance()
+    val context = LocalContext.current
+    var maxLineDes by remember { mutableStateOf(4) }
+    var liked by remember { mutableStateOf(false) }
+    var colorLikeIcon =
+        if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
 
-    val viewModel: PlayMovieViewModel = hiltViewModel()
     var lifecycle by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
     }
     val lifecycleOwner = LocalLifecycleOwner.current
+    val viewModel: PlayMovieViewModel = hiltViewModel()
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             lifecycle = event
@@ -96,7 +107,10 @@ fun Film(
     }
     Scaffold() {
             paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().background(Color.Black).padding(paddingValues)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .padding(paddingValues)) {
             AndroidView(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -127,7 +141,6 @@ fun Film(
                             it.onResume()
                         }
 
-
                         else -> Unit
                     }
                 },
@@ -141,26 +154,7 @@ fun Film(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     item {
-                        Box(
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-
-                            repeat(3) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(60.dp)
-                                        .background(
-                                            brush = Brush.verticalGradient(
-                                                colors = listOf(
-                                                    Color.Transparent,
-                                                    StyleStatic.primaryModeColor
-                                                )
-                                            )
-                                        )
-                                )
-                            }
-                        }
+                        Spacer(modifier = Modifier.height(18.dp))
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -196,10 +190,21 @@ fun Film(
                                     fontWeight = FontWeight.Normal,
                                     textIndent = TextIndent(6.sp)
                                 ),
-                                maxLines = 4,
-                                modifier = Modifier.padding(vertical = 8.dp),
+                                maxLines = maxLineDes,
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp)
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = remember { MutableInteractionSource() }
+                                    ) {
+                                        maxLineDes = if (maxLineDes == 4) 99 else 4
+                                    }
+                                    .animateContentSize()
+                                ,
                                 overflow = TextOverflow.Ellipsis
                             )
+
+
 
                             InfoTopicFilm(
                                 topic = "Quốc gia",
@@ -209,13 +214,10 @@ fun Film(
                             InfoCategoryFilm(
                                 topic = "Thể loại",
                                 infomation = movie.category!!
-
                             )
 
                             ButtonPlay(
-                                onClick = {
-
-                                },
+                                onClick = {},
                                 modifier = Modifier
                                     .padding(vertical = 12.dp)
                                     .fillMaxWidth(),
@@ -227,18 +229,38 @@ fun Film(
                                     icon = Icons.Outlined.Add,
                                     description = "Thêm vào DS",
                                     colorText = StyleStatic.blurTextWhiteColor,
-                                    modifier = Modifier.padding(end = 16.dp))
+                                    modifier = Modifier.padding(end = 16.dp),
+                                    onClick = {}
+                                )
 
                                 IconDetail(
                                     icon = Icons.Outlined.Share,
                                     description = "Chia sẻ",
                                     colorText = StyleStatic.blurTextWhiteColor,
-                                    modifier = Modifier.padding(end = 16.dp))
+                                    modifier = Modifier.padding(end = 16.dp),
+                                    onClick = {
+                                        val text = "Tóc phai màu, ốm đau nhiều."
+
+                                        val sendIntent = Intent()
+                                        sendIntent.action = Intent.ACTION_SEND
+                                        sendIntent.putExtra(
+                                            Intent.EXTRA_TEXT,
+                                            text
+                                        )
+                                        sendIntent.type = "text/plain"
+                                        context.startActivity(sendIntent)
+                                    }
+                                )
                                 IconDetail(
-                                    icon = Icons.Default.FavoriteBorder,
+                                    icon = if(liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     description = "Yêu thích",
                                     colorText = StyleStatic.blurTextWhiteColor,
-                                    modifier = Modifier.padding(end = 16.dp))
+                                    colorIcon = colorLikeIcon,
+                                    modifier = Modifier.padding(end = 16.dp),
+                                    onClick = {
+                                        liked = !liked
+                                    }
+                                )
                             }
                         }
                         CarouselListFilms(movie = movie!!,navController,movies,viewModel)
@@ -269,7 +291,6 @@ fun Film(
                         size = "small",
                         onClick = {
                             viewModel.stopVideo()
-
                             navController.navigate(NavigationItem.Home.route)
                         }
                     )

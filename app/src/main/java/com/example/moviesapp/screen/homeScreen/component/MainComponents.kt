@@ -61,7 +61,6 @@ fun Carousel(
 
     val pagerState = rememberPagerState()
     var scope = rememberCoroutineScope()
-    var liked by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
 
     // Chiều cao sẽ bằng 70% kích thước màn hình
@@ -71,8 +70,7 @@ fun Carousel(
     // Chiều cao của ảnh
     val imageHeight = height - 80.dp
 
-    var colorLikeIcon =
-        if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
+
 //    LaunchedEffect(Unit) {
 //        while (true) {
 //            delay(4000)
@@ -93,7 +91,6 @@ fun Carousel(
                 heightImg = imageHeight,
                 navController,
                 onClick = {
-
                     navController.navigate(MovieBookNavigation.createRoute(movie = movies[page]))
                 })
         }
