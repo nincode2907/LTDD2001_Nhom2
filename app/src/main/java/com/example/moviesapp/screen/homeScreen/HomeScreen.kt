@@ -36,7 +36,6 @@ fun HomeScreen(
     bottomBarState: Boolean,
     movies: List<Movie>
 ) {
-    val currentDate = LocalDateTime.now()
 
     Scaffold(
         bottomBar = {
@@ -59,7 +58,6 @@ fun HomeScreen(
                 Carousel(
                     movies.filter { it.outstanding == true }.sortedByDescending { it.view ?: 0 },
                     navController,
-
                     )
                 ListFilmHorizontal(
                     movies.shuffled(),

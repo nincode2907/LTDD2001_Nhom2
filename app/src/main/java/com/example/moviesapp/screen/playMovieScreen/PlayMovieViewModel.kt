@@ -29,6 +29,7 @@ class PlayMovieViewModel @Inject constructor(
     private var _uiState = MutableStateFlow<VideoDetailUiState>(VideoDetailUiState.Default)
     val uiState: StateFlow<VideoDetailUiState>
         get() = _uiState
+
     init {
         videoPlayer.repeatMode = Player.REPEAT_MODE_ALL
         videoPlayer.playWhenReady = true
@@ -45,6 +46,9 @@ class PlayMovieViewModel @Inject constructor(
             is VideoDetailAction.ToggleVideo -> {
                 toggleVideo()
             }
+            is VideoDetailAction.StopVideo ->{
+                stopVideo()
+            }
 
             else -> {
 
@@ -52,24 +56,25 @@ class PlayMovieViewModel @Inject constructor(
         }
     }
 
-    private fun loadVideo(videoResource:String){
+    private fun loadVideo(videoResource: String) {
         _uiState.value = VideoDetailUiState.Loading
-        viewModelScope.launch{
+        viewModelScope.launch {
             delay(100L)
             playVideo(videoResource)
             _uiState.value = VideoDetailUiState.Success
         }
     }
 
-    private fun playVideo(videoResource:String){
+    private fun playVideo(videoResource: String) {
         val mediaItem = MediaItem.fromUri(videoResource)
         videoPlayer.setMediaItem(mediaItem)
         videoPlayer.play()
     }
-    private fun toggleVideo(){
-        if (videoPlayer.isLoading){
 
-        } else{
+    private fun toggleVideo() {
+        if (videoPlayer.isLoading) {
+
+        } else {
             if (videoPlayer.isPlaying)
                 videoPlayer.pause()
             else
@@ -77,11 +82,17 @@ class PlayMovieViewModel @Inject constructor(
         }
     }
 
+    private fun stopVideo() {
+        videoPlayer.pause()
+
+    }
+
     override fun onCleared() {
         super.onCleared()
         videoPlayer.release()
     }
 }
+
 sealed interface VideoDetailUiState {
     object Default : VideoDetailUiState
     object Loading : VideoDetailUiState
@@ -90,7 +101,8 @@ sealed interface VideoDetailUiState {
 }
 
 sealed class VideoDetailAction {
-    data class LoadData(val videoResource : String) : VideoDetailAction()
+    data class LoadData(val videoResource: String) : VideoDetailAction()
     object ToggleVideo : VideoDetailAction()
+    object StopVideo : VideoDetailAction()
 
 }

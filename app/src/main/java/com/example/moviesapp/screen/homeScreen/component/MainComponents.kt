@@ -40,12 +40,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic.textCommonStyle
 import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
+import com.example.myapplication.screen.PlayMovieScreen.VideoDetailAction
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -61,7 +63,6 @@ fun Carousel(
 
     val pagerState = rememberPagerState()
     var scope = rememberCoroutineScope()
-    var liked by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
 
     // Chiều cao sẽ bằng 70% kích thước màn hình
@@ -71,8 +72,7 @@ fun Carousel(
     // Chiều cao của ảnh
     val imageHeight = height - 80.dp
 
-    var colorLikeIcon =
-        if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
+
 //    LaunchedEffect(Unit) {
 //        while (true) {
 //            delay(4000)
@@ -93,7 +93,6 @@ fun Carousel(
                 heightImg = imageHeight,
                 navController,
                 onClick = {
-
                     navController.navigate(MovieBookNavigation.createRoute(movie = movies[page]))
                 })
         }
@@ -125,14 +124,14 @@ fun Carousel(
     }
 }
 
-
+@UnstableApi
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun CarouselListFilms(
     movie: Movie,
     navController: NavController,
     movies: List<Movie>,
-    viewModel: PlayMovieViewModel,
+    viewModel: PlayMovieViewModel
 ) {
     val listTags = listOf("Phim liên quan", "Trailer")
     val pagerState = rememberPagerState(initialPage = 0)
@@ -286,19 +285,19 @@ fun ListFilmTop5(
     }
 }
 
-
+@UnstableApi
 @Composable
 fun RelatedMovies(
     movies: List<Movie>,
     navController: NavController,
-    viewModel: PlayMovieViewModel,
+    viewModel: PlayMovieViewModel
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         for (film in movies) {
             ItemRelatedFilm(film, onClick = {
-               // viewModel.stopVideo()
+                viewModel.handleAction(VideoDetailAction.StopVideo)
                 navController.navigate(MovieBookNavigation.createRoute(movie = film))
 
             })
