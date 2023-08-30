@@ -106,8 +106,6 @@ fun BottomBarAnimationApp(
     val context = LocalContext.current
 
 
-
-
     BottomBarAnimationTheme {
         val navController = rememberNavController()
 
@@ -177,7 +175,6 @@ fun BottomBarAnimationApp(
                 AnimatedSplashScreen(navController)
             }
 
-
             composable("signIn") {
                 val viewModel: SignInViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsState()
@@ -194,8 +191,6 @@ fun BottomBarAnimationApp(
                         }
                     }
                 )
-
-
 
                 LaunchedEffect(key1 = state.isSignInSuccessful) {
                     if (state.isSignInSuccessful) {

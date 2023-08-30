@@ -1,5 +1,6 @@
 package com.example.moviesapp.presentation.signIn
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
@@ -284,11 +285,15 @@ fun FacebookButton(
     DisposableEffect(Unit) {
         loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onCancel() {
+                Log.d("XXX","1")
+
 
             }
 
             override fun onError(error: FacebookException) {
                 onAuthError(error)
+                Log.d("XXX",error.message.toString())
+
             }
 
             override fun onSuccess(result: LoginResult) {
@@ -297,8 +302,12 @@ fun FacebookButton(
                     val credential = FacebookAuthProvider.getCredential(token)
                     val authResult = Firebase.auth.signInWithCredential(credential).await()
                     if (authResult.user != null) {
+                        Log.d("XXX",authResult.user?.displayName.toString())
+
                         onAuthComplete()
                     } else {
+                        Log.d("XXX","asdasdasd")
+
                         onAuthError(IllegalStateException("Unable to sign in with Facebook"))
                     }
                 }
@@ -306,6 +315,8 @@ fun FacebookButton(
         })
 
         onDispose {
+            Log.d("XXX","5z")
+
             loginManager.unregisterCallback(callbackManager)
         }
     }

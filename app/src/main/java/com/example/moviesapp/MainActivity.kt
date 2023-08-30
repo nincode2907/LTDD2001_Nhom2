@@ -46,8 +46,9 @@ class MainActivity : ComponentActivity() {
             oneTapClient = Identity.getSignInClient(applicationContext),
         )
     }
-
-    @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
+    @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation",
+        "UnsafeOptInUsageError"
+    )
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,66 +63,7 @@ class MainActivity : ComponentActivity() {
             }
 
             BottomBarAnimationApp(googleAuthUiClient)
+
         }
     }
 }
-
-@Composable
-fun FacebookButton(
-    onAuthComplete: () -> Unit,
-    onAuthError: (Exception) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val scope = rememberCoroutineScope()
-    val loginManager = LoginManager.getInstance()
-    val callbackManager = remember { CallbackManager.Factory.create() }
-    val launcher = rememberLauncherForActivityResult(
-        loginManager.createLogInActivityResultContract(callbackManager, null)
-    ) {
-    }
-
-    DisposableEffect(Unit) {
-        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onCancel() {
-
-            }
-
-            override fun onError(error: FacebookException) {
-                onAuthError(error)
-            }
-
-            override fun onSuccess(result: LoginResult) {
-                scope.launch {
-                    val token = result.accessToken.token
-                    val credential = FacebookAuthProvider.getCredential(token)
-                    val authResult = Firebase.auth.signInWithCredential(credential).await()
-                    if (authResult.user != null) {
-                        Log.d("XXX",authResult.user?.displayName.toString())
-                        onAuthComplete()
-                    } else {
-                        onAuthError(IllegalStateException("Unable to sign in with Facebook"))
-                    }
-                }
-            }
-        })
-
-        onDispose {
-            loginManager.unregisterCallback(callbackManager)
-        }
-    }
-    Button(
-        modifier = modifier,
-        onClick = {
-            // start the sign-in flow
-            launcher.launch(listOf("email", "public_profile"))
-        }) {
-        Text("Continue with Facebook")
-    }
-}
-
-
-
-
-
-
-
