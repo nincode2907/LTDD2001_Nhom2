@@ -72,11 +72,9 @@ fun SearchScreen(
     navController: NavController,
     movies: List<Movie>
 ) {
-
     var boolean by remember {
         mutableStateOf(true)
     }
-
     val searchSreenViewModel: SearchSreenViewModel = hiltViewModel()
     val categoriesState = searchSreenViewModel.categories.collectAsState()
     Scaffold(
@@ -127,7 +125,6 @@ fun SearchScreen(
                 ItemMovieView(it) {
                     navController.navigate(MovieBookNavigation.createRoute(it))
 
-
                 }
             }
         }
@@ -162,8 +159,6 @@ fun SearchBarView(movies: List<Movie>, searchSreenViewModel: SearchSreenViewMode
                 items.add(text)
 
                 text = ""
-
-
             },
             active = active,
             onActiveChange = { active = it },

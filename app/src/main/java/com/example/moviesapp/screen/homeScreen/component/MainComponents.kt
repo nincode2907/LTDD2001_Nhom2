@@ -64,23 +64,10 @@ fun Carousel(
     val pagerState = rememberPagerState()
     var scope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
-
-    // Chiều cao sẽ bằng 70% kích thước màn hình
     val screenHeight = configuration.screenHeightDp.dp
     val height = screenHeight * 0.8f
-
-    // Chiều cao của ảnh
     val imageHeight = height - 80.dp
 
-
-//    LaunchedEffect(Unit) {
-//        while (true) {
-//            delay(4000)
-//            scope.launch {
-//                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-//            }
-//        }
-//    }
     Column() {
         HorizontalPager(
             count = movies.size,
@@ -136,7 +123,6 @@ fun CarouselListFilms(
     val listTags = listOf("Phim liên quan", "Trailer")
     val pagerState = rememberPagerState(initialPage = 0)
     var scope = rememberCoroutineScope()
-
     val styleActive = textCommonStyle.copy(fontWeight = FontWeight.Bold, fontSize = 17.sp)
 
     Column() {

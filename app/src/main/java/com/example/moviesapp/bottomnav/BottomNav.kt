@@ -1,7 +1,6 @@
 package com.example.petadoption.bottomnav
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -25,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +54,6 @@ import com.example.moviesapp.model.MoviesNavType
 import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.moviesapp.presentation.signIn.SignInScreen
 import com.example.moviesapp.presentation.signIn.SignInViewModel
-
 import com.example.moviesapp.screen.AnimatedSplashScreen
 import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
@@ -65,8 +62,6 @@ import com.example.moviesapp.screen.homeScreen.HomeViewModel
 import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.mainScreen.MainViewModel
-import com.facebook.CallbackManager
-import com.facebook.login.LoginManager
 import com.plcoding.composegooglesignincleanarchitecture.presentation.profile.ProfileScreen
 import kotlinx.coroutines.launch
 
@@ -105,8 +100,6 @@ fun BottomBarAnimationApp(
     val moviesState = homeViewModel.movies.collectAsState()
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
-
-
     BottomBarAnimationTheme {
         val navController = rememberNavController()
 
@@ -175,7 +168,6 @@ fun BottomBarAnimationApp(
             composable(NavigationItem.AnimatedSplash.route) {
                 AnimatedSplashScreen(navController)
             }
-
             composable("signIn") {
                 val viewModel: SignInViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsState()
@@ -192,7 +184,6 @@ fun BottomBarAnimationApp(
                         }
                     }
                 )
-
                 LaunchedEffect(key1 = state.isSignInSuccessful) {
                     if (state.isSignInSuccessful) {
                         Toast.makeText(
@@ -235,25 +226,18 @@ fun BottomBarAnimationApp(
                     }
                 )
             }
-
-
         }
     }
 }
-
-
 @Composable
 fun RowScope.AddItem(
     screen: NavigationItem, currentDestination: NavDestination?, navController: NavController
 ) {
     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-    val background = if (selected) Color.Transparent else Color.Transparent
-    val contentColor = if (selected) Color.White else Color.White
-
     Box(
         modifier = Modifier
             .clip(CircleShape)
-            .background(background)
+            .background(Color.Transparent)
             .clickable(onClick = {
                 navController.navigate(screen.route) {
                     popUpTo(navController.graph.findStartDestination().id)
@@ -271,14 +255,13 @@ fun RowScope.AddItem(
             Icon(
                 painter = painterResource(id = if (selected) screen.image else screen.imageSelected),
                 contentDescription = "icon",
-                tint = contentColor
+                tint = Color.White
             )
             AnimatedVisibility(visible = selected) {
                 Text(
-                    text = screen.title, color = contentColor
+                    text = screen.title, color = Color.White
                 )
             }
         }
     }
 }
-

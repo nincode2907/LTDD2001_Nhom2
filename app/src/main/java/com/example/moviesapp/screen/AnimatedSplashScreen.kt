@@ -4,10 +4,8 @@ package com.example.moviesapp.screen
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,22 +20,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavHostController
 import com.example.myapplication.model.NavigationItem
 import kotlinx.coroutines.delay
 import com.example.moviesapp.R
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
-
 @Composable
 fun AnimatedSplashScreen(navController: NavController) {
     var showLoading by remember { mutableStateOf(true) }
@@ -55,7 +46,6 @@ fun AnimatedSplashScreen(navController: NavController) {
             .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
-
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,8 +71,6 @@ fun AnimatedSplashScreen(navController: NavController) {
         }
     }
 }
-
-
 @Composable
 fun LoadingAnimation(
     dotCount: Int = 3,
@@ -94,9 +82,7 @@ fun LoadingAnimation(
     waveFrequency: Float = 8f,
     modifier: Modifier = Modifier
 ) {
-
     val waveOffsets = remember { List(dotCount) { Animatable(0f) } }
-
     waveOffsets.forEachIndexed { index, animatable ->
         LaunchedEffect(key1 = animatable) {
             delay(index * 100L)
@@ -114,9 +100,7 @@ fun LoadingAnimation(
             )
         }
     }
-
     val waveOffsetsValues = waveOffsets.map { it.value }
-
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(spaceBetween)
@@ -137,10 +121,3 @@ fun LoadingAnimation(
         }
     }
 }
-
-
-
-
-
-
-

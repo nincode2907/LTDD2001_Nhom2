@@ -9,3 +9,5 @@ val Teal200 = Color(0xFF03DAC5)
 val BlackDark = Color(0xFF000000)
 val Grey900 = Color(0xFF202124)
 val Blue500 = Color(0xFF1957C2)
+val White = Color.White
+val Transparent = Color.Transparent
