@@ -34,6 +34,7 @@ class PlayMovieViewModel @Inject constructor(
         videoPlayer.repeatMode = Player.REPEAT_MODE_ALL
         videoPlayer.playWhenReady = true
         videoPlayer.prepare()
+
     }
 
     fun handleAction(action: VideoDetailAction) {
