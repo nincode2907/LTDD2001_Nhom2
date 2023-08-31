@@ -3,6 +3,7 @@ package com.example.moviesapp.presentation.signIn
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.util.Log
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -24,9 +25,11 @@ class GoogleAuthUiClient(
                 buildSignInRequest()
             ).await()
         } catch(e: Exception) {
+
             e.printStackTrace()
             if(e is CancellationException) throw e
             null
+
         }
         return result?.pendingIntent?.intentSender
     }
@@ -81,7 +84,7 @@ class GoogleAuthUiClient(
                 GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId("221622331059-7h3m41k6e4t3117rl1fdk7h8fnvkns5d.apps.googleusercontent.com")
+                    .setServerClientId("221622331059-19tqfgmomqu2lg3fnnng1rkjp3fdebmi.apps.googleusercontent.com")
                     .build()
             )
             .setAutoSelectEnabled(true)
