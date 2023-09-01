@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -173,6 +174,46 @@ fun UserScreen(
                                 color = Color.White,
                             )
                         }
+                    }
+
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .background(Color.DarkGray)
+                        .padding(10.dp)
+                        .clickable {
+                            if (googleAuthUiClient.getSignedInUser() != null) {
+                                navController.navigate("favourite")
+                            } else {
+                                navController.navigate("signIn")
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = Color.White,
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = "Danh sách phim yêu thích",
+                            fontSize = 20.sp,
+                            color = Color.White,
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(45.dp),
+                            tint = Color.White
+                        )
+
                     }
 
                 }

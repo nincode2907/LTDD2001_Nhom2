@@ -237,6 +237,25 @@ fun FilmInList(
     )
 }
 
+@Composable
+fun FilmInFavourite(
+    imageUrl: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        modifier = modifier
+            .clip(RoundedCornerShape(6.dp))
+            .clickable { onClick() },
+        contentScale = ContentScale.Crop
+    )
+}
+
 
 
 @Composable
@@ -390,10 +409,10 @@ fun ItemMovieTop5(
 fun ItemPoster(
     imageUrl: String,
     heightImg: Dp,
-    navController: NavController,
+    isFavourite: Boolean,
     onClick: () -> Unit
 ) {
-    var liked by remember { mutableStateOf(false) }
+    var liked by remember { mutableStateOf(isFavourite) }
     var colorLikeIcon =
         if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
     Box(
@@ -407,6 +426,7 @@ fun ItemPoster(
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
+                .height(heightImg)
                 .clickable { onClick() },
             contentScale = ContentScale.Crop
         )

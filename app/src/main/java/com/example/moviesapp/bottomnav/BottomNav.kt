@@ -24,7 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +37,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -49,11 +55,15 @@ import com.example.movieapp.screen.rankingScreen.RankingScreen
 import com.example.movieapp.screen.searchScreen.SearchScreen
 import com.example.moviesapp.model.CategoryMovieBookNavigation
 import com.example.moviesapp.model.CategoryMovieNavType
+import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.model.MoviesNavType
+import com.example.moviesapp.presentation.favourite.FavouriteList
+import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
 import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.moviesapp.presentation.signIn.SignInScreen
 import com.example.moviesapp.presentation.signIn.SignInViewModel
+import com.example.moviesapp.presentation.signIn.UserData
 import com.example.moviesapp.screen.AnimatedSplashScreen
 import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
@@ -98,6 +108,9 @@ fun BottomBarAnimationApp(
     val mainViewModel: MainViewModel = hiltViewModel()
     val homeViewModel: HomeViewModel = hiltViewModel()
     val moviesState = homeViewModel.movies.collectAsState()
+    val viewFavouriteModel: FavouriteMoviesModel = viewModel()
+    val favouriteMovies by viewFavouriteModel.favouriteMovies.collectAsState(initial = emptyList())
+
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
     BottomBarAnimationTheme {
@@ -105,7 +118,7 @@ fun BottomBarAnimationApp(
 
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.Home.route,
+            startDestination = NavigationItem.User.route,
             ) {
             composable(NavigationItem.Home.route) {
                 HomeScreen(
@@ -113,6 +126,7 @@ fun BottomBarAnimationApp(
                     navController = navController,
                     bottomBarState = true,
                     movies = moviesState.value,
+                    movieFavourites = favouriteMovies.orEmpty()
                 )
             }
 
@@ -124,12 +138,15 @@ fun BottomBarAnimationApp(
                 })
             ) {
                 val movie = MovieBookNavigation.from(it)
-                Film(movie = movie!!, navController = navController, moviesState.value)
+                Film(movie = movie!!,  navController = navController, moviesState.value, movieFavourites = favouriteMovies, viewModel = viewFavouriteModel)
             }
             composable(NavigationItem.Ranking.route) {
                 RankingScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
+                    movies = moviesState.value,
+                    movieFavourites = favouriteMovies,
+                    viewModel = viewFavouriteModel
                 )
             }
             composable(NavigationItem.Search.route) {
@@ -162,7 +179,6 @@ fun BottomBarAnimationApp(
                     mainViewModel = mainViewModel,
                     navController = navController,
                     googleAuthUiClient
-
                 )
             }
             composable(NavigationItem.AnimatedSplash.route) {
@@ -211,8 +227,13 @@ fun BottomBarAnimationApp(
                 )
             }
             composable("profile") {
+                var userData by remember { mutableStateOf<UserData?>(null) }
+
+                LaunchedEffect(key1 = Unit) {
+                    userData = googleAuthUiClient.getSignedInUser()
+                }
                 ProfileScreen(
-                    userData = googleAuthUiClient.getSignedInUser(),
+                    userData = userData,
                     onSignOut = {
                         coroutine.launch {
                             googleAuthUiClient.signOut()
@@ -224,6 +245,13 @@ fun BottomBarAnimationApp(
                             navController.popBackStack()
                         }
                     }
+                )
+            }
+
+            composable("favourite") {
+                FavouriteList(
+                    movies = favouriteMovies.orEmpty(),
+                    navController = navController
                 )
             }
         }

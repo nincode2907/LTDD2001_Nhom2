@@ -1,6 +1,7 @@
 package com.example.moviesapp
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -38,6 +39,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val googleAuthUiClient by lazy {
@@ -65,5 +67,21 @@ class MainActivity : ComponentActivity() {
             BottomBarAnimationApp(googleAuthUiClient)
 
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Xác nhận thoát")
+        alertDialogBuilder.setMessage("Ấn quay về một lần nữa để thoát ứng dụng?")
+
+        alertDialogBuilder.setPositiveButton("Không") { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialogBuilder.setNegativeButton("Thoát") { _, _ ->
+            finish()
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }

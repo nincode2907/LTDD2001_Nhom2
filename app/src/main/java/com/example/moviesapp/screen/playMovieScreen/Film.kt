@@ -1,43 +1,32 @@
 package com.example.moviesapp.screen.playMovieScreen
 
+
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,47 +35,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import com.example.moviesapp.screen.categoryMoviesCreen.TopBarScreen
-import com.example.myapplication.screen.PlayMovieScreen.VideoDetailAction
-import com.example.myapplication.screen.PlayMovieScreen.VideoDetailUiState
-
-
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
-
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
-import com.example.moviesapp.screen.homeScreen.component.ButtonPlay
+import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
-import com.example.moviesapp.screen.homeScreen.component.IconBackBlur
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
 import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
 import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
-import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
+import com.example.myapplication.screen.PlayMovieScreen.VideoDetailAction
+import com.example.myapplication.screen.PlayMovieScreen.VideoDetailUiState
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -97,6 +79,8 @@ fun Film(
     movie: Movie,
     navController: NavController,
     movies: List<Movie>,
+    movieFavourites: List<Movie>,
+    viewModel: FavouriteMoviesModel
 ) {
     val videoViewModel: PlayMovieViewModel = hiltViewModel(key = movie.id)
 
@@ -106,6 +90,15 @@ fun Film(
     var liked by remember { mutableStateOf(false) }
     var colorLikeIcon =
         if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
+
+    var isFavourite by remember { mutableStateOf(movie?.id?.let { movieId ->
+        movieFavourites.any { it.id == movieId }
+    } ?: false) }
+    var rotationState by remember { mutableStateOf(0f) }
+    val rotation by animateFloatAsState(
+        targetValue = if (isFavourite) 360f else 0f,
+        animationSpec = tween(durationMillis = 500)
+    )
 
     Column(
         modifier = Modifier
@@ -172,11 +165,19 @@ fun Film(
             )
             Row(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
                 IconDetail(
-                    icon = Icons.Outlined.Add,
+                    icon = if(isFavourite) Icons.Outlined.Check else Icons.Default.Add,
                     description = "Thêm vào DS",
                     colorText = StyleStatic.blurTextWhiteColor,
-                    modifier = Modifier.padding(end = 16.dp),
-                    onClick = {}
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .rotate(rotationState + rotation),
+                    onClick = {
+                        viewModel.viewModelScope.launch {
+                            viewModel.updateFavourite(movie)
+                        }
+                        isFavourite = !isFavourite
+                        rotationState += 360f
+                    }
                 )
                 IconDetail(
                     icon = Icons.Outlined.Share,
@@ -209,8 +210,6 @@ fun Film(
             }
         }
         CarouselListFilms(movie = movie!!,navController,movies, viewModel = videoViewModel)
-
-       
     }
 }
 
@@ -300,6 +299,7 @@ fun TopTopVideoPlayer(modifier: Modifier, player: Player) {
 
                 }
             }
+
 
         }
     }, modifier = modifier)

@@ -18,11 +18,10 @@ import androidx.navigation.NavController
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.screen.homeScreen.component.Carousel
-import com.example.myapplication.screen.mainScreen.MainViewModel
-import com.example.petadoption.bottomnav.BottomBar
 import com.example.moviesapp.screen.homeScreen.component.ListFilmHorizontal
 import com.example.moviesapp.screen.homeScreen.component.ListFilmTop5
-import java.time.LocalDateTime
+import com.example.myapplication.screen.mainScreen.MainViewModel
+import com.example.petadoption.bottomnav.BottomBar
 
 
 @SuppressLint(
@@ -34,7 +33,8 @@ fun HomeScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
     bottomBarState: Boolean,
-    movies: List<Movie>
+    movies: List<Movie>,
+    movieFavourites: List<Movie>
 ) {
 
     Scaffold(
@@ -57,7 +57,8 @@ fun HomeScreen(
             item {
                 Carousel(
                     movies.filter { it.outstanding == true }.sortedByDescending { it.view ?: 0 },
-                    navController,
+                    movieFavourites,
+                    navController
                     )
                 ListFilmHorizontal(
                     movies.shuffled(),
