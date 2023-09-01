@@ -38,6 +38,7 @@ import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
+import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 import com.example.rank.RankingListItem
@@ -49,7 +50,8 @@ fun RankingScreen(
     navController: NavController,
     movies: List<Movie>,
     movieFavourites: List<Movie>,
-    viewModel: FavouriteMoviesModel
+    viewModel: FavouriteMoviesModel,
+    googleAuthUiClient: GoogleAuthUiClient
 ) {
     val imageRanking : List<String> = listOf(
         "https://i.ibb.co/v4TWn3P/top1.png",
@@ -121,12 +123,13 @@ fun RankingScreen(
                 } ?: false
                 RankingListItem(movie = movies[it],
                     isFavourite,
-                    onClick = {
-                        navController.navigate(MovieBookNavigation.createRoute(movie = movies[it]))
-                              },
                     viewModel = viewModel,
-                    imgTopUrl = imageRanking[it]
-                )
+                    imgTopUrl = imageRanking[it],
+                    navController = navController,
+                    googleAuthUiClient = googleAuthUiClient
+                ) {
+                    navController.navigate(MovieBookNavigation.createRoute(movie = movies[it]))
+                }
             }
         }
     }

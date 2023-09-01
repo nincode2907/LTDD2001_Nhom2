@@ -35,11 +35,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
+import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import kotlinx.coroutines.launch
 
 
@@ -47,10 +49,12 @@ import kotlinx.coroutines.launch
 fun RankingListItem(
     movie: Movie,
     isFavouriteInit: Boolean,
-    onClick: () -> Unit,
     viewModel: FavouriteMoviesModel,
-    imgTopUrl: String?
-) {
+    imgTopUrl: String?,
+    navController: NavController,
+    googleAuthUiClient: GoogleAuthUiClient,
+    onClick: () -> Unit
+    ) {
     var isFavourite by remember { mutableStateOf(isFavouriteInit) }
 
     Card(
@@ -85,10 +89,14 @@ fun RankingListItem(
                             .size(width = 175.dp, height = 30.dp))
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = {
-                        viewModel.viewModelScope.launch {
-                            viewModel.updateFavourite(movie)
+                        if (googleAuthUiClient.getSignedInUser() != null) {
+                            viewModel.viewModelScope.launch {
+                                viewModel.updateFavourite(movie)
+                            }
+                            isFavourite = !isFavourite
+                        } else {
+                            navController.navigate("signIn")
                         }
-                        isFavourite = !isFavourite
                     },
                         modifier = Modifier.size(30.dp)) {
                         Icon(painter = if(!isFavourite) painterResource(id = R.drawable.outline_bookmark_add_24) else painterResource(id = R.drawable.outline_bookmark_added_24),

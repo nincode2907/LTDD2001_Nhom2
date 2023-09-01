@@ -118,7 +118,7 @@ fun BottomBarAnimationApp(
 
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.User.route,
+            startDestination = NavigationItem.AnimatedSplash.route,
             ) {
             composable(NavigationItem.Home.route) {
                 HomeScreen(
@@ -138,7 +138,13 @@ fun BottomBarAnimationApp(
                 })
             ) {
                 val movie = MovieBookNavigation.from(it)
-                Film(movie = movie!!,  navController = navController, moviesState.value, movieFavourites = favouriteMovies, viewModel = viewFavouriteModel)
+                Film(movie = movie!!,
+                    navController = navController,
+                    moviesState.value,
+                    movieFavourites = favouriteMovies,
+                    viewModel = viewFavouriteModel,
+                    googleAuthUiClient = googleAuthUiClient
+                )
             }
             composable(NavigationItem.Ranking.route) {
                 RankingScreen(
@@ -146,7 +152,8 @@ fun BottomBarAnimationApp(
                     navController = navController,
                     movies = moviesState.value,
                     movieFavourites = favouriteMovies,
-                    viewModel = viewFavouriteModel
+                    viewModel = viewFavouriteModel,
+                    googleAuthUiClient = googleAuthUiClient
                 )
             }
             composable(NavigationItem.Search.route) {
@@ -172,6 +179,9 @@ fun BottomBarAnimationApp(
                     mainViewModel = mainViewModel,
                     navController = navController,
                     movies = moviesState.value,
+                    movieFavourites = favouriteMovies,
+                    viewModel = viewFavouriteModel,
+                    googleAuthUiClient = googleAuthUiClient
                 )
             }
             composable(NavigationItem.User.route) {

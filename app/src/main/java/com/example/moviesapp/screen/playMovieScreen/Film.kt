@@ -19,6 +19,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
@@ -59,6 +64,7 @@ import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
+import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
 import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
@@ -80,7 +86,8 @@ fun Film(
     navController: NavController,
     movies: List<Movie>,
     movieFavourites: List<Movie>,
-    viewModel: FavouriteMoviesModel
+    viewModel: FavouriteMoviesModel,
+    googleAuthUiClient: GoogleAuthUiClient
 ) {
     val videoViewModel: PlayMovieViewModel = hiltViewModel(key = movie.id)
 
@@ -100,120 +107,120 @@ fun Film(
         animationSpec = tween(durationMillis = 500)
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-
-    ) {
-        VideoDetailScreen(movie, videoViewModel)
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)) {
-            Text(
-                text = movie!!.name.toString(),
-                style = StyleStatic.textCommonStyle.copy(
-                    fontSize = 38.sp,
-                    fontFamily = fontFamilyHeading,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            )
-            Row(
-                modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
-            ) {
-                calendar.time = movie.releaseDate?.toDate()
-                val styleInRow = StyleStatic.textCommonStyle.copy(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = StyleStatic.blurTextWhiteColor
-                )
-                val infos = listOf(
-                    calendar.get(Calendar.YEAR).toString(),
-                    movie.episodeTotal.toString(),
-                    movie.time.toString()
-                )
-
-                InfoSpaceDot(infos = infos, style = styleInRow)
-            }
-            Text(
-                text = movie.description.toString(),
-                style = StyleStatic.textCommonStyle.copy(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    textIndent = TextIndent(6.sp)
-                ),
-                maxLines = maxLineDes,
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
+    Scaffold() { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .padding(paddingValues)
+        ) {
+            VideoDetailScreen(movie, videoViewModel)
+            LazyColumn() {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
                     ) {
-                        maxLineDes = if (maxLineDes == 4) 99 else 4
-                    }
-                    .animateContentSize(),
-                overflow = TextOverflow.Ellipsis
-            )
-            InfoTopicFilm(
-                topic = "Quốc gia",
-                infomation = movie.country.toString()
-            )
-            InfoCategoryFilm(
-                topic = "Thể loại",
-                infomation = movie.category!!
-            )
-            Row(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
-                IconDetail(
-                    icon = if(isFavourite) Icons.Outlined.Check else Icons.Default.Add,
-                    description = "Thêm vào DS",
-                    colorText = StyleStatic.blurTextWhiteColor,
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .rotate(rotationState + rotation),
-                    onClick = {
-                        viewModel.viewModelScope.launch {
-                            viewModel.updateFavourite(movie)
-                        }
-                        isFavourite = !isFavourite
-                        rotationState += 360f
-                    }
-                )
-                IconDetail(
-                    icon = Icons.Outlined.Share,
-                    description = "Chia sẻ",
-                    colorText = StyleStatic.blurTextWhiteColor,
-                    modifier = Modifier.padding(end = 16.dp),
-                    onClick = {
-                        val text = "Tóc phai màu, ốm đau nhiều."
-
-                        val sendIntent = Intent()
-                        sendIntent.action = Intent.ACTION_SEND
-                        sendIntent.putExtra(
-                            Intent.EXTRA_TEXT,
-                            text
+                        Text(
+                            text = movie!!.name.toString(),
+                            style = StyleStatic.textCommonStyle.copy(
+                                fontSize = 38.sp,
+                                fontFamily = fontFamilyHeading,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
                         )
-                        sendIntent.type = "text/plain"
-                        context.startActivity(sendIntent)
+                        Row(
+                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                        ) {
+                            calendar.time = movie.releaseDate?.toDate()
+                            val styleInRow = StyleStatic.textCommonStyle.copy(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = StyleStatic.blurTextWhiteColor
+                            )
+                            val infos = listOf(
+                                calendar.get(Calendar.YEAR).toString(),
+                                movie.episodeTotal.toString(),
+                                movie.time.toString()
+                            )
+                            InfoSpaceDot(infos = infos, style = styleInRow)
+                        }
+                        Text(text = movie.description.toString(),
+                            style = StyleStatic.textCommonStyle.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Normal,
+                                textIndent = TextIndent(6.sp)
+                            ),
+                            maxLines = maxLineDes,
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .clickable(indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }) {
+                                    maxLineDes = if (maxLineDes == 4) 99 else 4
+                                }
+                                .animateContentSize(),
+                            overflow = TextOverflow.Ellipsis)
+                        InfoTopicFilm(
+                            topic = "Quốc gia", infomation = movie.country.toString()
+                        )
+                        InfoCategoryFilm(
+                            topic = "Thể loại", infomation = movie.category!!
+                        )
+                        Row(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
+                            IconDetail(
+                                icon = if(isFavourite) Icons.Outlined.Check else Icons.Default.Add,
+                                description = "Thêm vào DS",
+                                colorText = StyleStatic.blurTextWhiteColor,
+                                modifier = Modifier
+                                    .padding(end = 16.dp)
+                                    .rotate(rotationState + rotation),
+                                onClick = {
+                                    if (googleAuthUiClient.getSignedInUser() != null) {
+                                        viewModel.viewModelScope.launch {
+                                            viewModel.updateFavourite(movie)
+                                        }
+                                        isFavourite = !isFavourite
+                                        rotationState += 360f
+                                    } else {
+                                        navController.navigate("signIn")
+                                    }
+                                }
+                            )
+                            IconDetail(icon = Icons.Outlined.Share,
+                                description = "Chia sẻ",
+                                colorText = StyleStatic.blurTextWhiteColor,
+                                modifier = Modifier.padding(end = 16.dp),
+                                onClick = {
+                                    val text = "Tóc phai màu, ốm đau nhiều."
+
+                                    val sendIntent = Intent()
+                                    sendIntent.action = Intent.ACTION_SEND
+                                    sendIntent.putExtra(
+                                        Intent.EXTRA_TEXT, text
+                                    )
+                                    sendIntent.type = "text/plain"
+                                    context.startActivity(sendIntent)
+                                })
+                            IconDetail(icon = if (liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                description = "Yêu thích",
+                                colorText = StyleStatic.blurTextWhiteColor,
+                                colorIcon = colorLikeIcon,
+                                modifier = Modifier.padding(end = 16.dp),
+                                onClick = {
+                                    liked = !liked
+                                })
+                        }
                     }
-                )
-                IconDetail(
-                    icon = if (liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    description = "Yêu thích",
-                    colorText = StyleStatic.blurTextWhiteColor,
-                    colorIcon = colorLikeIcon,
-                    modifier = Modifier.padding(end = 16.dp),
-                    onClick = {
-                        liked = !liked
-                    }
-                )
+                    CarouselListFilms(
+                        movie = movie!!, navController, movies, viewModel = videoViewModel
+                    )
+                }
             }
         }
-        CarouselListFilms(movie = movie!!,navController,movies, viewModel = videoViewModel)
     }
 }
-
-
 
 
 @UnstableApi

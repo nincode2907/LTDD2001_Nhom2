@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
 import coil.compose.AsyncImage
@@ -69,6 +70,8 @@ import com.example.petadoption.bottomnav.BottomBar
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
+import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
+import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import kotlinx.coroutines.launch
 
@@ -79,6 +82,9 @@ fun ComingSoonScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
     movies: List<Movie>,
+    movieFavourites: List<Movie>,
+    viewModel: FavouriteMoviesModel,
+    googleAuthUiClient: GoogleAuthUiClient
 ) {
 
     var isSaved by remember{
@@ -114,7 +120,15 @@ fun ComingSoonScreen(
                 .background(Color.Black)
         ) {
             items(movies.sortedByDescending { it.releaseDate }.take(3)) { movie ->
-                MovieList(movie = movie) {
+                val isFavourite = movie.id?.let { movieId ->
+                    movieFavourites.any { it.id == movieId }
+                } ?: false
+                MovieList(movie = movie,
+                    isFavouriteInit = isFavourite,
+                    viewModel = viewModel,
+                    navController = navController,
+                    googleAuthUiClient = googleAuthUiClient
+                ) {
                     navController.navigate(MovieBookNavigation.createRoute(movie = movie))
                 }
             }
@@ -126,9 +140,16 @@ fun ComingSoonScreen(
 @SuppressLint("NewApi")
 @Composable
 fun MovieList(
-    movie: Movie, onClick: () -> Unit
+    movie: Movie,
+    isFavouriteInit: Boolean,
+    viewModel: FavouriteMoviesModel,
+    navController: NavController,
+    googleAuthUiClient: GoogleAuthUiClient,
+    onClick: () -> Unit
 ) {
     val context = LocalContext.current
+    var isFavourite by remember { mutableStateOf(isFavouriteInit) }
+
     Column(
         modifier = Modifier
             .background(Color.Black)
@@ -195,8 +216,18 @@ fun MovieList(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
-                            .width(90.dp), img = R.drawable.ic_save1, title = "Save"
+                            .width(90.dp),
+                        img = if(!isFavourite) R.drawable.ic_save1 else R.drawable.ic_save,
+                        title = "Save"
                     ) {
+                        if (googleAuthUiClient.getSignedInUser() != null) {
+                            viewModel.viewModelScope.launch {
+                                viewModel.updateFavourite(movie)
+                            }
+                            isFavourite = !isFavourite
+                        } else {
+                            navController.navigate("signIn")
+                        }
                     }
 
                     IconButtonView(
