@@ -188,7 +188,19 @@ fun BottomBarAnimationApp(
                 UserScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    googleAuthUiClient
+                    googleAuthUiClient,
+                    onSignOut = {
+                        coroutine.launch {
+                            googleAuthUiClient.signOut()
+                            Toast.makeText(
+                                context,
+                                "Signed out",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            navController.popBackStack()
+                            navController.navigate(NavigationItem.User.route)
+                        }
+                    }
                 )
             }
             composable(NavigationItem.AnimatedSplash.route) {

@@ -105,8 +105,10 @@ fun RankingListItem(
                         )
                     }
                 }
-                Text(text = movie.country!!,  style = TextStyle(color = Color.Gray), fontSize = 10.sp, fontStyle = FontStyle.Italic, maxLines = 1)
-                Text(text = movie.description!!, style = typography.bodySmall,
+                Text(text = movie.country!!,  style = TextStyle(color = Color.Gray), fontSize = 12.sp, fontStyle = FontStyle.Italic, maxLines = 1)
+                Text(text = movie.description!!,
+                    style = typography.bodySmall,
+                    fontSize = 12.sp,
                     color = Color.White,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis)

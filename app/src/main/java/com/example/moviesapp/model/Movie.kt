@@ -23,7 +23,6 @@ data class Movie(
     val episodeTotal: String? = null,
     val time: String? = null,
     val country: String? = null,
-    val imgTop: String? = null,
     val trailer: String? = null,
     val category: List<String>? = null,
     val view: Int? = null,

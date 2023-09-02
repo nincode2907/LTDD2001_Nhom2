@@ -71,7 +71,7 @@ fun RankingScreen(
                 colors = TopAppBarDefaults.topAppBarColors(colorResource(id = R.color.dark)),
                 title = {
                     Text(
-                        text = "Ranking",
+                        text = "Xếp hạng",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -106,14 +106,16 @@ fun RankingScreen(
                         text = "Nổi bật",
                         style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                         fontStyle = FontStyle.Italic,
-                        color = Color.White
+                        color = Color.White,
+                        modifier = Modifier.padding(start = 6.dp)
                     )
                     Banner( movies.filter { it.outstanding == true }.sortedByDescending { it.view ?: 0 })
                     Text(
                         text = "Top phim",
                         style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                         fontStyle = FontStyle.Italic,
-                        color = Color.White
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 10.dp, start = 6.dp)
                     )
                 }
             }
