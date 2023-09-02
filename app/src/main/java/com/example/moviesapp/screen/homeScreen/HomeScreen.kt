@@ -60,7 +60,11 @@ fun HomeScreen(
                     movieFavourites,
                     navController
                     )
-
+                ListFilmHorizontal(
+                    movies.filter { "Phim Chiếu Rạp" in it.category.orEmpty() },
+                    categoryFilms = "Phim Chiếu Rạp",
+                    navController,
+                )
                 ListFilmTop5(
                     movies.shuffled(),
                     navController = navController,
@@ -75,8 +79,18 @@ fun HomeScreen(
                     navController = navController,
                 )
                 ListFilmHorizontal(
-                    movies.filter { "Phim Chiếu Rạp" in it.category.orEmpty() },
-                    categoryFilms = "Phim Chiếu Rạp",
+                    movies.filter { "Hài Hước" in it.category.orEmpty() },
+                    categoryFilms = "Hài Hước",
+                    navController,
+                )
+                ListFilmHorizontal(
+                    movies.filter { "Hành Động" in it.category.orEmpty() },
+                    categoryFilms = "Hành Động",
+                    navController,
+                )
+                ListFilmHorizontal(
+                    movies.filter { "Kinh Dị" in it.category.orEmpty() },
+                    categoryFilms = "Kinh Dị",
                     navController,
                 )
                 Spacer(modifier = Modifier.height(50.dp))

@@ -50,7 +50,6 @@ data class Movie(
 
 }
 
-
 class MoviesNavType : NavType<Movie>(isNullableAllowed = true) {
     override fun get(bundle: Bundle, key: String): Movie? {
         return bundle.getParcelable(key)

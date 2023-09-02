@@ -251,7 +251,7 @@ fun TitleRowViewMovie(title: String,navController: NavController) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = title,
+            text = "Phim $title",
             style = StyleStatic.textCommonStyle.copy(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
