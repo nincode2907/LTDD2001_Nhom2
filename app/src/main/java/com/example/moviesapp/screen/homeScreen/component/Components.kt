@@ -1,5 +1,8 @@
 package com.example.moviesapp.screen.homeScreen.component
 
+import android.os.Looper
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,7 +64,10 @@ import com.example.moviesapp.model.Movie
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import kotlinx.coroutines.delay
 import java.util.Calendar
+import java.util.logging.Handler
+import androidx.compose.runtime.LaunchedEffect as LaunchedEffect
 
 @Composable
 fun IconDetail(
@@ -489,19 +495,21 @@ fun InfoSpaceDot(
    }
 }
 
-//@Composable
-//fun YoutubeTrailer(trailerUrl: String) {
-//    AndroidView(
-//        modifier = Modifier.fillMaxWidth()
-//            .height(360.dp),
-//        factory = {context ->
-//            WebView(context).apply {
-//                settings.javaScriptEnabled = true
-//                webViewClient = WebViewClient()
-//                loadUrl(trailerUrl)
-//            }
-//    })
-//}
+@Composable
+fun BackAppToast() {
+    var shouldShowToast by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    BackHandler {
+        if (shouldShowToast) {
+            Toast.makeText(context, "Ứng dụng sẽ thoát khi bạn nhấn lại một lần nữa", Toast.LENGTH_SHORT).show()
+        } else {
+            shouldShowToast = true
+
+        }
+    }
+}
+
 
 @Composable
 fun YoutubeTrailer(

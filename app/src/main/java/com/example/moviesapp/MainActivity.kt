@@ -1,23 +1,37 @@
 package com.example.moviesapp
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -42,6 +56,8 @@ import java.security.NoSuchAlgorithmException
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private var pressedTime: Long = 0
+
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
             context = applicationContext,
@@ -65,23 +81,17 @@ class MainActivity : ComponentActivity() {
             }
 
             BottomBarAnimationApp(googleAuthUiClient)
-
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onBackPressed() {
-        super.onBackPressed()
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setTitle("Xác nhận thoát")
-        alertDialogBuilder.setMessage("Ấn quay về một lần nữa để thoát ứng dụng?")
-
-        alertDialogBuilder.setPositiveButton("Không") { dialog, _ ->
-            dialog.dismiss()
-        }
-        alertDialogBuilder.setNegativeButton("Thoát") { _, _ ->
+        if (pressedTime + 2000 > System.currentTimeMillis()) {
+            super.onBackPressed()
             finish()
+        } else {
+            Toast.makeText(this, "Nhấn trở về một lần nữa để thoát", Toast.LENGTH_SHORT).show();
         }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
+        pressedTime = System.currentTimeMillis();
     }
 }
