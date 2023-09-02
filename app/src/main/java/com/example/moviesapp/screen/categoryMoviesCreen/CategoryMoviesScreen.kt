@@ -58,8 +58,7 @@ import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 fun CategoryMoviesScreen(
     categoryMovie: CategoryMovie,
     navController: NavController,
-    movies: List<Movie>,
-
+    movies: List<Movie>
 ) {
     Scaffold(
         modifier = Modifier
@@ -115,7 +114,6 @@ fun CategoryMoviesScreen(
 
                 ItemMovieView(it) {
                     navController.navigate(MovieBookNavigation.createRoute(movie = it))
-
                 }
             }
         }
@@ -153,8 +151,3 @@ fun Top5Movies(categoryMovie: CategoryMovie, movies: List<Movie>, navController:
     }
 }
 
-
-@Preview(showSystemUi = true)
-@Composable
-fun Prieview() {
-}

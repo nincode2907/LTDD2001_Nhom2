@@ -1,7 +1,5 @@
 package com.example.moviesapp.data.moviesData
 
-import android.content.ContentValues
-import android.util.Log
 import com.example.moviesapp.model.Movie
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject

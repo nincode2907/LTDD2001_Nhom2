@@ -1,8 +1,7 @@
 package com.example.rank
 
-import android.provider.ContactsContract.Profile
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,46 +14,66 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.moviesapp.R
-import com.example.rank.data.Ranking
-import codes.andreirozov.bottombaranimation.ui.theme.BottomBarAnimationTheme
+import com.example.moviesapp.model.Movie
+import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
+import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun RankingListItem(ranking: Ranking, onClick: () -> Unit) {
+fun RankingListItem(
+    movie: Movie,
+    isFavouriteInit: Boolean,
+    viewModel: FavouriteMoviesModel,
+    imgTopUrl: String?,
+    navController: NavController,
+    googleAuthUiClient: GoogleAuthUiClient,
+    onClick: () -> Unit
+    ) {
+    var isFavourite by remember { mutableStateOf(isFavouriteInit) }
 
     Card(
         modifier = Modifier
             .padding(horizontal = 8.dp, vertical = 8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable {  },
         colors = CardDefaults.cardColors(colorResource(id = R.color.dark)),
         elevation = CardDefaults.cardElevation(20.dp),
         shape = RoundedCornerShape(corner = CornerSize(10.dp))
 
     ) {
         Row(Modifier.clickable(onClick = onClick)) {
-            Text(text = ranking.id, style = typography.bodyLarge,
-                modifier = Modifier
-                    .size(width = 25.dp, height = 120.dp),
-                textAlign = TextAlign.Center,
-                color = Color.White
-            )
-            RankingImage(ranking = ranking)
+            Box() {
+                RankingImage(movie)
+                if (imgTopUrl != null) {
+                    topRank(imgTopUrl)
+                }
+            }
             Column(
                 modifier = Modifier
                     .padding(8.dp)
@@ -62,18 +81,34 @@ fun RankingListItem(ranking: Ranking, onClick: () -> Unit) {
                     .height(90.dp)
             ) {
                 Row {
-                    Text(text = ranking.title, style = typography.bodyLarge,
+                    Text(text = movie.name!!, style = typography.bodyLarge,
                         color = Color.White,
                         maxLines =1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .size(width = 175.dp, height = 30.dp))
                     Spacer(modifier = Modifier.weight(1f))
-                    Icon(painter = painterResource(id = R.drawable.outline_bookmark_add_24), contentDescription = null, modifier = Modifier
-                        .padding(0.dp), tint = Color.White)
+                    IconButton(onClick = {
+                        if (googleAuthUiClient.getSignedInUser() != null) {
+                            viewModel.viewModelScope.launch {
+                                viewModel.updateFavourite(movie)
+                            }
+                            isFavourite = !isFavourite
+                        } else {
+                            navController.navigate("signIn")
+                        }
+                    },
+                        modifier = Modifier.size(30.dp)) {
+                        Icon(painter = if(!isFavourite) painterResource(id = R.drawable.outline_bookmark_add_24) else painterResource(id = R.drawable.outline_bookmark_added_24),
+                            contentDescription = null, modifier = Modifier
+                                .padding(0.dp), tint = Color.White,
+                        )
+                    }
                 }
-                Text(text = ranking.category,  style = TextStyle(color = Color.Gray), fontSize = 10.sp, fontStyle = FontStyle.Italic, maxLines = 1)
-                Text(text = ranking.description, style = typography.bodySmall,
+                Text(text = movie.country!!,  style = TextStyle(color = Color.Gray), fontSize = 12.sp, fontStyle = FontStyle.Italic, maxLines = 1)
+                Text(text = movie.description!!,
+                    style = typography.bodySmall,
+                    fontSize = 12.sp,
                     color = Color.White,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis)
@@ -83,15 +118,29 @@ fun RankingListItem(ranking: Ranking, onClick: () -> Unit) {
 }
 
 @Composable
-private fun RankingImage(ranking: Ranking) {
-    Image(
-        painter = painterResource(id = ranking.puppyImageId) ,
-        contentDescription = null,
+private fun RankingImage(movie: Movie) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(movie.image)
+            .crossfade(true)
+            .build(),
+        contentDescription = movie.name,
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .padding(8.dp)
             .size(width = 90.dp, height = 120.dp)
             .height(90.dp)
             .clip(RoundedCornerShape(corner = CornerSize(5.dp)))
+    )
+}
+
+@Composable
+private fun topRank(imgTopUrl: String) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imgTopUrl)
+            .crossfade(true)
+            .build(),
+        contentDescription = null
     )
 }

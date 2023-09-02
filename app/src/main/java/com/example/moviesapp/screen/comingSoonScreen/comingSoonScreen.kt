@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
 import coil.compose.AsyncImage
@@ -69,6 +70,8 @@ import com.example.petadoption.bottomnav.BottomBar
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
+import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
+import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
 import kotlinx.coroutines.launch
 
@@ -79,6 +82,9 @@ fun ComingSoonScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
     movies: List<Movie>,
+    movieFavourites: List<Movie>,
+    viewModel: FavouriteMoviesModel,
+    googleAuthUiClient: GoogleAuthUiClient
 ) {
 
     
@@ -112,21 +118,34 @@ fun ComingSoonScreen(
                 .background(Color.Black)
         ) {
             items(movies.sortedByDescending { it.releaseDate }.take(3)) { movie ->
-                MovieList(movie = movie) {
+                val isFavourite = movie.id?.let { movieId ->
+                    movieFavourites.any { it.id == movieId }
+                } ?: false
+                MovieList(movie = movie,
+                    isFavouriteInit = isFavourite,
+                    viewModel = viewModel,
+                    navController = navController,
+                    googleAuthUiClient = googleAuthUiClient
+                ) {
                     navController.navigate(MovieBookNavigation.createRoute(movie = movie))
                 }
             }
         }
     }
 }
-
 @SuppressLint("NewApi")
 @Composable
 fun MovieList(
-    movie: Movie, onClick: () -> Unit
+    movie: Movie,
+    isFavouriteInit: Boolean,
+    viewModel: FavouriteMoviesModel,
+    navController: NavController,
+    googleAuthUiClient: GoogleAuthUiClient,
+    onClick: () -> Unit
 ) {
     val context = LocalContext.current
-    var isSaved by remember{ mutableStateOf(false) }
+    var isFavourite by remember { mutableStateOf(isFavouriteInit) }
+
     Column(
         modifier = Modifier
             .background(Color.Black)
@@ -185,57 +204,66 @@ fun MovieList(
                     )
 
                 )
-                Spacer(modifier = Modifier.width(35.dp))
                 Row(
+                    modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     IconButtonView(
                         modifier = Modifier
-                            .absolutePadding(left = 10.dp)
+                            .weight(1f)
                             .fillMaxHeight()
-                            .width(50.dp),
-                        img = if (isSaved) R.drawable.ic_save else R.drawable.ic_save1,
-                        title = if (isSaved) "Saved" else "Save"
+                            .width(90.dp),
+                        img = if(!isFavourite) R.drawable.ic_save1 else R.drawable.ic_save,
+                        title = "Save"
                     ) {
-                        val message = if (isSaved) "Đã hủy thêm vào DS" else "Đã thêm vào DS"
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                        isSaved = !isSaved
+                        if (googleAuthUiClient.getSignedInUser() != null) {
+                            viewModel.viewModelScope.launch {
+                                viewModel.updateFavourite(movie)
+                            }
+                            isFavourite = !isFavourite
+                        } else {
+                            navController.navigate("signIn")
+                        }
+                    }
+
+                    IconButtonView(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .width(90.dp), img = R.drawable.ic_share, title = "Share"
+                    ) {
+                        val text = "Tóc phai màu, ốm đau nhiều."
+
+                        val sendIntent = Intent()
+                        sendIntent.action = Intent.ACTION_SEND
+                        sendIntent.putExtra(
+                            Intent.EXTRA_TEXT,
+                            text
+                        )
+                        sendIntent.type = "text/plain"
+                        context.startActivity(sendIntent)
                     }
 
                 }
-                IconButtonView(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .width(25.dp), img = R.drawable.ic_share, title = "Share"
-                ) {
-                    val text = "Tóc phai màu, ốm đau nhiều."
-
-                    val sendIntent = Intent()
-                    sendIntent.action = Intent.ACTION_SEND
-                    sendIntent.putExtra(
-                        Intent.EXTRA_TEXT,
-                        text
-                    )
-                    sendIntent.type = "text/plain"
-                    context.startActivity(sendIntent)
-                }
-
             }
         }
+
+        Text(
+            text = movie.description.toString(),
+            style = StyleStatic.textCommonStyle.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                textIndent = TextIndent(6.sp)
+            ),
+            maxLines = 4,
+            modifier = Modifier.padding(vertical = 8.dp),
+            overflow = TextOverflow.Ellipsis
+        )
+
+
     }
 
-    Text(
-        text = movie.description.toString(),
-        style = StyleStatic.textCommonStyle.copy(
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
-            textIndent = TextIndent(6.sp)
-        ),
-        maxLines = 4,
-        modifier = Modifier.padding(vertical = 8.dp),
-        overflow = TextOverflow.Ellipsis
-    )
+
 }
 
 @Composable

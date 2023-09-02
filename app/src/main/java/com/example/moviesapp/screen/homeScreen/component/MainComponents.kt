@@ -26,7 +26,12 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +52,7 @@ import com.example.myapplication.screen.PlayMovieScreen.VideoDetailAction
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -54,6 +60,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Carousel(
     movies: List<Movie>,
+    movieFavourites: List<Movie>,
     navController: NavController,
 ) {
 
@@ -64,6 +71,19 @@ fun Carousel(
     val height = screenHeight * 0.8f
     val imageHeight = height - 80.dp
 
+    var currentPage by remember { mutableStateOf(0) }
+
+    LaunchedEffect(currentPage) {
+        while(true) {
+            delay(4000)
+            currentPage = (currentPage + 1) % movies.size
+
+            scope.launch {
+                pagerState.animateScrollToPage(currentPage)
+            }
+        }
+    }
+
     Column() {
         HorizontalPager(
             count = movies.size,
@@ -71,10 +91,14 @@ fun Carousel(
             modifier = Modifier.height(height),
             verticalAlignment = Alignment.Top
         ) { page ->
+            val isFavourite = movies[page]?.id?.let { movieId ->
+                movieFavourites.any { it.id == movieId }
+            } ?: false
+
             ItemPoster(
                 imageUrl = movies[page].image.toString(),
                 heightImg = imageHeight,
-                navController,
+                isFavourite,
                 onClick = {
                     navController.navigate(MovieBookNavigation.createRoute(movie = movies[page]))
                 })

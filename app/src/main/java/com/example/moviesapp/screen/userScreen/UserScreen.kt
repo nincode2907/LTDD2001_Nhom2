@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -38,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +52,7 @@ import com.example.moviesapp.R
 import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,6 +61,7 @@ fun UserScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
     googleAuthUiClient: GoogleAuthUiClient,
+    onSignOut : () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -89,7 +94,7 @@ fun UserScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .background(Color(0xFF060197))
+                    .background(Color(0xFF12315F))
                     .padding(15.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -125,13 +130,13 @@ fun UserScreen(
                 }
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .background(Color.DarkGray)
+                        .background(colorResource(id = R.color.dark))
                         .padding(10.dp)
                         .clickable {
                             if (googleAuthUiClient.getSignedInUser() != null) {
@@ -142,12 +147,12 @@ fun UserScreen(
                             }
                         },
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Person,
+                        painterResource(id = R.drawable.iconuser),
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = colorResource(id = R.color.whiteBlur),
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -155,7 +160,7 @@ fun UserScreen(
                     ) {
                         Text(
                             text = "Thiết lập tài khoản",
-                            fontSize = 20.sp,
+                            fontSize = 17.sp,
                             color = Color.White,
                         )
 
@@ -163,14 +168,14 @@ fun UserScreen(
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowRight,
                                 contentDescription = null,
-                                modifier = Modifier.size(45.dp),
-                                tint = Color.White
+                                modifier = Modifier.size(38.dp),
+                                tint = colorResource(id = R.color.whiteBlur)
                             )
                         } else {
                             Text(
                                 text = googleAuthUiClient.getSignedInUser()!!.username.toString(),
-                                fontSize = 15.sp,
-                                color = Color.White,
+                                fontSize = 14.sp,
+                                color = colorResource(id = R.color.whiteBlur),
                             )
                         }
                     }
@@ -180,7 +185,46 @@ fun UserScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .background(Color.DarkGray)
+                        .background(colorResource(id = R.color.dark))
+                        .padding(10.dp)
+                        .clickable {
+                            if (googleAuthUiClient.getSignedInUser() != null) {
+                                navController.navigate("favourite")
+                            } else {
+                                navController.navigate("signIn")
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = colorResource(id = R.color.whiteBlur),
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = "Danh sách phim yêu thích",
+                            fontSize = 17.sp,
+                            color = Color.White,
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(32.dp),
+                            tint = colorResource(id = R.color.whiteBlur)
+                        )
+                    }
+
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .background(colorResource(id = R.color.dark))
                         .padding(10.dp)
                         .clickable {
                             if (googleAuthUiClient.getSignedInUser() != null) {
@@ -191,16 +235,16 @@ fun UserScreen(
                             }
                         },
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = colorResource(id = R.color.whiteBlur),
                     )
                     Text(
                         text = "Cài đặt ứng dụng",
-                        fontSize = 20.sp,
+                        fontSize = 17.sp,
                         color = Color.White,
                         modifier = Modifier.weight(1f)
 
@@ -210,8 +254,8 @@ fun UserScreen(
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowRight,
                             contentDescription = null,
-                            modifier = Modifier.size(45.dp),
-                            tint = Color.White
+                            modifier = Modifier.size(32.dp),
+                            tint = colorResource(id = R.color.whiteBlur)
                         )
                     }
                 }
@@ -220,7 +264,7 @@ fun UserScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .background(Color.DarkGray)
+                        .background(colorResource(id = R.color.dark))
                         .padding(10.dp)
                         .clickable {
                             if (googleAuthUiClient.getSignedInUser() != null) {
@@ -231,17 +275,17 @@ fun UserScreen(
                             }
                         },
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 )
                 {
                     Icon(
                         painter = painterResource(id = R.drawable.iconticket),
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = colorResource(id = R.color.whiteBlur),
                     )
                     Text(
                         text = "Ưu đãi của bạn",
-                        fontSize = 20.sp,
+                        fontSize = 17.sp,
                         color = Color.White,
                         modifier = Modifier.weight(1f)
 
@@ -249,9 +293,36 @@ fun UserScreen(
                     androidx.compose.material3.TextButton(onClick = { }) {
                         Text(
                             text = "Nhập Mã",
-                            fontSize = 10.sp,
+                            fontSize = 12.sp,
                             color = Color.White,
                             textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                if (googleAuthUiClient.getSignedInUser() != null) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .background(colorResource(id = R.color.dark))
+                            .padding(10.dp)
+                            .clickable {
+                                onSignOut()
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ExitToApp,
+                            contentDescription = null,
+                            tint = colorResource(id = R.color.whiteBlur),
+                        )
+                        Text(
+                            text = "Đăng xuất",
+                            fontSize = 17.sp,
+                            color = Color.White,
                         )
                     }
                 }
