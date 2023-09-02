@@ -13,7 +13,7 @@ android {
     compileSdk 33
     signingConfigs {
         release {
-            storeFile file("F:\\Workspace\\School\\Nam3\\HocKy3\\LLTTBDD\\Project\\LTDD2001_Nhom2\\keystore\\key.jks")
+            storeFile file("C:\\New folder\\LTDD2001_Nhom2\\keystore\\key.jks")
             storePassword "ltddnhom2"
             keyAlias "ltddnhom2"
             keyPassword "ltddnhom2"

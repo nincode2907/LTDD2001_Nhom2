@@ -7,12 +7,14 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,11 +29,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -72,6 +77,7 @@ import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
 import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
+import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 import com.example.myapplication.screen.PlayMovieScreen.VideoDetailAction
 import com.example.myapplication.screen.PlayMovieScreen.VideoDetailUiState
@@ -99,9 +105,11 @@ fun Film(
     var colorLikeIcon =
         if (liked) colorResource(id = R.color.tym) else StyleStatic.primaryTextColor
 
-    var isFavourite by remember { mutableStateOf(movie?.id?.let { movieId ->
-        movieFavourites.any { it.id == movieId }
-    } ?: false) }
+    var isFavourite by remember {
+        mutableStateOf(movie?.id?.let { movieId ->
+            movieFavourites.any { it.id == movieId }
+        } ?: false)
+    }
     var rotationState by remember { mutableStateOf(0f) }
     val rotation by animateFloatAsState(
         targetValue = if (isFavourite) 360f else 0f,
@@ -116,6 +124,7 @@ fun Film(
                 .padding(paddingValues)
         ) {
             VideoDetailScreen(movie, videoViewModel)
+
             LazyColumn() {
                 item {
                     Column(
@@ -123,6 +132,22 @@ fun Film(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                     ) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Icon(
+                                Icons.Default.ArrowBack,
+                                contentDescription = "",
+                                tint = Color.White,
+                                modifier = Modifier.clickable {
+                                    navController.popBackStack()
+                                })
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = "",
+                                tint = Color.White,
+                                modifier = Modifier.clickable {
+                                    navController.popBackStack(NavigationItem.Home.route, false)
+                                })
+                        }
                         Text(
                             text = movie!!.name.toString(),
                             style = StyleStatic.textCommonStyle.copy(
@@ -171,7 +196,7 @@ fun Film(
                         )
                         Row(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
                             IconDetail(
-                                icon = if(isFavourite) Icons.Outlined.Check else Icons.Default.Add,
+                                icon = if (isFavourite) Icons.Outlined.Check else Icons.Default.Add,
                                 description = "Thêm vào DS",
                                 colorText = StyleStatic.blurTextWhiteColor,
                                 modifier = Modifier
