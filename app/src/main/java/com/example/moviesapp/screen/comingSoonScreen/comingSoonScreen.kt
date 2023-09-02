@@ -81,9 +81,7 @@ fun ComingSoonScreen(
     movies: List<Movie>,
 ) {
 
-    var isSaved by remember{
-        mutableStateOf(false)
-    }
+    
     Scaffold(
         topBar = {
             TopAppBar(
@@ -122,13 +120,13 @@ fun ComingSoonScreen(
     }
 }
 
-
 @SuppressLint("NewApi")
 @Composable
 fun MovieList(
     movie: Movie, onClick: () -> Unit
 ) {
     val context = LocalContext.current
+    var isSaved by remember{ mutableStateOf(false) }
     Column(
         modifier = Modifier
             .background(Color.Black)
@@ -187,58 +185,58 @@ fun MovieList(
                     )
 
                 )
+                Spacer(modifier = Modifier.width(35.dp))
                 Row(
-                    modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     IconButtonView(
                         modifier = Modifier
-                            .weight(1f)
+                            .absolutePadding(left = 10.dp)
                             .fillMaxHeight()
-                            .width(90.dp), img = R.drawable.ic_save1, title = "Save"
+                            .width(50.dp),
+                        img = if (isSaved) R.drawable.ic_save else R.drawable.ic_save1,
+                        title = if (isSaved) "Saved" else "Save"
                     ) {
-                    }
-
-                    IconButtonView(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .width(90.dp), img = R.drawable.ic_share, title = "Share"
-                    ) {
-                        val text = "Tóc phai màu, ốm đau nhiều."
-
-                        val sendIntent = Intent()
-                        sendIntent.action = Intent.ACTION_SEND
-                        sendIntent.putExtra(
-                            Intent.EXTRA_TEXT,
-                            text
-                        )
-                        sendIntent.type = "text/plain"
-                        context.startActivity(sendIntent)
+                        val message = if (isSaved) "Đã hủy thêm vào DS" else "Đã thêm vào DS"
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        isSaved = !isSaved
                     }
 
                 }
+                IconButtonView(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .width(25.dp), img = R.drawable.ic_share, title = "Share"
+                ) {
+                    val text = "Tóc phai màu, ốm đau nhiều."
+
+                    val sendIntent = Intent()
+                    sendIntent.action = Intent.ACTION_SEND
+                    sendIntent.putExtra(
+                        Intent.EXTRA_TEXT,
+                        text
+                    )
+                    sendIntent.type = "text/plain"
+                    context.startActivity(sendIntent)
+                }
+
             }
         }
-
-        Text(
-            text = movie.description.toString(),
-            style = StyleStatic.textCommonStyle.copy(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                textIndent = TextIndent(6.sp)
-            ),
-            maxLines = 4,
-            modifier = Modifier.padding(vertical = 8.dp),
-            overflow = TextOverflow.Ellipsis
-        )
-
-
     }
 
-
+    Text(
+        text = movie.description.toString(),
+        style = StyleStatic.textCommonStyle.copy(
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            textIndent = TextIndent(6.sp)
+        ),
+        maxLines = 4,
+        modifier = Modifier.padding(vertical = 8.dp),
+        overflow = TextOverflow.Ellipsis
+    )
 }
-
 
 @Composable
 fun IconButtonView(modifier: Modifier, img: Int, title: String, onClick: () -> Unit) {
@@ -260,6 +258,7 @@ fun IconButtonView(modifier: Modifier, img: Int, title: String, onClick: () -> U
         }
     }
 }
+
 
 
 

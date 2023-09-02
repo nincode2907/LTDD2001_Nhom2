@@ -59,18 +59,14 @@ fun HomeScreen(
                     movies.filter { it.outstanding == true }.sortedByDescending { it.view ?: 0 },
                     navController,
                     )
-                ListFilmHorizontal(
-                    movies.shuffled(),
-                    categoryFilms = "Phim Thể Loại Top 1 Khu Vực",
-                    navController
-                )
+
                 ListFilmTop5(
                     movies.shuffled(),
                     navController = navController,
                 )
                 ListFilmHorizontal(
-                    movies.filter { "Trinh Thám" in it.category.orEmpty() },
-                    categoryFilms = "Trinh Thám",
+                    movies.filter { "Anime" in it.category.orEmpty() },
+                    categoryFilms = "Anime",
                     navController,
                 )
                 ListFilmHorizontal(

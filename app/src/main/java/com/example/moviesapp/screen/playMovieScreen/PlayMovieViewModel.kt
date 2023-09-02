@@ -70,6 +70,7 @@ class PlayMovieViewModel @Inject constructor(
         val mediaItem = MediaItem.fromUri(videoResource)
         videoPlayer.setMediaItem(mediaItem)
         videoPlayer.play()
+        videoPlayer.pause()
     }
 
     private fun toggleVideo() {

@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -173,10 +172,12 @@ fun ButtonPlay(
 
 
 @Composable
-fun FilmSeeMore() {
+fun FilmSeeMore(navController: NavController,title:String) {
     Box(
         modifier = StyleStatic.modifierFilmInListSize
-            .background(colorResource(id = R.color.dark), RoundedCornerShape(6.dp)),
+            .background(colorResource(id = R.color.dark), RoundedCornerShape(6.dp)).clickable {
+                navController.navigate("allmovies/"+title)
+            },
         contentAlignment = Alignment.Center
     ) {
         Image(

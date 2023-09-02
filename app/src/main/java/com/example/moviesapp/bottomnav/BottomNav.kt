@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -54,6 +55,7 @@ import com.example.moviesapp.model.MoviesNavType
 import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.moviesapp.presentation.signIn.SignInScreen
 import com.example.moviesapp.presentation.signIn.SignInViewModel
+import com.example.moviesapp.screen.AllMovies
 import com.example.moviesapp.screen.AnimatedSplashScreen
 import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
@@ -89,6 +91,7 @@ fun BottomBar(
             }
         })
 }
+
 @UnstableApi
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -106,7 +109,7 @@ fun BottomBarAnimationApp(
         NavHost(
             navController = navController,
             startDestination = NavigationItem.Home.route,
-            ) {
+        ) {
             composable(NavigationItem.Home.route) {
                 HomeScreen(
                     mainViewModel = mainViewModel,
@@ -136,7 +139,7 @@ fun BottomBarAnimationApp(
                 SearchScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    movies = moviesState.value
+                    movies = moviesState.value,
                 )
             }
 
@@ -226,9 +229,19 @@ fun BottomBarAnimationApp(
                     }
                 )
             }
+            composable("allmovies/{title}", arguments = listOf(navArgument("title") {
+                type = NavType.StringType
+            })) { navBackStackEntry ->
+                AllMovies(
+                    movies = moviesState.value,
+                    title = navBackStackEntry.arguments?.getString("title")!!,
+                    navController = navController
+                )
+            }
         }
     }
 }
+
 @Composable
 fun RowScope.AddItem(
     screen: NavigationItem, currentDestination: NavDestination?, navController: NavController
