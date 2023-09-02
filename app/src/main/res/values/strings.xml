@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MoviesApp</string>
+    <string name="app_name">Cinema</string>
 
     <string name="facebook_app_id">678782194269342</string>
     <string name="fb_login_protocol_scheme">fb678782194269342</string>
