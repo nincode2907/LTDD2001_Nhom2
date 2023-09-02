@@ -49,7 +49,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
         Button(onClick = onSignOut) {
-            Text(text = "Sign out", color = Color.White)
+            Text(text = "Đăng xuất", color = Color.White)
         }
     }
 }

@@ -1,5 +1,9 @@
 package com.example.myapplication.screen.mainScreen
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.model.NavigationItem
 import dagger.hilt.android.lifecycle.HiltViewModel

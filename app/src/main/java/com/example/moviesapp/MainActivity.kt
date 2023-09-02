@@ -1,63 +1,42 @@
 package com.example.moviesapp
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.AlertDialog
-import android.content.pm.PackageManager
-import android.graphics.Color
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Base64
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
+import com.example.moviesapp.screen.mainScreen.Main.checkNetworkConnectivity
 import com.example.petadoption.bottomnav.BottomBarAnimationApp
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.auth.api.identity.Identity
-import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var pressedTime: Long = 0
+    private val CHANNEL_ID = "movies_app_29"
+    private val notificationID = 2907
 
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
@@ -65,13 +44,28 @@ class MainActivity : ComponentActivity() {
             oneTapClient = Identity.getSignInClient(applicationContext),
         )
     }
+    @OptIn(ExperimentalPermissionsApi::class)
     @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation",
-        "UnsafeOptInUsageError"
+        "UnsafeOptInUsageError", "MissingPermission"
     )
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val isConnected by remember { mutableStateOf(checkNetworkConnectivity(this)) }
+            val notificationPermission = rememberPermissionState(permission = android.Manifest.permission.POST_NOTIFICATIONS)
+
+            if (!isConnected) {
+                Toast.makeText(this, "Không có kết nối mạng", Toast.LENGTH_SHORT).show()
+            }
+
+            createNotificationChannel()
+            if(!notificationPermission.status.isGranted) {
+                LaunchedEffect(Unit) {
+                    notificationPermission.launchPermissionRequest()
+                }
+            } else
+                sendNotification(this)
 
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
             WindowInsetsControllerCompat(window, window.decorView).apply {
@@ -95,4 +89,40 @@ class MainActivity : ComponentActivity() {
         }
         pressedTime = System.currentTimeMillis();
     }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.app_name)
+            val descriptionText = "Thông báo mới"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun sendNotification(context: Context) {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        // Tạo thông báo
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.baseline_notifications)
+            .setContentTitle("Ngày mới xuất hiện phim hay")
+            .setContentText("Đã có phim mới xuất hiện. Thưởng thức ngay thôi nào..")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(context)) {
+            notify(notificationID, builder.build())
+        }
+    }
 }
+

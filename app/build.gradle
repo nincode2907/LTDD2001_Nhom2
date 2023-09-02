@@ -13,7 +13,7 @@ android {
     compileSdk 33
     signingConfigs {
         release {
-            storeFile file("C:\\New folder\\LTDD2001_Nhom2\\keystore\\key.jks")
+            storeFile file("D:\\LTDD2001_Nhom2\\keystore\\key.jks")
             storePassword "ltddnhom2"
             keyAlias "ltddnhom2"
             keyPassword "ltddnhom2"
@@ -130,4 +130,6 @@ dependencies {
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
+    implementation "com.google.accompanist:accompanist-permissions:0.31.1-alpha"
+    implementation "androidx.work:work-runtime:2.8.0"
 }

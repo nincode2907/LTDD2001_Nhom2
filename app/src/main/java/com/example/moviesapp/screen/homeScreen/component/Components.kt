@@ -29,6 +29,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyBody
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviesapp.R
@@ -181,8 +183,9 @@ fun ButtonPlay(
 fun FilmSeeMore(navController: NavController,title:String) {
     Box(
         modifier = StyleStatic.modifierFilmInListSize
-            .background(colorResource(id = R.color.dark), RoundedCornerShape(6.dp)).clickable {
-                navController.navigate("allmovies/"+title)
+            .background(colorResource(id = R.color.dark), RoundedCornerShape(6.dp))
+            .clickable {
+                navController.navigate("allmovies/" + title)
             },
         contentAlignment = Alignment.Center
     ) {
@@ -511,6 +514,63 @@ fun BackAppToast() {
     }
 }
 
+@Composable
+fun NotConnected (
+    onReConnect: () -> Unit
+)
+{
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.black)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.notconnected),
+            contentDescription = "Không có kết nối mạng",
+            modifier = Modifier
+                .width(180.dp),
+            contentScale = ContentScale.Crop
+        )
+        Text(
+            text = "Lỗi kết nối",
+            style = TextStyle(
+                fontFamily = fontFamilyBody,
+                color = colorResource(id = R.color.whiteBlur),
+                fontSize = 26.sp
+            )
+        )
+        Text(
+            text = "Vui lòng kết nối mạng để tiếp tục",
+            style = TextStyle(
+                fontFamily = fontFamilyBody,
+                color = Color.White,
+                fontSize = 16.sp
+            )
+        )
+        Button(
+            onClick = {
+                onReConnect()
+            },
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = Color(0xFF39B7E8),
+                contentColor = Color.White
+            ),
+            modifier = Modifier
+                .width(180.dp)
+                .padding(top = 18.dp)
+        )
+        {
+            Text(
+                text = "Thử lại",
+                textAlign = TextAlign.Justify,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
 
 @Composable
 fun YoutubeTrailer(

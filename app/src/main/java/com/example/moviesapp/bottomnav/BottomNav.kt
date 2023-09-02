@@ -196,7 +196,7 @@ fun BottomBarAnimationApp(
                             googleAuthUiClient.signOut()
                             Toast.makeText(
                                 context,
-                                "Signed out",
+                                "Đăng xuất thành công",
                                 Toast.LENGTH_LONG
                             ).show()
                             navController.popBackStack()
@@ -228,7 +228,7 @@ fun BottomBarAnimationApp(
                     if (state.isSignInSuccessful) {
                         Toast.makeText(
                             context,
-                            "Sign in successful",
+                            "Đăng nhập thành công",
                             Toast.LENGTH_LONG
                         ).show()
                         navController.navigate(NavigationItem.User.route)
@@ -263,7 +263,7 @@ fun BottomBarAnimationApp(
                             googleAuthUiClient.signOut()
                             Toast.makeText(
                                 context,
-                                "Signed out",
+                                "Đăng xuất thành công",
                                 Toast.LENGTH_LONG
                             ).show()
                             navController.popBackStack()
