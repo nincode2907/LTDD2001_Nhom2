@@ -87,9 +87,7 @@ fun ComingSoonScreen(
     googleAuthUiClient: GoogleAuthUiClient
 ) {
 
-    var isSaved by remember{
-        mutableStateOf(false)
-    }
+    
     Scaffold(
         topBar = {
             TopAppBar(
@@ -135,8 +133,6 @@ fun ComingSoonScreen(
         }
     }
 }
-
-
 @SuppressLint("NewApi")
 @Composable
 fun MovieList(
@@ -270,7 +266,6 @@ fun MovieList(
 
 }
 
-
 @Composable
 fun IconButtonView(modifier: Modifier, img: Int, title: String, onClick: () -> Unit) {
     IconButton(modifier = modifier, onClick = onClick)
@@ -291,6 +286,7 @@ fun IconButtonView(modifier: Modifier, img: Int, title: String, onClick: () -> U
         }
     }
 }
+
 
 
 

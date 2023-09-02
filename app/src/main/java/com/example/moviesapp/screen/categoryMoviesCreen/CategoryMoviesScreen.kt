@@ -120,29 +120,6 @@ fun CategoryMoviesScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ItemMovieView(movie: Movie, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .height(90.dp)
-            .width(120.dp),
-        shape = RoundedCornerShape(15.dp),
-        elevation = CardDefaults.cardElevation(5.dp),
-        onClick = onClick
-
-    ) {
-        Box() {
-            AsyncImage(
-                modifier = Modifier.fillMaxSize(),
-                model = movie.image,
-                contentDescription = "",
-                contentScale = ContentScale.Crop
-            )
-        }
-    }
-}
-
 @Composable
 fun TopBarScreen(title: String) {
     Text(
@@ -174,32 +151,3 @@ fun Top5Movies(categoryMovie: CategoryMovie, movies: List<Movie>, navController:
     }
 }
 
-@Composable
-fun IteamTopMovies(image: String, i: Int) {
-    Box(
-        modifier = Modifier
-            .height(250.dp)
-            .width(150.dp),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        AsyncImage(
-            modifier = Modifier
-                .height(200.dp)
-                .width(140.dp),
-            model = image,
-            contentDescription = "",
-            contentScale = ContentScale.FillHeight
-        )
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomStart
-        ) {
-            Text(
-                text = "$i",
-                fontSize = 100.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
-    }
-}

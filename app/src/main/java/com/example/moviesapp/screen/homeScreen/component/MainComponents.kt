@@ -226,7 +226,7 @@ fun ListFilmHorizontal(
     navController: NavController,
 ) {
     Column(modifier = Modifier.padding(15.dp)) {
-        TitleRowViewMovie(categoryFilms)
+        TitleRowViewMovie(categoryFilms,navController)
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -236,14 +236,14 @@ fun ListFilmHorizontal(
                 })
             }
             item {
-                FilmSeeMore()
+                FilmSeeMore(navController, title = categoryFilms)
             }
         }
     }
 }
 
 @Composable
-fun TitleRowViewMovie(title: String) {
+fun TitleRowViewMovie(title: String,navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -260,7 +260,10 @@ fun TitleRowViewMovie(title: String) {
         Icon(
             imageVector = Icons.Default.KeyboardArrowRight,
             contentDescription = "Xem tất cả",
-            tint = StyleStatic.primaryTextColor
+            tint = StyleStatic.primaryTextColor,
+            modifier = Modifier.clickable {
+                navController.navigate("allmovies/"+title)
+            }
         )
     }
 }

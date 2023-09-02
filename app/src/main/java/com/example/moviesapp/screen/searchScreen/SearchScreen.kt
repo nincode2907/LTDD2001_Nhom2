@@ -1,7 +1,6 @@
 package com.example.movieapp.screen.searchScreen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,16 +69,17 @@ import com.example.petadoption.bottomnav.BottomBar
 fun SearchScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
-    movies: List<Movie>
+    movies: List<Movie>,
 ) {
     var boolean by remember {
         mutableStateOf(true)
     }
+
     val searchSreenViewModel: SearchSreenViewModel = hiltViewModel()
     val categoriesState = searchSreenViewModel.categories.collectAsState()
     Scaffold(
         topBar = {
-            SearchBarView(movies, searchSreenViewModel)
+            SearchBarView()
         },
         bottomBar = {
             BottomBar(
@@ -134,7 +134,7 @@ fun SearchScreen(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarView(movies: List<Movie>, searchSreenViewModel: SearchSreenViewModel) {
+fun SearchBarView() {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     var items = remember {
