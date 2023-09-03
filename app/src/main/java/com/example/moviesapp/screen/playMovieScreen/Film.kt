@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,6 +51,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +72,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import codes.andreirozov.bottombaranimation.ui.theme.fontFamilyHeading
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.moviesapp.R
 import com.example.moviesapp.model.Movie
 import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
@@ -122,6 +128,8 @@ fun Film(
 
     var isConnected by remember{ mutableStateOf(checkNetworkConnectivity(context))}
 
+    val height = LocalConfiguration.current.screenHeightDp
+    val heightImg = height*0.3
     Scaffold() { paddingValues ->
         if(isConnected) {
             Column(
@@ -130,7 +138,20 @@ fun Film(
                     .background(Color.Black)
                     .padding(paddingValues)
             ) {
-                VideoDetailScreen(movie, videoViewModel)
+                if(movie.linkUriMovie.toString()=="null"){
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(movie.image)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxWidth().height(heightImg.dp)
+                    )
+                }
+                else{
+                    VideoDetailScreen(movie, videoViewModel)
+                }
 
                 LazyColumn() {
                     item {
