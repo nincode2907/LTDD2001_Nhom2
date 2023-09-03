@@ -29,7 +29,7 @@ git clone https://github.com/nincode2907/LTDD2001_Nhom2.git
             <td>1</td>
             <td>Hoàng Quảng Ngà</td>
             <td>2051010201</td>
-            <td>Xử lý logic, đăng nhập/đăng ký, trang tìm kiếm, trang user, firebase.</td>
+            <td>Xử lý logic, đăng nhập/đăng ký, trang tìm kiếm, trang user, player, firebase.</td>
         </tr>
         <tr>
             <td>2</td>
