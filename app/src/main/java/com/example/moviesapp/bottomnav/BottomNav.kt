@@ -75,6 +75,7 @@ import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
 import com.example.moviesapp.screen.playMovieScreen.Film
 import com.example.moviesapp.screen.homeScreen.HomeViewModel
+import com.example.moviesapp.screen.mainScreen.Main
 import com.example.moviesapp.screen.userScreen.UserScreen
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.mainScreen.MainViewModel
@@ -211,15 +212,23 @@ fun BottomBarAnimationApp(
                     navController = navController,
                     googleAuthUiClient,
                     onSignOut = {
-                        coroutine.launch {
-                            googleAuthUiClient.signOut()
+                        if(Main.checkNetworkConnectivity(context)) {
+                            coroutine.launch {
+                                googleAuthUiClient.signOut()
+                                Toast.makeText(
+                                    context,
+                                    "Đăng xuất thành công",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                navController.popBackStack()
+                                navController.navigate(NavigationItem.User.route)
+                            }
+                        } else {
                             Toast.makeText(
                                 context,
-                                "Đăng xuất thành công",
+                                "Vui lòng kết nối mạng",
                                 Toast.LENGTH_LONG
                             ).show()
-                            navController.popBackStack()
-                            navController.navigate(NavigationItem.User.route)
                         }
                     }
                 )
@@ -278,14 +287,22 @@ fun BottomBarAnimationApp(
                 ProfileScreen(
                     userData = userData,
                     onSignOut = {
-                        coroutine.launch {
-                            googleAuthUiClient.signOut()
+                        if(Main.checkNetworkConnectivity(context)) {
+                            coroutine.launch {
+                                googleAuthUiClient.signOut()
+                                Toast.makeText(
+                                    context,
+                                    "Đăng xuất thành công",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                navController.popBackStack()
+                            }
+                        } else {
                             Toast.makeText(
                                 context,
-                                "Đăng xuất thành công",
+                                "Vui lòng kết nối mạng",
                                 Toast.LENGTH_LONG
                             ).show()
-                            navController.popBackStack()
                         }
                     }
                 )
