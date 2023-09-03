@@ -22,15 +22,4 @@ object Main {
 
         return isConnect
     }
-
-    fun isNotificationPermissionGranted(context: Context): Boolean {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        return notificationManager.areNotificationsEnabled()
-    }
-
-    fun requestNotificationPermission(activity: Activity, requestCode: Int) {
-        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-        intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
-        activity.startActivityForResult(intent, requestCode)
-    }
 }

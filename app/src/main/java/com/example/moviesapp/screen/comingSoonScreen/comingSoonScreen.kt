@@ -1,8 +1,13 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.moviesapp.screen.comingSoonScreen
 
+import android.R.attr.text
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,7 +67,12 @@ import com.example.moviesapp.screen.mainScreen.Main.checkNetworkConnectivity
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.sql.Timestamp
+import java.util.Calendar
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,9 +84,11 @@ fun ComingSoonScreen(
     viewModel: FavouriteMoviesModel,
     googleAuthUiClient: GoogleAuthUiClient
 ) {
+    val currentDate = LocalDate.now()
     val context = LocalContext.current
+
     var isConnected by remember{ mutableStateOf(Main.checkNetworkConnectivity(context))}
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -106,7 +118,15 @@ fun ComingSoonScreen(
                     .padding(paddingValues = paddingValues)
                     .background(Color.Black)
             ) {
-                items(movies.sortedByDescending { it.releaseDate }.take(3)) { movie ->
+                val filteredAndSortedMovies = movies.filter { movie ->
+                    val releaseDate = movie.releaseDate!!.toDate()
+                    val currentDate = Calendar.getInstance().time
+
+                    releaseDate.month > currentDate.month ||
+                            releaseDate.month == currentDate.month && releaseDate.day > currentDate.day
+                }.sortedBy { it.releaseDate?.toDate()?.month }
+
+                items(filteredAndSortedMovies) { movie ->
                     val isFavourite = movie.id?.let { movieId ->
                         movieFavourites.any { it.id == movieId }
                     } ?: false
@@ -158,13 +178,14 @@ fun MovieList(
                 color = Color(0xFF157AFF)
             )
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                val month = movie.releaseDate?.toDate()?.month?.plus(1) ?: 9
                 Text(
-                    text = "Ngày " + movie.releaseDate?.toDate()?.day,
+                    text = movie.releaseDate?.toDate()?.day.toString(),
                     color = Color.White,
                     fontSize = 17.sp, fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Tháng " + movie.releaseDate?.toDate()?.month,
+                   text = "Tháng ${if (month < 10) "0$month" else "$month"}",
                     color = Color(0xFFB3B3B3),
                     fontSize = 15.sp, fontWeight = FontWeight.Normal,
                     fontStyle = FontStyle.Italic
