@@ -1,5 +1,6 @@
 package com.example.movieapp.screen.rankingScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -39,6 +44,8 @@ import com.example.moviesapp.model.Movie
 import com.example.moviesapp.model.MovieBookNavigation
 import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
 import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
+import com.example.moviesapp.screen.homeScreen.component.NotConnected
+import com.example.moviesapp.screen.mainScreen.Main.checkNetworkConnectivity
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.example.petadoption.bottomnav.BottomBar
 import com.example.rank.RankingListItem
@@ -65,6 +72,9 @@ fun RankingScreen(
         "https://i.ibb.co/VBZ3KKL/top9.png",
         "https://i.ibb.co/yh4fRcX/top10.png"
     )
+    val context = LocalContext.current
+    var isConnected by remember { mutableStateOf(checkNetworkConnectivity(context))}
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -88,50 +98,59 @@ fun RankingScreen(
             )
         },
     ) { paddingValues ->
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(colorResource(id = R.color.dark))
-                .padding(paddingValues)
-        )
-        {
-            stickyHeader {
-                Card(
-                    modifier = Modifier
-                        .fillMaxHeight(),
-                    colors = CardDefaults.cardColors(colorResource(id = R.color.dark))
-                ) {
-                    Text(
-                        text = "Nổi bật",
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
-                        fontStyle = FontStyle.Italic,
-                        color = Color.White,
-                        modifier = Modifier.padding(start = 6.dp)
-                    )
-                    Banner( movies.filter { it.outstanding == true }.sortedByDescending { it.view ?: 0 })
-                    Text(
-                        text = "Top phim",
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
-                        fontStyle = FontStyle.Italic,
-                        color = Color.White,
-                        modifier = Modifier.padding(top = 10.dp, start = 6.dp)
-                    )
+        if(isConnected) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colorResource(id = R.color.dark))
+                    .padding(paddingValues)
+            )
+            {
+                stickyHeader {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxHeight(),
+                        colors = CardDefaults.cardColors(colorResource(id = R.color.dark))
+                    ) {
+                        Text(
+                            text = "Nổi bật",
+                            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
+                            fontStyle = FontStyle.Italic,
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 6.dp)
+                        )
+                        Banner(movies.filter { it.outstanding == true }
+                            .sortedByDescending { it.view ?: 0 })
+                        Text(
+                            text = "Top phim",
+                            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
+                            fontStyle = FontStyle.Italic,
+                            color = Color.White,
+                            modifier = Modifier.padding(top = 10.dp, start = 6.dp)
+                        )
+                    }
+                }
+                items(movies.take(10).size) { it ->
+                    val isFavourite = movies[it].id?.let { movieId ->
+                        movieFavourites.any { it.id == movieId }
+                    } ?: false
+                    RankingListItem(
+                        movie = movies[it],
+                        isFavourite,
+                        viewModel = viewModel,
+                        imgTopUrl = imageRanking[it],
+                        navController = navController,
+                        googleAuthUiClient = googleAuthUiClient
+                    ) {
+                        navController.navigate(MovieBookNavigation.createRoute(movie = movies[it]))
+                    }
                 }
             }
-            items(movies.take(10).size) { it ->
-                val isFavourite = movies[it].id?.let { movieId ->
-                    movieFavourites.any { it.id == movieId }
-                } ?: false
-                RankingListItem(movie = movies[it],
-                    isFavourite,
-                    viewModel = viewModel,
-                    imgTopUrl = imageRanking[it],
-                    navController = navController,
-                    googleAuthUiClient = googleAuthUiClient
-                ) {
-                    navController.navigate(MovieBookNavigation.createRoute(movie = movies[it]))
-                }
+        } else {
+            NotConnected {
+                isConnected = checkNetworkConnectivity(context)
+                if(isConnected)
+                    Toast.makeText(context, "Đã khôi phục kết nối", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -72,11 +73,14 @@ import com.example.moviesapp.model.Movie
 import com.example.moviesapp.presentation.favourite.FavouriteMoviesModel
 import com.example.moviesapp.presentation.signIn.GoogleAuthUiClient
 import com.example.moviesapp.screen.homeScreen.component.CarouselListFilms
+import com.example.moviesapp.screen.homeScreen.component.IconBackBlur
 import com.example.moviesapp.screen.homeScreen.component.IconDetail
 import com.example.moviesapp.screen.homeScreen.component.InfoCategoryFilm
 import com.example.moviesapp.screen.homeScreen.component.InfoSpaceDot
 import com.example.moviesapp.screen.homeScreen.component.InfoTopicFilm
+import com.example.moviesapp.screen.homeScreen.component.NotConnected
 import com.example.moviesapp.screen.homeScreen.component.StyleStatic
+import com.example.moviesapp.screen.mainScreen.Main.checkNetworkConnectivity
 import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.PlayMovieScreen.PlayMovieViewModel
 import com.example.myapplication.screen.PlayMovieScreen.VideoDetailAction
@@ -116,133 +120,146 @@ fun Film(
         animationSpec = tween(durationMillis = 500)
     )
 
+    var isConnected by remember{ mutableStateOf(checkNetworkConnectivity(context))}
+
     Scaffold() { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-                .padding(paddingValues)
-        ) {
-            VideoDetailScreen(movie, videoViewModel)
+        if(isConnected) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+                    .padding(paddingValues)
+            ) {
+                VideoDetailScreen(movie, videoViewModel)
 
-            LazyColumn() {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Icon(
-                                Icons.Default.ArrowBack,
-                                contentDescription = "",
-                                tint = Color.White,
-                                modifier = Modifier.clickable {
-                                    navController.popBackStack()
-                                })
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "",
-                                tint = Color.White,
-                                modifier = Modifier.clickable {
-                                    navController.popBackStack(NavigationItem.Home.route, false)
-                                })
-                        }
-                        Text(
-                            text = movie!!.name.toString(),
-                            style = StyleStatic.textCommonStyle.copy(
-                                fontSize = 38.sp,
-                                fontFamily = fontFamilyHeading,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        )
-                        Row(
-                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
-                        ) {
-                            calendar.time = movie.releaseDate?.toDate()
-                            val styleInRow = StyleStatic.textCommonStyle.copy(
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = StyleStatic.blurTextWhiteColor
-                            )
-                            val infos = listOf(
-                                calendar.get(Calendar.YEAR).toString(),
-                                movie.episodeTotal.toString(),
-                                movie.time.toString()
-                            )
-                            InfoSpaceDot(infos = infos, style = styleInRow)
-                        }
-                        Text(text = movie.description.toString(),
-                            style = StyleStatic.textCommonStyle.copy(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal,
-                                textIndent = TextIndent(6.sp)
-                            ),
-                            maxLines = maxLineDes,
+                LazyColumn() {
+                    item {
+                        Column(
                             modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .clickable(indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }) {
-                                    maxLineDes = if (maxLineDes == 4) 99 else 4
-                                }
-                                .animateContentSize(),
-                            overflow = TextOverflow.Ellipsis)
-                        InfoTopicFilm(
-                            topic = "Quốc gia", infomation = movie.country.toString()
-                        )
-                        InfoCategoryFilm(
-                            topic = "Thể loại", infomation = movie.category!!
-                        )
-                        Row(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
-                            IconDetail(
-                                icon = if (isFavourite) Icons.Outlined.Check else Icons.Default.Add,
-                                description = "Thêm vào DS",
-                                colorText = StyleStatic.blurTextWhiteColor,
-                                modifier = Modifier
-                                    .padding(end = 16.dp)
-                                    .rotate(rotationState + rotation),
-                                onClick = {
-                                    if (googleAuthUiClient.getSignedInUser() != null) {
-                                        viewModel.viewModelScope.launch {
-                                            viewModel.updateFavourite(movie)
-                                        }
-                                        isFavourite = !isFavourite
-                                        rotationState += 360f
-                                    } else {
-                                        navController.navigate("signIn")
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                IconBackBlur(
+                                    icon = Icons.Default.ArrowBack,
+                                    size = "small",
+                                    onClick = {
+                                        navController.popBackStack()
                                     }
-                                }
+                                )
+                                IconBackBlur(
+                                    icon = Icons.Default.Close,
+                                    size = "small",
+                                    onClick = {
+                                        navController.popBackStack(NavigationItem.Home.route, false)
+                                    }
+                                )
+                            }
+                            Text(
+                                text = movie!!.name.toString(),
+                                style = StyleStatic.textCommonStyle.copy(
+                                    fontSize = 38.sp,
+                                    fontFamily = fontFamilyHeading,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
                             )
-                            IconDetail(icon = Icons.Outlined.Share,
-                                description = "Chia sẻ",
-                                colorText = StyleStatic.blurTextWhiteColor,
-                                modifier = Modifier.padding(end = 16.dp),
-                                onClick = {
-                                    val text = "Tóc phai màu, ốm đau nhiều."
+                            Row(
+                                modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                            ) {
+                                calendar.time = movie.releaseDate?.toDate()
+                                val styleInRow = StyleStatic.textCommonStyle.copy(
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = StyleStatic.blurTextWhiteColor
+                                )
+                                val infos = listOf(
+                                    calendar.get(Calendar.YEAR).toString(),
+                                    movie.episodeTotal.toString(),
+                                    movie.time.toString()
+                                )
+                                InfoSpaceDot(infos = infos, style = styleInRow)
+                            }
+                            Text(text = movie.description.toString(),
+                                style = StyleStatic.textCommonStyle.copy(
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    textIndent = TextIndent(6.sp)
+                                ),
+                                maxLines = maxLineDes,
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp)
+                                    .clickable(indication = null,
+                                        interactionSource = remember { MutableInteractionSource() }) {
+                                        maxLineDes = if (maxLineDes == 4) 99 else 4
+                                    }
+                                    .animateContentSize(),
+                                overflow = TextOverflow.Ellipsis)
+                            InfoTopicFilm(
+                                topic = "Quốc gia", infomation = movie.country.toString()
+                            )
+                            InfoCategoryFilm(
+                                topic = "Thể loại", infomation = movie.category!!
+                            )
+                            Row(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
+                                IconDetail(
+                                    icon = if (isFavourite) Icons.Outlined.Check else Icons.Default.Add,
+                                    description = "Thêm vào DS",
+                                    colorText = StyleStatic.blurTextWhiteColor,
+                                    modifier = Modifier
+                                        .padding(end = 16.dp)
+                                        .rotate(rotationState + rotation),
+                                    onClick = {
+                                        if (googleAuthUiClient.getSignedInUser() != null) {
+                                            viewModel.viewModelScope.launch {
+                                                viewModel.updateFavourite(movie)
+                                            }
+                                            isFavourite = !isFavourite
+                                            rotationState += 360f
+                                        } else {
+                                            navController.navigate("signIn")
+                                        }
+                                    }
+                                )
+                                IconDetail(icon = Icons.Outlined.Share,
+                                    description = "Chia sẻ",
+                                    colorText = StyleStatic.blurTextWhiteColor,
+                                    modifier = Modifier.padding(end = 16.dp),
+                                    onClick = {
+                                        val text = "Tóc phai màu, ốm đau nhiều."
 
-                                    val sendIntent = Intent()
-                                    sendIntent.action = Intent.ACTION_SEND
-                                    sendIntent.putExtra(
-                                        Intent.EXTRA_TEXT, text
-                                    )
-                                    sendIntent.type = "text/plain"
-                                    context.startActivity(sendIntent)
-                                })
-                            IconDetail(icon = if (liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                description = "Yêu thích",
-                                colorText = StyleStatic.blurTextWhiteColor,
-                                colorIcon = colorLikeIcon,
-                                modifier = Modifier.padding(end = 16.dp),
-                                onClick = {
-                                    liked = !liked
-                                })
+                                        val sendIntent = Intent()
+                                        sendIntent.action = Intent.ACTION_SEND
+                                        sendIntent.putExtra(
+                                            Intent.EXTRA_TEXT, text
+                                        )
+                                        sendIntent.type = "text/plain"
+                                        context.startActivity(sendIntent)
+                                    })
+                                IconDetail(icon = if (liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    description = "Yêu thích",
+                                    colorText = StyleStatic.blurTextWhiteColor,
+                                    colorIcon = colorLikeIcon,
+                                    modifier = Modifier.padding(end = 16.dp),
+                                    onClick = {
+                                        liked = !liked
+                                    })
+                            }
                         }
+                        CarouselListFilms(
+                            movie = movie!!, navController, movies, viewModel = videoViewModel
+                        )
                     }
-                    CarouselListFilms(
-                        movie = movie!!, navController, movies, viewModel = videoViewModel
-                    )
                 }
+            }
+        } else {
+            NotConnected {
+                isConnected = checkNetworkConnectivity(context)
+                if(isConnected)
+                    Toast.makeText(context, "Đã khôi phục kết nối", Toast.LENGTH_SHORT).show()
             }
         }
     }
