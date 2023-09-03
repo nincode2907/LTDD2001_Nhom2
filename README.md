@@ -17,40 +17,44 @@ git clone https://github.com/nincode2907/LTDD2001_Nhom2.git
   Nhóm 2
   <table>
     <thead>
-      <tr>
-        <th>STT</th>
-        <th>Họ và tên</th>
-        <th>MSSV</th>
-        <th>Công việc</th>
-      </tr>
+        <tr>
+            <th>STT</th>
+            <th>Họ và tên</th>
+            <th>MSSV</th>
+            <th>Công việc</th>
+        </tr>
     </thead>
     <tbody>
-      <tr>
-      <th>1</th>
-      <th>Phạm Đức Mạnh</th>
-      <th>2051012061</th>
-      <th>Đa cấp</th>
-    </tr><tr>
-      <th>2</th>
-      <th>Mai Nhật Thanh Tâm</th>
-      <th>2051012105</th>
-      <th>Ngủ</th>
-    </tr><tr>
-      <th>3</th>
-      <th>Lê Thị Ngọc Thư</th>
-      <th>2051010304</th>
-      <th>Thuyết trình part-time</th>
-    </tr><tr>
-      <th>4</th>
-      <th>Hoàng Quảng Ngà</th>
-      <th>2051010201</th>
-      <th>Thuyết trình</th>
-    </tr>
-      <tr>
-      <th>5</th>
-      <th>Bùi Văn Nin</th>
-      <th>2051012083</th>
-      <th>Việc gì khó, có Nin lo!!</th>
-    </tr>
+        <tr>
+            <td>1</td>
+            <td>Hoàng Quảng Ngà</td>
+            <td>2051010201</td>
+            <td>Xử lý logic, đăng nhập/đăng ký, trang tìm kiếm, trang user.</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Phạm Đức Mạnh</td>
+            <td>2051012061</td>
+            <td>Trang xếp hạng, thông báo, viết báo cáo tiếng Anh.</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Bùi Văn Nin</td>
+            <td>2051012083</td>
+            <td>Trang chủ, trang xem phim, danh sách phim yêu thích, kết nối mạng.</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Lê Thị Ngọc Thư</td>
+            <td>2051010304</td>
+            <td>Trang sắp ra mắt, chức năng chia sẻ, viết báo cáo tiếng Anh.</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Mai Nhật Thanh Tâm</td>
+            <td>2051012105</td>
+            <td>Viết báo cáo tiếng Việt, database.</td>
+        </tr>
     </tbody>
-  </table>
+</table>
+

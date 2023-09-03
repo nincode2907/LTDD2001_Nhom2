@@ -121,7 +121,8 @@ fun BottomBarAnimationApp(
 
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.AnimatedSplash.route,) {
+            startDestination = NavigationItem.AnimatedSplash.route,
+        ) {
             composable(NavigationItem.Home.route) {
                 HomeScreen(
                     mainViewModel = mainViewModel,
@@ -140,7 +141,8 @@ fun BottomBarAnimationApp(
                 })
             ) {
                 val movie = MovieBookNavigation.from(it)
-                Film(movie = movie!!,
+                Film(
+                    movie = movie!!,
                     navController = navController,
                     moviesState.value,
                     movieFavourites = favouriteMovies,
