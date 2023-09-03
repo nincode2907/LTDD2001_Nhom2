@@ -29,7 +29,7 @@ git clone https://github.com/nincode2907/LTDD2001_Nhom2.git
             <td>1</td>
             <td>Hoàng Quảng Ngà</td>
             <td>2051010201</td>
-            <td>Xử lý logic, đăng nhập/đăng ký, trang tìm kiếm, trang user.</td>
+            <td>Xử lý logic, đăng nhập/đăng ký, trang tìm kiếm, trang user, firebase.</td>
         </tr>
         <tr>
             <td>2</td>
@@ -47,13 +47,13 @@ git clone https://github.com/nincode2907/LTDD2001_Nhom2.git
             <td>4</td>
             <td>Lê Thị Ngọc Thư</td>
             <td>2051010304</td>
-            <td>Trang sắp ra mắt, chức năng chia sẻ, viết báo cáo tiếng Anh.</td>
+            <td>Trang sắp ra mắt, chức năng chia sẻ, database, viết báo cáo tiếng Anh.</td>
         </tr>
         <tr>
             <td>5</td>
             <td>Mai Nhật Thanh Tâm</td>
             <td>2051012105</td>
-            <td>Viết báo cáo tiếng Việt, database.</td>
+            <td>Splash screen, database, viết báo cáo tiếng Việt.</td>
         </tr>
     </tbody>
 </table>
