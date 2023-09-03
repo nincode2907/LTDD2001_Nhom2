@@ -67,6 +67,7 @@ import com.example.moviesapp.presentation.signIn.SignInViewModel
 import com.example.moviesapp.screen.AllMovies
 import com.example.moviesapp.presentation.signIn.UserData
 import com.example.moviesapp.screen.AnimatedSplashScreen
+import com.example.moviesapp.screen.MoviesSearchScreen
 import com.example.moviesapp.screen.categoryMoviesCreen.CategoryMoviesScreen
 import com.example.moviesapp.screen.comingSoonScreen.ComingSoonScreen
 import com.example.moviesapp.screen.playMovieScreen.Film
@@ -121,7 +122,8 @@ fun BottomBarAnimationApp(
 
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.AnimatedSplash.route,) {
+            startDestination = NavigationItem.AnimatedSplash.route,
+        ) {
             composable(NavigationItem.Home.route) {
                 HomeScreen(
                     mainViewModel = mainViewModel,
@@ -140,7 +142,8 @@ fun BottomBarAnimationApp(
                 })
             ) {
                 val movie = MovieBookNavigation.from(it)
-                Film(movie = movie!!,
+                Film(
+                    movie = movie!!,
                     navController = navController,
                     moviesState.value,
                     movieFavourites = favouriteMovies,
@@ -285,6 +288,15 @@ fun BottomBarAnimationApp(
                 FavouriteList(
                     movies = favouriteMovies.orEmpty(),
                     navController = navController
+                )
+            }
+            composable("movieQuery/{query}", arguments = listOf(navArgument("query") {
+                type = NavType.StringType
+            })) { navBackStackEntry ->
+                MoviesSearchScreen(
+                    movies = moviesState.value,
+                    navBackStackEntry.arguments?.getString("query")!!,
+                    navController
                 )
             }
         }
