@@ -118,15 +118,7 @@ fun ComingSoonScreen(
                     .padding(paddingValues = paddingValues)
                     .background(Color.Black)
             ) {
-                val filteredAndSortedMovies = movies.filter { movie ->
-                    val releaseDate = movie.releaseDate!!.toDate()
-                    val currentDate = Calendar.getInstance().time
-
-                    releaseDate.month > currentDate.month ||
-                            releaseDate.month == currentDate.month && releaseDate.day > currentDate.day
-                }.sortedBy { it.releaseDate?.toDate()?.month }
-
-                items(filteredAndSortedMovies) { movie ->
+                items(movies) { movie ->
                     val isFavourite = movie.id?.let { movieId ->
                         movieFavourites.any { it.id == movieId }
                     } ?: false

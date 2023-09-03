@@ -103,6 +103,7 @@ fun Film(
     navController: NavController,
     movies: List<Movie>,
     movieFavourites: List<Movie>,
+    isCommingSoon: Boolean = false,
     viewModel: FavouriteMoviesModel,
     googleAuthUiClient: GoogleAuthUiClient
 ) {
@@ -138,7 +139,7 @@ fun Film(
                     .background(Color.Black)
                     .padding(paddingValues)
             ) {
-                if(movie.linkUriMovie.toString()=="null"){
+                if(isCommingSoon){
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(movie.image)

@@ -1,11 +1,15 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.petadoption.bottomnav
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -76,6 +80,7 @@ import com.example.myapplication.model.NavigationItem
 import com.example.myapplication.screen.mainScreen.MainViewModel
 import com.plcoding.composegooglesignincleanarchitecture.presentation.profile.ProfileScreen
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -102,6 +107,7 @@ fun BottomBar(
         })
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @UnstableApi
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -116,6 +122,15 @@ fun BottomBarAnimationApp(
 
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val filteredAndSortedMovies = moviesState.value.filter { movie ->
+        val releaseDate = movie.releaseDate!!.toDate()
+        val currentDate = Calendar.getInstance().time
+
+        releaseDate.month > currentDate.month ||
+                releaseDate.month == currentDate.month && releaseDate.day > currentDate.day
+    }.sortedBy { it.releaseDate?.toDate()?.month }
+
     BottomBarAnimationTheme {
         val navController = rememberNavController()
 
@@ -141,11 +156,13 @@ fun BottomBarAnimationApp(
                 })
             ) {
                 val movie = MovieBookNavigation.from(it)
+                val isCommingSoon = filteredAndSortedMovies.any { it == movie }
                 Film(
                     movie = movie!!,
                     navController = navController,
                     moviesState.value,
                     movieFavourites = favouriteMovies,
+                    isCommingSoon = isCommingSoon,
                     viewModel = viewFavouriteModel,
                     googleAuthUiClient = googleAuthUiClient
                 )
@@ -182,7 +199,7 @@ fun BottomBarAnimationApp(
                 ComingSoonScreen(
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    movies = moviesState.value,
+                    movies = filteredAndSortedMovies,
                     movieFavourites = favouriteMovies,
                     viewModel = viewFavouriteModel,
                     googleAuthUiClient = googleAuthUiClient
